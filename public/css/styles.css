@@ -1,0 +1,510 @@
+/* Fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=optional');
+
+/* Estilos globales */
+* {
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-display: swap;
+}
+
+.container{
+    display: flex;
+}
+/* Enlaces */
+a:link,
+a:visited,
+a:hover,
+a:active {
+    text-decoration: none;
+}
+
+/* Estilos flexibles */
+.flex-container {
+    display: flex;
+    height: 25px;
+}
+
+.flex-item-left,
+.flex-item-right {
+    padding-top: 5px;
+    flex: 50%;
+}
+
+/* Estilos de navegación */
+.bodynav {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: radial-gradient(circle, rgba(14, 104, 38, 0) 0%, rgba(0, 56, 184, 0) 25%, rgba(239, 252, 116, 1) 100%);
+    padding: 10px;
+}
+
+/* Enlaces de navegación */
+nav a {
+    font-size: 1.6rem; /* Ajusta el tamaño de la fuente */
+    color: #FFFFFF; /* Color blanco para buen contraste */
+    padding: 10px;
+    transition: background-color 0.3s, color 0.3s; /* Transiciones suaves */
+}
+
+nav a:hover {
+    background-color: #007BFF; /* Fondo azul al pasar el mouse */
+    color: #FFD700; /* Color dorado al pasar el mouse */
+}
+
+nav.menu-visible a {
+    display: block;
+}
+
+
+.menu-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* Estilos del ticker */
+.ticker {
+    padding: 7px 0;
+    text-align: left;
+    border: 2px solid #00A4BD;
+    box-shadow: 6px 4px #00A4BD;
+}
+
+/* Estilos del audio */
+.audio {
+    margin-top: 5px;
+    height: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Estilos del navticker */
+.navticker {
+    margin-top: 20px;
+    text-align: center;
+    height: 200px;
+}
+
+/* Contenedor de imagen y texto */
+.imgcontainer {
+    position: relative;
+}
+
+/* Texto en la esquina inferior derecha */
+.text-block {
+    margin-top: 5px;
+    position: absolute;
+    bottom: 150px;
+    left: 20px;
+    right: 20px;
+    background-color: black;
+    opacity: 0.7;
+    color: white;
+    padding: 0 20px;
+    width: 200px;
+}
+
+/* Estilos de la clase seed */
+.seed {
+    font-size: 1.25rem;
+    color: #333;
+    line-height: 1.5;
+}
+
+.lig {
+    font-size: 0.875rem;
+    color: #777;
+}
+
+
+/* Estilos del centro del texto */
+.center {
+    text-align: center;
+   
+}
+
+
+/* Estilos para iframes */
+iframe {
+    height: 600px;
+    display: block; 
+    margin-left: 20px; /* Aumenta el margen izquierdo */
+    margin-right: 20px; /* Aumenta el margen derecho */
+    margin-top: 10px; /* Ajusta el margen superior si es necesario */
+}
+
+/* Estilos del texto de copyright */
+.copyright {
+    font-size: 14px;
+}
+
+/* Estilos para centrar imágenes */
+.imgcenter {
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+}
+
+/* Estilos para listas no ordenadas dentro de elementos de lista */
+ul > li {
+    list-style: none;
+    font-weight: 600;
+}
+
+/* Estilos del texto con peso de fuente 800 y margen superior */
+.fontw {
+    margin-top: 30px;
+    font-weight: 800;
+}
+
+/* Estilos del texto con color especificado */
+.fontst {
+    color: rgb(0, 56, 184);
+}
+
+/* Estilos del pie de página */
+.foot {
+    background: radial-gradient(circle, rgba(14, 104, 38, 0) 0%, rgba(0, 56, 184, 0) 35%, rgba(239, 252, 116, 1) 100%);
+}
+
+/* Estilos de iconos con color rojo */
+.iconcolor {
+    color: red;
+}
+
+/* Estilos de tarjetas de imágenes */
+.imgcard {
+    display: block;
+    width: 40%;
+    padding: 10px;
+}
+
+/* Estilos de encabezado h5 dentro de tarjetas de imágenes */
+.imgcard h5.imgh5 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: rgb(0, 56, 184);
+    font-weight: bold;
+}
+
+/* Estilos del CTA (Call to Action) */
+.cta {
+    --shadowColor: 184 60% 40%;
+    display: flex;
+    flex-wrap: wrap;
+    background: rgb(255, 218, 101);
+    width: 100%;
+    box-shadow: 0.45rem 0.45rem 0 hsl(var(--shadowColor) / 1);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border-color: rgb(239, 252, 116);
+}
+
+.cta img {
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    flex: 1 1 350px;
+}
+
+.cta__text-column {
+    padding: min(2rem, 5vw);
+    flex: 1 0 50%;
+}
+
+.cta a {
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 0.6rem;
+    font-weight: 700;
+    color: rgb(0, 56, 184);
+    border: 0.2rem solid;
+}
+
+/* Estilos del texto justificado */
+.abstract {
+    text-align: justify;
+}
+
+/* Estilos del modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    opacity: 0.8;
+    margin: 15% auto;
+    padding: 20px;
+}
+
+/* Estilos del botón de cierre */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Estilos compartidos */
+.center, #header {
+    text-align: center;
+    margin: 10px;
+}
+
+#header > h3, #header > p {
+    font-size: 1.5rem;
+}
+
+/* Estilos compartidos para .containernews y .card */
+.containernews, .card {
+    position: relative;
+    box-shadow: 0 15px 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+.containernews {
+    width: 100vw;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    z-index: 1;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    margin-bottom: 60px;
+}
+
+.card > div, .card-image {
+    box-shadow: 0 15px 20px 0 rgba(0, 0, 0, 0.5);
+}
+
+.card-image {
+    width: 360px;
+    height: 250px;
+}
+
+.card-image > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: bottom;
+}
+
+.card-text {
+    margin: -30px auto;
+    margin-bottom: -50px;
+    height: 350px;
+    width: 350px;
+    background-color: #1D1C20;
+    color: #fff;
+    padding: 10px;
+}
+
+.card-badge {
+    font-style: italic;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    margin-top: 5px;
+}
+
+.card-body {
+    font-size: 0.85rem;
+    line-height: 1.5; /* Ajusta según tu diseño */
+    max-height: calc(1.5rem * 8); /* 8 líneas visibles */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-link {
+    width: 50px;
+    height: 40px;
+    background-color: #fafcf9;
+    color: #fff;
+    margin-left: auto;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos para .wrapper */
+.wrapper {
+    position: relative;
+    margin: 20px auto;
+    height: 250px;
+    box-shadow: 1px 1px 25px 3px rgba(0, 0, 0, .3);
+    z-index: 2;
+}
+
+/* Estilos compartidos para .headernews y .content */
+.headernews, .content {
+    position: relative;
+    z-index: 2;
+}
+
+.headernews {
+    width: max-content;
+    font-size: 1.875rem;
+    white-space: nowrap;
+    top: 5%;
+    left: 7%;
+}
+
+.content {
+    font-size: 1rem;
+    overflow: hidden;
+    margin-left: 10px;
+    max-width: 600px; /* Limita el ancho máximo */
+    max-height: 150px;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+    width: 100%; /* Para un diseño responsive */
+}
+
+/* Estilos de la imagen */
+.image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    clip-path: polygon(25% 0%, 100% 0, 100% 100%, 8% 100%);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Estilos del contenedor de "Leer más" */
+.read-more-container {
+    position: absolute;
+    bottom: 10px;
+    right: 40%;
+    background-color: rgb(239, 252, 116);
+    width: 80px;
+    height: 30px;
+    border-radius: 5px;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+}
+
+/* Estilos del enlace "Leer más" */
+.read-more {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.read-more:hover {
+    text-decoration: none;
+}
+
+.video-circle video {
+    width: 200px; /* Tamaño del video */
+    height: 200px; /* Aseguramos proporción cuadrada */
+    border-radius: 50%; /* Hace el video circular */
+    object-fit: cover; /* Ajusta el contenido dentro del círculo */
+    border: 4px solid #ffffff; /* Borde blanco */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+/* Media Query para pantallas menores a 700px */
+@media only screen and (max-width: 700px) {
+    .copyright {
+        font-size: 12px;
+    }
+
+    .imgh5 {
+        font-size: 1.2rem;
+    }
+
+    .wrapper {
+        height: auto;
+        margin-top: 20px;
+    }
+
+    .read-more-container {
+        position: absolute;
+        bottom: 10px;
+        right: 20px;
+        background-color: rgb(239, 252, 116);
+        padding: 10px;
+        border-radius: 5px;
+        z-index: 1;
+    }
+
+    .headernews,
+    .content {
+        width: 90%;
+        left: 5%;
+    }
+
+    .image {
+        width: 50%;
+        z-index: 2;
+    }
+
+    .ticker,
+    .imgcontainer,
+    .navigate .seed,
+    .cta {
+        margin-top: 20px;
+    }
+
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav a {
+        display: none;
+        width: 100%;
+        text-align: center;
+    }
+
+    .menu-icon {
+        display: block;
+    }
+
+    .menu-visible a {
+        display: block;
+    }
+
+    .ticker {
+        height: 80px;
+    }
+
+    .center {
+        margin: 0 auto;
+    }
+}

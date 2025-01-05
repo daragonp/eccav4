@@ -1,0 +1,41 @@
+// Global styles for both custom sidebar and topbar compoments
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+.sidebar,
+.topbar {
+  .nav-item {
+    // Customize Dropdown Arrows for Navbar
+    &.dropdown {
+      .dropdown-toggle {
+        &::after {
+          width: 1rem;
+          text-align: center;
+          float: right;
+          vertical-align: 0;
+          border: 0;
+          font-weight: 900;
+          content: '\f105';
+        }
+      }
+      &.show {
+        .dropdown-toggle::after {
+          content: '\f107';
+        }
+      }
+    }
+    // Counter for nav links and nav link image sizing
+    .nav-link {
+      position: relative;
+      .badge-counter {
+        position: absolute;
+        transform: scale(0.7);
+        transform-origin: top right;
+        right: .25rem;
+        margin-top: -.25rem;
+      }
+      .img-profile {
+        height: 2rem;
+        width: 2rem;
+      }
+    }
+  }
+}

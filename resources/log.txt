@@ -1,0 +1,5 @@
+Versión 3.0:
+    Nueva interfaz, nuevas secciones, código mejorado.
+
+Versión 3.0.1:
+    Se agrega video al versículo del día.
