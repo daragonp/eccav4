@@ -2,7 +2,7 @@
 /public/audio
 /public/documents
 /public/feed
-/public/images
+/public/images/bible
 /public/seeders
 /public/video
 /storage/*.key
