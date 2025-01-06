@@ -4,6 +4,9 @@
 
 @section('content')
     <div class="mt-1">
+        @include('social')
+    </div>
+    <div class="mt-1">
         @include('ticker')
     </div>
     <div class="mt-2">

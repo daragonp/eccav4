@@ -16,7 +16,7 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/">Inicio</a>
-                    </li>
+                    </li><!--
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('worship-home') }}">Palabra de vida</a>
                     </li>
@@ -28,7 +28,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('lumbrera') }}">Programas</a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>

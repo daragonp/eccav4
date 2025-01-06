@@ -19,11 +19,9 @@
     <meta name="description"
         content="Emancipación Cristiana Afro, palabra de vida para el pueblo de tez brillante. Biblia, sólo biblia. El dedo índice en la palabra de Dios.">
     <meta name="author" content="ECCA">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('images/fav/apple-touch-icon.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/fav/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/fav/favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}">
-    <link rel="mask-icon" href="{{ asset('images/fav/safari-pinned-tab.svg" color="#5bbad5') }}">
+    <link rel="icon" href="{{ asset('images/fav/favicon.svg') }}" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/fav/apple-touch-icon.png') }}" />
+    <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
 </head>

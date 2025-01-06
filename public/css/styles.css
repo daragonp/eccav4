@@ -70,6 +70,30 @@ nav.menu-visible a {
     cursor: pointer;
 }
 
+/* Efecto hover */
+.btn-social-icon:hover {
+    transform: scale(1.1);  /* Aumenta el tamaño al pasar el ratón */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Ajusta el color del ícono dentro del botón */
+.btn-social-icon i {
+    color: rgba(194, 206, 30, 0.575);
+}
+
+/* Colores personalizados para el hover */
+.btn-social-icon.btn-instagram:hover {
+    background-color: #e1306c;
+}
+
+.btn-social-icon.btn-facebook:hover {
+    background-color: #3b5998;
+}
+
+.btn-social-icon.btn-youtube:hover {
+    background-color: #ff0000;
+}
+
 
 /* Estilos del ticker */
 .ticker {
