@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row">
             @if ($quote->video)
-                <div class="col-lg-10 col-md-7 col-12 mb-3 shadow">
-                    <img src="{{ asset('images/bible/' . $quote->image) }}"
+                <div class="col-lg-10 col-md-7 col-12 mb-3">
+                    <img class="quote" src="{{ asset('images/bible/' . $quote->image) }}"
                         alt="Biblia, sólo biblia; el dedo índice de la mano de Dios" width="100%" height="500px;">
                 </div>
                 <div class="col-lg-2 col-md-5 col-12 d-flex justify-content-center">

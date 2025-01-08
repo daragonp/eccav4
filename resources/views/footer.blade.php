@@ -75,7 +75,7 @@
                         <a class="btn btn-outline-light btn-sm mb-2"
                             href="https://tunein.com/radio/Radio-Emancipacin-Cristiana-Afro-s292735/" target="_blank"
                             title="TuneIn">
-                            <img src="{{ asset('images/brands/logo_ink.webp') }}" width="20px" alt="">
+                            <img src="{{ asset('images/brands/tunein.webp') }}" width="20px" alt="">
                         </a>
                     @endauth
                 </div>

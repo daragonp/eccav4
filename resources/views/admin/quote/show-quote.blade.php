@@ -9,6 +9,7 @@
 
 @section('title', 'Versículos del día')
 
+
 @section('pageheading', 'Vesículos')
 
 @section('urlbtn', 'new-verse')

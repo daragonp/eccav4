@@ -1,8 +1,13 @@
+/* Variables CSS (opcional, para un diseño más modular) */
+:root {
+    --font-primary: "Poppins", sans-serif;
+    --font-weight: 400;
+}
 
 /* Estilos globales */
 * {
-    font-family: "Poppins", sans-serif;
-    font-weight: 400;
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight);
     font-display: swap;
 }
 
@@ -12,16 +17,20 @@ a:visited,
 a:hover,
 a:active {
     text-decoration: none;
+    color: inherit; /* Evita cambios de color indeseados */
 }
+
+/* Media Queries para pantallas pequeñas (max-width: 768px) */
 @media (max-width: 768px) {
+    /* Navbar - Adaptación en pantallas pequeñas */
     .navbar-expand-lg {
-    flex-direction: column;
+        flex-direction: column !important; /* Asegura que se muestre en columna */
     }
     .navbar-nav {
-    flex-direction: row;
-    flex-wrap: wrap;
+        flex-direction: row !important; /* Alinea los elementos en fila */
+        flex-wrap: wrap; /* Permite que los elementos se acomoden mejor */
     }
     .navbar-nav > li {
-    margin-bottom: 0;
+        margin-bottom: 0; /* Elimina espacio extra entre elementos */
     }
-    }
+}
