@@ -9,8 +9,11 @@
                 <span class="navbar-toggler-icon"></span>
             </button>            
             <div class="center">
-                <iframe src="https://tunein.com/embed/player/s292735/?background=dark" style="width:80%; height:100px;" scrolling="no"
-                    frameborder="no"></iframe>
+                {{-- <iframe src="https://tunein.com/embed/player/s292735/?background=dark" style="width:80%; height:100px;" scrolling="no"
+                    frameborder="no"></iframe> --}}
+                <h4 class="en-vivo-text">EN VIVO</h4>
+                @include('player')
+
             </div>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">

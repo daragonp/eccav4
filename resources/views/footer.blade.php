@@ -43,7 +43,7 @@
             <div class="col">
                 <h5 class="text-uppercase text-warning font-weight-bold">Otros enlaces</h5>
                 <div class="d-flex justify-content-center flex-wrap gap-3">
-                    <a class="btn btn-warning btn-sm mb-2" href="{{ url('opinion') }}" target="">Mirada Afro</a>
+                    {{-- <a class="btn btn-warning btn-sm mb-2" href="{{ url('opinion') }}" target="">Mirada Afro</a> --}}
                     @auth
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
