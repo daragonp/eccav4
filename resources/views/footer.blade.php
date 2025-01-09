@@ -3,7 +3,7 @@
         <!-- Sección principal del footer -->
         <div class="row text-center text-md-start">
             <!-- Conócenos -->
-            <div class="col-md-4 mb-4">
+           {{--  <div class="col-md-4 mb-4">
                 <h5 class="text-uppercase text-warning font-weight-bold">Conócenos</h5>
                 <ul class="list-unstyled">
                     <li><a class="text-light" href="{{ url('mision') }}">Misión</a></li>
@@ -22,7 +22,7 @@
                     <li><a class="text-light" href="{{ url('rights') }}">Derechos del titular</a></li>
                     <li><a class="text-light" href="{{ url('pqr') }}">PQR en línea</a></li>
                 </ul>
-            </div>
+            </div> --}}
             <!-- Contáctanos -->
             <div class="col-md-4 mb-4">
                 <h5 class="text-uppercase text-warning font-weight-bold">Contáctanos</h5>
