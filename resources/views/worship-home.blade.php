@@ -4,7 +4,7 @@
 
 @section('content')
     <br>
-    @if($feed)
+    @if ($feed)
         <div class="container">
             <div class="row">
                 <div class="wrapper">
@@ -19,10 +19,7 @@
             </div>
         </div>
     @endif
-    @if($list)
-        <div id="header">
-            <h3>Palabra de vida - anteriores</h3>
-        </div>
+    @if ($list)
         <div class="container containernews">
             @foreach ($list as $l)
                 <div class="card">

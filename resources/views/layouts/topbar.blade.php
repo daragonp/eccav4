@@ -17,10 +17,10 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-users') }}">Usuarios</a>
-            </li>
+            </li>-->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-worship') }}">Palabra de vida</a>
-            </li>-->
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-quote') }}">Versículos</a>
             </li><!--
