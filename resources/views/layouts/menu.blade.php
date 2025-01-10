@@ -4,17 +4,16 @@
             <a class="navbar-brand" href="/">
                 <img src="{{ asset('images/logo/logo.png') }}" alt="Emancipación Cristiana Afro" width="100">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>            
             <div class="center">
                 {{-- <iframe src="https://tunein.com/embed/player/s292735/?background=dark" style="width:80%; height:100px;" scrolling="no"
                     frameborder="no"></iframe> --}}
                 <h4 class="en-vivo-text">EN VIVO</h4>
                 @include('player')
-
             </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
