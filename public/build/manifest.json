@@ -5,9 +5,15 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-B2idPAAv.js",
+    "file": "assets/app-DBN-o-_o.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/menu.js": {
+    "file": "assets/menu-DUpEUBNf.js",
+    "name": "menu",
+    "src": "resources/js/menu.js",
     "isEntry": true
   },
   "resources/sass/app.scss": {

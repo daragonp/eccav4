@@ -1,16 +1,19 @@
-// vite.config.js
 import { defineConfig } from 'vite';
 const laravel = await import('laravel-vite-plugin');
 
 export default defineConfig({
-    plugins: [
-        laravel.default({
-            input: [
-                'resources/css/app.css',
-                'resources/sass/app.scss',
-                'resources/js/app.js',
-            ],
-            refresh: true,
-        }),
-    ],
+  build: {
+    outDir: 'public/build', // Asegúrate de que los archivos generados se guarden aquí
+  },
+  plugins: [
+    laravel.default({
+      input: [
+        'resources/css/app.css',
+        'resources/sass/app.scss',
+        'resources/js/app.js',
+        'resources/js/menu.js',
+          ],
+      refresh: true,
+    }),
+  ],
 });

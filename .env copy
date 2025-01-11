@@ -2,32 +2,18 @@ APP_NAME="Emancipación Colombiana Cristiana Afro"
 APP_ENV=production
 APP_KEY=base64:vHyq9f/Zmi9eofQbu2qzuTAMjUvOTZNv9ownwF6/hhk=
 APP_DEBUG=false
-APP_URL=http://localhost
+APP_URL=http://tezbrillante.org
 
 LOG_CHANNEL=stack
 LOG_DEPRECATIONS_CHANNEL=null
 LOG_LEVEL=debug
 
-#DB_CONNECTION=mysql
-#DB_HOST=srv564.hstgr.io
-#DB_PORT=3306
-#DB_DATABASE=u372822660_eccathird
-#DB_USERNAME=u372822660_eccadarag
-#DB_PASSWORD=rJ9Q:Q&A=Gl4
-
 DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
+DB_HOST=localhost
 DB_PORT=3306
-DB_DATABASE=ecca
-DB_USERNAME=daragonp
-DB_PASSWORD=Jacobo2505*+
-
-#DB_CONNECTION=mysql
-#DB_HOST=srv564.hstgr.io
-#DB_PORT=3306
-#DB_DATABASE=u372822660_ecca4
-#DB_USERNAME=u372822660_database4
-#DB_PASSWORD=]wYtVIvit8Q63TG6574.kd
+DB_DATABASE=u372822660_ecca4
+DB_USERNAME=u372822660_database4
+DB_PASSWORD=]wYtVIvit8Q63TG6574.kd
 
 BROADCAST_DRIVER=log
 CACHE_DRIVER=file

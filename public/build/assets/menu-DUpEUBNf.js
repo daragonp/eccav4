@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){const e=document.querySelector(".menu-icon"),n=document.querySelector("nav");e&&n&&e.addEventListener("click",function(){n.classList.toggle("menu-visible")})});
