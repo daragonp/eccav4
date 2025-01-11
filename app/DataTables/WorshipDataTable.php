@@ -54,18 +54,20 @@ class WorshipDataTable extends DataTable
         ])->render();
     }
 
+    
     protected function renderImageColumn($imgworship)
     {
-        $url = ("images/worship/$imgworship->image");
+        $url = "images/worship/$imgworship->image";
 
-        // Verifica si el campo 'image' está vacío
         if (empty($imgworship->image)) {
             return "No se ha puesto una imagen aún";
         }
 
-        return view('layouts.media', ['url' => $url])->render();
+        return view('layouts.media', [
+            'url' => $url,
+            'type' => 'image', // Indicamos que es una imagen
+        ])->render();
     }
-
 
 
 

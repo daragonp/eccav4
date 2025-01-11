@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-lg">
     <a class="navbar-brand" href="/"><img src="{{ asset('images/logo/logo.png') }}" width="100px" alt="Logo"
             class="logo-img"></a>
-    @include('player')
+            <iframe src="https://tunein.com/embed/player/s292735/?background=dark" style="width:15%; height:100px;" scrolling="no"
+                    frameborder="no"></iframe>
+    {{-- @include('player') --}}
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
