@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
         ->where('day', '=', DB::raw('(SELECT DAYOFWEEK(NOW()))'))
         ->whereRaw('CURTIME() BETWEEN start AND end')
         ->first();
-        view()->share('onair', $onair);
-        Paginator::useBootstrap();*/
+        view()->share('onair', $onair);*/
+        Paginator::useBootstrap();
     }
 }

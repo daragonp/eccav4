@@ -47,19 +47,14 @@ nav {
 /* Enlaces de navegación */
 nav a {
     font-size: 1.6rem;
-    /* Ajusta el tamaño de la fuente */
     color: #FFFFFF;
-    /* Color blanco para buen contraste */
     padding: 10px;
     transition: background-color 0.3s, color 0.3s;
-    /* Transiciones suaves */
 }
 
 nav a:hover {
     background-color: #0038b8;
-    /* Fondo azul al pasar el mouse */
     color: #FFD700;
-    /* Color dorado al pasar el mouse */
 }
 
 nav.menu-visible a {
@@ -75,7 +70,6 @@ nav.menu-visible a {
 /* Efecto hover */
 .btn-social-icon:hover {
     transform: scale(1.1);
-    /* Aumenta el tamaño al pasar el ratón */
     transition: transform 0.3s ease-in-out;
 }
 
@@ -111,7 +105,6 @@ nav.menu-visible a {
 .imgcontainer {
     position: relative;
 }
-
 
 /* Estilos de la clase seed */
 .seed {
@@ -164,7 +157,6 @@ ul>li {
     background: radial-gradient(circle, rgba(14, 104, 38, 0) 0%, rgba(0, 56, 184, 0) 35%, rgba(239, 252, 116, 1) 100%);
 }
 
-
 /* Estilos del CTA (Call to Action) */
 .cta {
     --shadowColor: 184 60% 40%;
@@ -206,17 +198,11 @@ ul>li {
 /* Estilos del versículo del día con video */
 .video-circle video {
     width: 200px;
-    /* Tamaño del video */
     height: 200px;
-    /* Aseguramos proporción cuadrada */
     border-radius: 50%;
-    /* Hace el video circular */
     object-fit: cover;
-    /* Ajusta el contenido dentro del círculo */
     border: 2px solid #ffffff;
-    /* Borde blanco */
     box-shadow: 0px 2px px rgba(0, 0, 0, 0.2);
-    /* Sombra suave */
     margin-left: auto;
 }
 
@@ -224,20 +210,16 @@ ul>li {
     border-radius: 8px;
     max-width: 100%;
     height: auto;
-
 }
 
 /* REPRODUCTOR STREAMING */
 .reproductor {
     background-color: #646262;
-    /* Fondo más oscuro para el reproductor */
     border-radius: 12px;
     padding: 20px 30px;
-    /* Más padding horizontal */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
-    /* Centrado vertical */
 }
 
 .controles {
@@ -249,22 +231,18 @@ ul>li {
     background: none;
     border: none;
     color: #eee;
-    /* Color de los iconos */
     font-size: 24px;
     cursor: pointer;
     transition: transform 0.2s ease;
-    /* Transición suave para el hover */
 }
 
 #toggleButton:hover {
     transform: scale(1.4);
-    /* Ligero aumento al pasar el mouse */
     color: #fff;
 }
 
 #toggleButton:focus {
     outline: none;
-    /* Elimina el borde de enfoque predeterminado */
 }
 
 /* Estilos para que el reproductor sea responsive */
@@ -280,7 +258,7 @@ ul>li {
 
 .en-vivo-text {
     color: red;
-    font-weight: bold; /* Opcional: para que se vea más destacado */
+    font-weight: bold;
     font-size: 16px;
 }
 
@@ -290,18 +268,15 @@ ul>li {
 }
 
 .containernews {
-    width: 100vw;
     display: flex;
-    justify-content: space-around;
     flex-wrap: wrap;
-    z-index: 1;
+    justify-content: space-around;
 }
 
 .card {
-    display: flex;
-    flex-direction: column;
-    width: 360px;
-    margin-bottom: 60px;
+    width: 100%;
+    margin-bottom: 20px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card > div, .card-image {
@@ -309,8 +284,9 @@ ul>li {
 }
 
 .card-image {
-    width: 360px;
-    height: 250px;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
 }
 
 .card-image > img {
@@ -321,12 +297,6 @@ ul>li {
 }
 
 .card-text {
-    margin: -30px auto;
-    margin-bottom: -50px;
-    height: 350px;
-    width: 350px;
-    background-color: #1D1C20;
-    color: #fff;
     padding: 10px;
 }
 
@@ -342,34 +312,35 @@ ul>li {
 
 .card-body {
     font-size: 0.85rem;
-    overflow: hidden;
     max-height: 100px;
+    overflow: hidden;
     text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 8;
-    line-clamp: 8;
-    -webkit-box-orient: vertical;
 }
 
 .card-link {
-    width: 50px;
-    height: 40px;
-    background-color: #fafcf9;
-    color: #fff;
-    margin-left: auto;
-    font-size: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #fafcf9;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+.card-link a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.card-link a:hover {
+    color: #0038b8;
 }
 
 /* Estilos para .wrapper */
 .wrapper {
-    position: relative;
-    margin: 20px auto;
-    height: 250px;
-    box-shadow: 1px 1px 25px 3px rgba(0, 0, 0, .3);
-    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Estilos compartidos para .headernews y .content */
@@ -379,24 +350,15 @@ ul>li {
 }
 
 .headernews {
-    width: max-content;
-    font-size: 1.875rem;
-    white-space: nowrap;
-    top: 5%;
-    left: 7%;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    text-align: center;
 }
 
 .content {
-    font-size: 1rem;
-    overflow: hidden;
-    width: 55%;
-    margin-left: 10px;
-    max-height: 150px;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
-    -webkit-box-orient: vertical;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
 }
 
 /* Estilos de la imagen */
@@ -404,36 +366,31 @@ ul>li {
     position: absolute;
     top: 0;
     right: 0;
-    width: 50%;
-    height: 100%;
-    clip-path: polygon(25% 0%, 100% 0, 100% 100%, 8% 100%);
-    background-repeat: no-repeat;
+    width: 100%;
+    height: 200px;
     background-size: cover;
+    background-position: center;
 }
 
 /* Estilos del contenedor de "Leer más" */
 .read-more-container {
-    position: absolute;
-    bottom: 10px;
-    right: 40%;
-    background-color: rgb(239, 252, 116);
-    width: 80px;
-    height: 30px;
-    border-radius: 5px;
-    justify-content: center;
     text-align: center;
-    z-index: 1;
+    margin-bottom: 1.5rem;
+    padding: 10px;
 }
 
-/* Estilos del enlace "Leer más" */
 .read-more {
+    background-color: rgb(239, 252, 116);
+    padding: 10px 20px;
+    border-radius: 5px;
     color: #333;
-    text-decoration: none;
     font-weight: bold;
+    text-decoration: none;
 }
 
 .read-more:hover {
-    text-decoration: none;
+    background-color: rgb(0, 56, 184);
+    color: #fff;
 }
 
 /* Media Query para pantallas menores a 700px */
@@ -444,6 +401,22 @@ ul>li {
 
     .imgh5 {
         font-size: 1.2rem;
+    }
+
+    .wrapper {
+        padding: 0 15px;
+    }
+
+    .headernews {
+        font-size: 1.5rem;
+    }
+
+    .content {
+        font-size: 1rem;
+    }
+
+    .image {
+        height: 200px;
     }
 
     .wrapper {
@@ -461,8 +434,7 @@ ul>li {
         z-index: 1;
     }
 
-    .headernews,
-    .content {
+    .headernews, .content {
         width: 90%;
         left: 5%;
     }
@@ -472,12 +444,10 @@ ul>li {
         z-index: 2;
     }
 
-    .ticker,
-    .imgcontainer,
-    .navigate .seed,
-    .cta {
+    .ticker, .imgcontainer, .navigate .seed, .cta {
         margin-top: 20px;
     }
+
     .menu-icon {
         display: block;
     }
@@ -496,5 +466,18 @@ ul>li {
 
     .center {
         margin: 0 auto;
+    }
+
+    .card {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card-body {
+        font-size: 1rem;
     }
 }
