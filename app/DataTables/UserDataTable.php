@@ -68,7 +68,10 @@ class UserDataTable extends DataTable
             return "No se ha puesto una imagen aún";
         }
 
-        return view('layouts.media', ['url' => $url])->render();
+        return view('layouts.media', [
+            'url' => $url,
+            'type' => 'image', // Indicamos que es una imagen
+        ])->render();
     }
 
     public function query(User $model): QueryBuilder

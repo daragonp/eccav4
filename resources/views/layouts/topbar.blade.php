@@ -11,7 +11,7 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-           <!-- <li class="nav-item">
+           <li class="nav-item">
                 <a class="nav-link" href="{{ url('dashboard') }}"><i class="fa-solid fa-gauge fa-2x" style="color: #d7c823;"></i></a>
             </li>
             <li class="nav-item">
@@ -19,13 +19,13 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-users') }}">Usuarios</a>
-            </li>-->
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-worship') }}">Palabra de vida</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-quote') }}">Versículos</a>
-            </li><!--
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-categories') }}">PodCast</a>
             </li>
@@ -37,7 +37,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-looks') }}">Mirada afro</a>
-            </li>-->
+            </li>
             <li>
                 <div class="navbar-right">
                     <ul class="navbar-nav">

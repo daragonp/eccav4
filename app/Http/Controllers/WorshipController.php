@@ -73,7 +73,7 @@ class WorshipController extends Controller
 
             $worship->pdfdoc = $docuName;
         }else{
-            $worship->pdfdoc = 'documento.pdf';
+            $worship->pdfdoc = NULL;
         }
 
         $worship->autor = $request->input('autor');

@@ -5,10 +5,10 @@
                 <img src="{{ asset('images/logo/logo.png') }}" alt="Emancipación Cristiana Afro" width="100">
             </a>
             <div class="center">
-                {{-- <iframe src="https://tunein.com/embed/player/s292735/?background=dark" style="width:80%; height:100px;" scrolling="no"
-                    frameborder="no"></iframe> --}}
-                <h4 class="en-vivo-text">EN VIVO</h4>
-                @include('player')
+                <iframe src="https://tunein.com/embed/player/s292735/?background=dark" style="width:80%; height:100px;" scrolling="no"
+                    frameborder="no"></iframe>
+                {{-- <h4 class="en-vivo-text">EN VIVO</h4>
+                @include('player') --}}
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,16 +21,16 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('worship-home') }}">Palabra de vida</a>
-                    </li><!--
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('newsweek') }}">Mensaje de la semana</a>
                     </li>
-                    <li class="nav-item">
+                    <!--<li class="nav-item">
                         <a class="nav-link" href="{{ url('bischool-home') }}">Escuela bíblica</a>
-                    </li>
+                    </li>-->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('lumbrera') }}">Programas</a>
-                    </li> -->
+                    </li>
                 </ul>
             </div>
         </div>
