@@ -1,11 +1,19 @@
 /* Fuentes */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
+:root {
+    --green-dark: #2a3d1f;
+    --green-light: #8aa446;
+    --white: #fff;
+}
+
 /* Estilos globales */
 body {
     font-family: "Poppins", sans-serif;
     font-weight: 600;
     font-display: swap;
+    margin: 0;
+    color: #333;
 }
 
 /* Enlaces */
@@ -28,111 +36,9 @@ a:active {
     flex: 50%;
 }
 
-/* Estilos de navegación */
-.bodynav {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgb(255, 218, 101);
-    background: linear-gradient(90deg, rgba(255, 218, 101, 1) 0%, rgba(14, 104, 38, 0.8939950980392157) 57%, rgba(14, 104, 38, 0.76234243697479) 80%);
-    padding: 10px;
-}
-
-/* Enlaces de navegación */
-nav a {
-    font-size: 1.6rem;
-    color: #FFFFFF;
-    padding: 10px;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-nav a:hover {
-    background-color: #0038b8;
-    color: #FFD700;
-}
-
-nav.menu-visible a {
-    display: block;
-}
-
-.menu-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-/* Efecto hover */
-.btn-social-icon:hover {
-    transform: scale(1.1);
-    transition: transform 0.3s ease-in-out;
-}
-
-/* Colores personalizados para el hover */
-.btn-social-icon.btn-instagram:hover {
-    background-color: #e1306c;
-}
-
-.btn-social-icon.btn-facebook:hover {
-    background-color: #3b5998;
-}
-
-.btn-social-icon.btn-youtube:hover {
-    background-color: #ff0000;
-}
-
-/* Estilos del ticker */
-.ticker {
-    padding: 7px 0;
-    text-align: left;
-    border: 2px solid #00A4BD;
-    box-shadow: 6px 4px #00A4BD;
-}
-
-/* Estilos del navticker */
-.navticker {
-    margin-top: 20px;
-    text-align: center;
-    height: 200px;
-}
-
-/* Contenedor de imagen y texto */
-.imgcontainer {
-    position: relative;
-}
-
-/* Estilos de la clase seed */
-.seed {
-    font-size: 1.25rem;
-    color: #333;
-    line-height: 1.5;
-}
-
-.lig {
-    font-size: 0.875rem;
-    color: #777;
-}
-
-/* Estilos del centro del texto */
-.center {
-    text-align: center;
-}
-
 /* Estilos del texto de copyright */
 .copyright {
     font-size: 14px;
-}
-
-/* Estilos para centrar imágenes */
-.imgcenter {
-    display: block;
-    margin: 0 auto;
-    width: 50%;
 }
 
 /* Estilos para listas no ordenadas dentro de elementos de lista */
@@ -141,343 +47,349 @@ ul>li {
     font-weight: 600;
 }
 
-/* Estilos del texto con peso de fuente 800 y margen superior */
-.fontw {
-    margin-top: 30px;
-    font-weight: 800;
+.custom-footer {
+    font-size: 0.85rem; /* más pequeño que el base, pero aún legible */
 }
 
-/* Estilos del texto con color especificado */
-.fontst {
-    color: rgb(0, 56, 184);
+.custom-footer h5 {
+    font-size: 1rem; /* títulos más compactos */
+    font-weight: 700;
 }
 
-/* Estilos del pie de página */
-.foot {
-    background: radial-gradient(circle, rgba(14, 104, 38, 0) 0%, rgba(0, 56, 184, 0) 35%, rgba(239, 252, 116, 1) 100%);
+.custom-footer a,
+.custom-footer p,
+.custom-footer li {
+    font-size: 0.8rem;
+    font-weight: 400;
+    line-height: 1.4;
 }
 
-/* Estilos del CTA (Call to Action) */
-.cta {
-    --shadowColor: 184 60% 40%;
+.custom-footer .btn {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+}
+
+
+.header {
     display: flex;
     flex-wrap: wrap;
-    background: rgb(255, 218, 101);
-    width: 100%;
-    box-shadow: 0.45rem 0.45rem 0 hsl(var(--shadowColor) / 1);
-    border-radius: 0.5rem;
-    overflow: hidden;
-    border-color: rgb(239, 252, 116);
-}
-
-.cta img {
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
-    flex: 1 1 350px;
-}
-
-.cta__text-column {
-    padding: min(2rem, 5vw);
-    flex: 1 0 50%;
-}
-
-.cta a {
-    display: inline-block;
-    text-decoration: none;
-    border-radius: 0.6rem;
-    font-weight: 700;
-    color: rgb(0, 56, 184);
-    border: 0.2rem solid;
-}
-
-/* Estilos del texto justificado */
-.abstract {
-    text-align: justify;
-}
-
-/* Estilos del versículo del día con video */
-.video-circle video {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ffffff;
-    box-shadow: 0px 2px px rgba(0, 0, 0, 0.2);
-    margin-left: auto;
-}
-
-.quote {
-    border-radius: 8px;
-    max-width: 100%;
-    height: auto;
-}
-
-/* REPRODUCTOR STREAMING */
-.reproductor {
-    background-color: #646262;
-    border-radius: 12px;
-    padding: 20px 30px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background-color: var(--white);
+    border-bottom: 2px solid #eee;
 }
 
-.controles {
-    display: flex;
-    align-items: center;
+.logo img {
+    width: 120px;
 }
 
-#toggleButton {
-    background: none;
-    border: none;
-    color: #eee;
-    font-size: 24px;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-#toggleButton:hover {
-    transform: scale(1.4);
-    color: #fff;
-}
-
-#toggleButton:focus {
-    outline: none;
-}
-
-/* Estilos para que el reproductor sea responsive */
-@media (max-width: 400px) {
-    .reproductor {
-        padding: 15px 20px;
-    }
-
-    #toggleButton {
-        font-size: 20px;
-    }
-}
-
-.en-vivo-text {
-    color: red;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-/* Estilos compartidos para .containernews y .card */
-.containernews, .card {
+.navbar {
     position: relative;
 }
 
-.containernews {
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: var(--green-dark);
+    font-weight: bold;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background: var(--white);
+    border: 1px solid #ccc;
+    top: 100%;
+    left: 0;
+    list-style: none;
+    padding: 0.5rem;
+    z-index: 1000;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu li {
+    margin: 0;
+}
+
+.dropdown-menu li a {
+    display: block;
+    padding: 0.5rem;
+    white-space: nowrap;
+    color: #333;
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--green-dark);
+}
+
+.hero-image {
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+    background-color: #fff;
+}
+
+.hero-image img {
+    max-width: 80%;
+    height: auto;
+    display: inline-block;
+}
+
+.hero {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    padding: 2rem;
+    background-color: var(--green-dark);
+    color: white;
+}
+
+.hero-left,
+.hero-right {
+    flex: 1;
+    padding: 1rem;
+}
+
+.hero-left img {
+    width: 100%;
+    max-width: 300px;
+}
+
+.links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3rem;
+    padding: 2rem;
+    background-color: var(--white);
+    text-align: center;
 }
 
 .card {
-    width: 100%;
-    margin-bottom: 20px;
-    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
-}
-
-.card > div, .card-image {
-    box-shadow: 0 15px 20px 0 rgba(0, 0, 0, 0.5);
-}
-
-.card-image {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.card-image > img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: bottom;
-}
-
-.card-text {
-    padding: 10px;
-}
-
-.card-badge {
-    font-style: italic;
-}
-
-.card-title {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    margin-top: 5px;
-}
-
-.card-body {
-    font-size: 0.85rem;
-    max-height: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.card-link {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fafcf9;
-    padding: 10px;
-    font-size: 1rem;
-}
-
-.card-link a {
-    text-decoration: none;
-    color: #333;
-    font-weight: bold;
-}
-
-.card-link a:hover {
-    color: #0038b8;
-}
-
-/* Estilos para .wrapper */
-.wrapper {
+    width: 180px;
+    height: 180px;
+    border-radius: 15px;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-}
-
-/* Estilos compartidos para .headernews y .content */
-.headernews, .content {
-    position: relative;
-    z-index: 2;
-}
-
-.headernews {
-    font-size: 1.75rem;
-    margin-bottom: 1rem;
+    padding: 1rem;
+    transition: transform 0.3s ease;
     text-align: center;
+    overflow: hidden;
 }
 
-.content {
+.icon-img {
+    width: 150px;
+    height: 150px;
+    margin-bottom: 0.5rem;
+    object-fit: contain;
+    background-color: #2a3d1f;
+}
+
+footer {
+    background: var(--green-dark);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}
+
+footer a {
+    color: white;
+    margin: 0 5px;
     font-size: 1.2rem;
+}
+
+.daily-word-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    padding: 2rem;
+    background-color: var(--white);
+    gap: 2rem;
+}
+
+.left-block {
     text-align: center;
-    margin-bottom: 1.5rem;
 }
 
-/* Estilos de la imagen */
-.image {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100%;
-    height: 200px;
-    background-size: cover;
-    background-position: center;
+.title {
+    color: var(--green-dark);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
 }
 
-/* Estilos del contenedor de "Leer más" */
-.read-more-container {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    padding: 10px;
-}
-
-.read-more {
-    background-color: rgb(239, 252, 116);
-    padding: 10px 20px;
-    border-radius: 5px;
-    color: #333;
-    font-weight: bold;
+.download-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--green-dark);
+    color: var(--white);
     text-decoration: none;
+    padding: 0.8rem 2.5rem 0.8rem 1.2rem;
+    border-radius: 40px;
+    font-weight: 500;
+    font-size: 1rem;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease;
 }
 
-.read-more:hover {
-    background-color: rgb(0, 56, 184);
-    color: #fff;
+.download-button:hover {
+    transform: translateY(-2px);
 }
 
-/* Media Query para pantallas menores a 700px */
-@media only screen and (max-width: 700px) {
-    .copyright {
-        font-size: 12px;
-    }
+.circle-badge {
+    position: absolute;
+    right: -15px;
+    background-color: var(--white);
+    color: var(--green-dark);
+    border: 2px solid var(--green-dark);
+    border-radius: 50%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
 
-    .imgh5 {
-        font-size: 1.2rem;
-    }
+.right-block img {
+    max-width: 100%;
+    height: auto;
+    max-height: 500px;
+}
 
-    .wrapper {
-        padding: 0 15px;
-    }
-
-    .headernews {
-        font-size: 1.5rem;
-    }
-
-    .content {
-        font-size: 1rem;
-    }
-
-    .image {
-        height: 200px;
-    }
-
-    .wrapper {
-        height: auto;
-        margin-top: 20px;
-    }
-
-    .read-more-container {
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        background-color: var(--white);
         position: absolute;
-        bottom: 10px;
-        right: 20px;
-        background-color: rgb(239, 252, 116);
-        padding: 10px;
-        border-radius: 5px;
-        z-index: 1;
+        top: 60px;
+        right: 0;
+        width: 200px;
+        border: 1px solid #ccc;
     }
 
-    .headernews, .content {
-        width: 90%;
-        left: 5%;
+    .nav-links.active {
+        display: flex;
     }
 
-    .image {
-        width: 50%;
-        z-index: 2;
-    }
-
-    .ticker, .imgcontainer, .navigate .seed, .cta {
-        margin-top: 20px;
-    }
-
-    .menu-icon {
+    .menu-toggle {
         display: block;
     }
 
-    .menu-visible a {
-        display: block;
+    .dropdown:hover .dropdown-menu {
+        position: static;
     }
 
-    .ticker {
-        height: 80px;
+
+    .pdf-text {
+        flex: 1 0 100%;
+        max-width: 100%;
     }
 
-    .seed {
-        height: auto;
-    }
-
-    .center {
-        margin: 0 auto;
+    .links {
+        flex-direction: column;
+        align-items: center;
     }
 
     .card {
-        width: 100%;
-        margin: 10px 0;
+        width: 80%;
     }
 
-    .card-title {
-        font-size: 1.2rem;
+    .daily-word-section {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-around;
+        padding: 2rem;
+        background-color: var(--white);
+        gap: 2rem;
     }
 
-    .card-body {
+    .left-block {
+        text-align: center;
+    }
+
+    .title {
+        color: var(--green-dark);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .download-button {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        background-color: var(--green-dark);
+        color: var(--white);
+        text-decoration: none;
+        padding: 0.8rem 2.5rem 0.8rem 1.2rem;
+        border-radius: 40px;
+        font-weight: 500;
         font-size: 1rem;
+        box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+    }
+
+    .download-button:hover {
+        transform: translateY(-2px);
+    }
+
+    .circle-badge {
+        position: absolute;
+        right: -15px;
+        background-color: var(--white);
+        color: var(--green-dark);
+        border: 2px solid var(--green-dark);
+        border-radius: 50%;
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 0.75rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .left-block,
+    .right-block {
+        flex: 1 0 100%;
+        max-width: 100%;
+    }
+
+    .right-block img {
+        max-width: 100%;
+        height: auto;
+        max-height: 300px;
     }
 }

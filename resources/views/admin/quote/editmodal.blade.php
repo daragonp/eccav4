@@ -1,30 +1,29 @@
-<div class="row">
-    <div class="col-md-6">
-        <div class="form-floating mb-3">
-            <img src="images/bible/{{ $tableM->image }}" alt="Imagen de {{ $tableM->name }}" width="350px">
-            <p>Imagen actual</p>
+<div class="container my-5">
+    <div class="row">
+        <!-- Columna de imagen -->
+        <div class="col-md-6 mb-4">
+            <div class="form-group">
+                <p class="image-label"><strong>Imagen actual</strong></p>
+                <img src="images/bible/{{ $tableM->image }}" alt="Imagen de {{ $tableM->name }}" class="img-fluid img-preview">
+            </div>
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="form-floating mb-3">
-            <input type="file" name="image" id="floatingInput" accept="image/*" class="form-control"
-                value="images/bible/{{ $tableM->image }}">
-            <label>Nueva imagen del versículo</label>
-        </div>
-        <div class="form-floating mb-3">
-            <input type="file" name="audio" accept="audio/*" class="form-control"
-                value="audio/quote/{{ $tableM->audio }}">
-            <label>Audio del versículo</label>
-        </div>
-        <div class="form-floating mb-3">
-            <input type="file" name="video" accept="video/*" class="form-control"
-                value="video/quote/{{ $tableM->video }}">
-            <label>Video del versículo</label>
-        </div>
-        <div class="form-floating mb-3">
-            <input type="date" name="date" class="form-control"
-                value="{{ $tableM->date }}" required>
-            <label>Fecha</label>
+
+        <!-- Columna de formulario -->
+        <div class="col-md-6">
+            <form>
+                <div class="form-group mb-4">
+                    <label for="video" class="form-label">Documento PDF</label>
+                    <input type="file" name="video" accept=".pdf" class="form-control custom-input" id="video">
+                </div>
+                <div class="form-group mb-4">
+                    <label for="image" class="form-label">Nueva imagen del versículo</label>
+                    <input type="file" name="image" id="image" accept="image/*" class="form-control custom-input">
+                </div>
+                <div class="form-group mb-4">
+                    <label for="date" class="form-label">Fecha</label>
+                    <input type="date" name="date" id="date" class="form-control custom-input" value="{{ $tableM->date }}" required>
+                </div>
+            </form>
         </div>
     </div>
 </div>

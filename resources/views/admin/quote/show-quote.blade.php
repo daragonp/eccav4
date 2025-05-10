@@ -25,17 +25,21 @@
                 <input type="date" name="date" min="1" max="31" class="form-control" required>
             </div>
             <div class="form-group mb-2">
+                <label>Documento PDF</label>
+                <input type="file" name="video" accept='.pdf' class="form-control">
+            </div>
+            <div class="form-group mb-2">
                 <label>Imagen</label>
                 <input type="file" name="image" accept="image/*" class="form-control">
             </div>
-            <div class="form-group mb-2">
+            {{-- <div class="form-group mb-2">
                 <label>Audio</label>
                 <input type="file" name="audio" accept="audio/*" class="form-control">
             </div>
             <div class="form-group mb-2">
                 <label>Video</label>
                 <input type="file" name="video" accept="video/*" class="form-control">
-            </div>
+            </div> --}}
         </div>
     </div>
 @endsection

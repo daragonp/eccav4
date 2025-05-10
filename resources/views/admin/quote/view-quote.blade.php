@@ -17,6 +17,12 @@
                 alt="{{ $quote->text }}" srcset=""></td>
         </tr>
         <tr>
+            <th>Documento PDF</th>
+            <td><iframe src ="{{ asset('/laraview/#../documents/quote/' . $quote->video) }}" width="100%" height="800px"
+                    style="padding-top: 20px;">
+                </iframe></td>
+        </tr>{{-- 
+        <tr>
             <th>Audio</th>
             <td><audio src="../audio/quote/{{ $quote->audio }}"></audio></td>
         </tr>
@@ -27,7 +33,7 @@
                 <source src="../video/quote/{{ $quote->video }}" type="video/ogg">
                 Actualice su navegador para poder ver este contenido (video).
               </video></td>
-        </tr>
+        </tr> --}}
         <tr>
             <th>Fecha</th>
             <td>{{$quote->date}}</td>

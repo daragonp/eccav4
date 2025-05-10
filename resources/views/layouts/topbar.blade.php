@@ -1,8 +1,6 @@
 <nav class="navbar navbar-expand-lg">
     <a class="navbar-brand" href="/"><img src="{{ asset('images/logo/logo.png') }}" width="100px" alt="Logo"
             class="logo-img"></a>
-            <iframe src="https://tunein.com/embed/player/s292735/?background=dark" style="width:15%; height:100px;" scrolling="no"
-                    frameborder="no"></iframe>
     {{-- @include('player') --}}
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,11 +18,11 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-users') }}">Usuarios</a>
             </li>
-            <li class="nav-item">
+           {{--  <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-worship') }}">Palabra de vida</a>
-            </li>
+            </li> --}}
             <li class="nav-item">
-                <a class="nav-link" href="{{ url('show-quote') }}">Versículos</a>
+                <a class="nav-link" href="{{ url('show-quote') }}">Palabra de vida (versículos)</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('show-categories') }}">PodCast</a>

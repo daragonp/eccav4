@@ -76,18 +76,15 @@ class VerseDataTable extends DataTable
 
 
     protected function renderVideoColumn($videoQuote)
-    {
-        $url = "video/quote/$videoQuote->video";
+{
+    $url = asset("documents/quote/{$videoQuote->video}");
 
-        if (empty($videoQuote->video)) {
-            return "No se ha cargado un video aún";
-        }
-
-        return view('layouts.media', [
-            'url' => $url,
-            'type' => 'video', // Indicamos que es un video
-        ])->render();
+    if (empty($videoQuote->video)) {
+        return "No se ha cargado un documento aún";
     }
+
+    return '<a href="' . $url . '" target="_blank">Ver</a>';
+}
 
     protected function renderAudioColumn($audioQuote)
     {
@@ -152,8 +149,7 @@ class VerseDataTable extends DataTable
             // Column::make('id')->title('ID')->width(10),
             Column::make('date')->title('Fecha'),
             Column::make('image')->title('Imagen'),
-            Column::make('video')->title('Video'),
-            Column::make('audio')->title('Audio'),
+            Column::make('video')->title('Documento'),
             Column::computed('action')->title('Acciones')
                 ->exportable(true)
                 ->printable(false)

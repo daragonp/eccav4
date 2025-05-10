@@ -43,8 +43,8 @@ class VerseController extends Controller
             'image' => 'required',
             'date' => 'required',
         ], [
-            'image.required' => 'Debe seleccionar la fecha en la que se mostrará el resurso.',
-            'date.required' => 'Debe seleccionar la fecha en la que se mostrará el resurso.',
+            'image.required' => 'Debe seleccionar la fecha en la que se mostrará el recurso.',
+            'date.required' => 'Debe seleccionar la fecha en la que se mostrará el recurso.',
         ]);
 
         $quote = new Verse();
@@ -76,7 +76,7 @@ class VerseController extends Controller
 
             $videoName = time() . '.' . $video->getClientOriginalExtension();
 
-            $request->video->move('video/quote', $videoName);
+            $request->video->move('documents/quote', $videoName);
 
             $quote->video = $videoName;
         }
@@ -87,6 +87,7 @@ class VerseController extends Controller
 
         $quote->updated_at = Carbon::now();
 
+        //dd($quote);
         $quote->save();
 
         return redirect()->back()->with('success', 'El recurso ha sido creado');
@@ -157,7 +158,7 @@ class VerseController extends Controller
 
             $videoName = time() . '.' . $video->getClientOriginalExtension();
 
-            $request->video->move('video/quote', $videoName);
+            $request->video->move('documents/quote', $videoName);
 
             $quote->video = $videoName;
         }
@@ -168,6 +169,7 @@ class VerseController extends Controller
         $quote->created_at = Carbon::now();
 
         $quote->updated_at = Carbon::now();
+        
 
         $quote->save();
 
