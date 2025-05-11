@@ -3,9 +3,9 @@
 @section('title', 'Tez brillante')
 
 @section('content')
-    <div>
+{{--     <div>
         @include('ticker')
-    </div>
+    </div> --}}
     <div>
         <div>
             @include('eccard')

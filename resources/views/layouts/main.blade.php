@@ -9,8 +9,6 @@
     <link rel="icon" href="{{ asset('images/fav/favicon.svg') }}" type="image/svg+xml" />
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/fav/apple-touch-icon.png') }}" />
     <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/menu.js'])
 
 
@@ -24,33 +22,24 @@
     <main class="py-4">
         @yield('content')
     </main>
-
+    @include('footer')
     <script>
-        const audioPlayer = document.getElementById('audioPlayer');
-        const toggleButton = document.getElementById('toggleButton');
-        const playIcon = document.getElementById('playIcon');
-        const pauseIcon = document.getElementById('pauseIcon');
-
-        toggleButton.addEventListener('click', () => {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'block';
-            } else {
-                audioPlayer.pause();
-                playIcon.style.display = 'block';
-                pauseIcon.style.display = 'none';
-            }
-        });
-
-        audioPlayer.addEventListener('error', (event) => {
-            const error = event.target.error;
-            console.error("Error al reproducir el audio:", error);
-            alert("Hubo un error al reproducir la transmisión. Por favor, inténtalo de nuevo más tarde.");
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
         });
     </script>
-    @include('footer')
 
+    <script>
+        function myFunction() {
+            var x = document.getElementById("myLinks");
+            if (x.style.display === "block") {
+                x.style.display = "none";
+            } else {
+                x.style.display = "block";
+            }
+        }
+    </script>
 </body>
 
 </html>

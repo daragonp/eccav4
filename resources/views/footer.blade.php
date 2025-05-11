@@ -3,7 +3,7 @@
         <!-- Sección principal del footer -->
         <div class="row text-center text-md-start">
            
-            <div class="col-md-4 mb-4 sizem">
+            <div class="col-md-4 mb-4">
                 <h5 class="text-uppercase text-warning font-weight-bold">Legal</h5>
                 <ul class="list-unstyled">
                     <li><a class="text-light" href="{{ url('privacy') }}">Política de tratamiento de datos
