@@ -72,7 +72,7 @@
         <div class="row text-center">
             <div class="col">
                 <p class="mb-0">&copy; {{ date('Y') }} Derechos Reservados - Emancipación Cristiana Afro | Ver.
-                    4.5.0a</p>
+                    4.5.1</p>
                 <img src="{{ asset('images/brands/logoda.png') }}" width="20px" alt="">
             </div>
         </div>
