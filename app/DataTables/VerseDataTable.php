@@ -83,7 +83,7 @@ class VerseDataTable extends DataTable
         return "No se ha cargado un documento aún";
     }
 
-    return '<a href="' . $url . '" target="_blank">Ver</a>';
+        return '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-outline-info"><i class="fas fa-file-pdf me-1"></i> Ver PDF</a>';
 }
 
     protected function renderAudioColumn($audioQuote)

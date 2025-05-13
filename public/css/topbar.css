@@ -1,113 +1,186 @@
-/* Variables CSS (opcional, para un diseño más modular) */
-:root {
-    --font-primary: "Poppins", sans-serif;
-    --font-weight: 400;
+body {
+    overflow-x: hidden;
 }
 
-/* Estilos globales */
-* {
-    font-family: var(--font-primary);
-    font-weight: var(--font-weight);
-    font-display: swap;
-}
-
-/* Enlaces */
-a:link,
-a:visited,
-a:hover,
-a:active {
-    text-decoration: none;
-    color: inherit; /* Evita cambios de color indeseados */
-}
-
-/* Estilos generales del formulario */
-.container {
-    max-width: 900px; /* Limitar el tamaño para que no sea demasiado ancho */
-    margin: 0 auto;
-}
-
-/* Formulario */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-label {
-    font-size: 1.2rem; /* Tamaño de fuente más grande */
-    font-weight: 500;  /* Negrita moderada */
-    color: #4A4A4A;    /* Color gris suave */
-    margin-bottom: 0.8rem;
-}
-
-/* Estilo a los inputs */
-.custom-input {
-    border-radius: 12px; /* Bordes redondeados */
-    padding: 0.8rem;     /* Espaciado interno */
-    border: 2px solid #ccc; /* Borde suave */
-    background-color: #f9f9f9; /* Fondo claro */
-    transition: all 0.3s ease; /* Transición suave */
-}
-
-/* Efecto en los inputs al hacer focus */
-.custom-input:focus {
-    border-color: #007bff; /* Borde azul */
-    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3); /* Sombra ligera */
-    background-color: #fff; /* Fondo blanco al enfocar */
-}
-
-/* Imagen de vista previa */
-.img-preview {
-    border-radius: 12px; /* Bordes redondeados */
-    border: 4px solid #eee; /* Borde muy suave */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transición suave */
-    max-height: 350px;
-    object-fit: cover; /* Ajustar imagen sin deformarla */
-}
-
-/* Efecto hover sobre la imagen */
-.img-preview:hover {
-    transform: scale(1.05); /* Aumentar ligeramente el tamaño */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Sombra suave al hacer hover */
-}
-
-/* Espaciado entre las columnas */
-.row {
+#wrapper {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px; /* Espaciado entre columnas */
 }
 
-/* Media Queries para pantallas pequeñas (max-width: 768px) */
-@media (max-width: 768px) {
-    /* Navbar - Adaptación en pantallas pequeñas */
-    .navbar-expand-lg {
-        flex-direction: column !important; /* Asegura que se muestre en columna */
-    }
-    .navbar-nav {
-        flex-direction: row !important; /* Alinea los elementos en fila */
-        flex-wrap: wrap; /* Permite que los elementos se acomoden mejor */
-    }
-    .navbar-nav > li {
-        margin-bottom: 0; /* Elimina espacio extra entre elementos */
-    }
-    .form-group {
-        margin-bottom: 1rem; /* Menor espacio entre inputs */
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem;
+    /* Oculto por defecto en pantallas pequeñas */
+    transition: margin .25s ease-out;
+    /* Prefijos eliminados */
+    width: 15rem;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+    width: 15rem;
+}
+
+#page-content-wrapper {
+    transition: margin-left .25s ease-out;
+    /* Prefijos eliminados */
+    margin-left: 0;
+    /* Aseguramos que no tenga margen izquierdo por defecto */
+    width: 100%;
+    /* Ocupa todo el ancho por defecto */
+    word-wrap: break-word;
+    /* Rompe palabras largas si es necesario */
+
+}
+
+#page-content-wrapper img {
+    max-width: 100%;
+    /* La imagen no excederá el ancho de su contenedor */
+    height: auto;
+    /* Mantiene la proporción de aspecto */
+}
+
+#page-content-wrapper table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    /* Asegura que la tabla ocupe el ancho del contenedor */
+}
+
+#page-content-wrapper .container-fluid table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+}
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: 0;
+    /* Se muestra el menú */
+}
+
+#wrapper.toggled #page-content-wrapper {
+    margin-left: 15rem;
+    /* Empuja el contenido cuando el menú está visible */
+    width: calc(100% - 15rem);
+    /* Reduce el ancho del contenido */
+}
+
+#menu-toggle {
+    padding: 0.5rem 1rem;
+}
+
+/* Estilos adicionales para el menú */
+.list-group-item-action {
+    border: none;
+    color: #333;
+}
+
+.list-group-item-action:hover {
+    background-color: #f8f9fa;
+}
+
+.sidebar-heading {
+    background-color: #343a40;
+    color: white;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-item:hover {
+    background-color: #e9ecef;
+}
+
+/* Estilos para los iconos */
+.me-2 {
+    /* mr-2 reemplazado por me-2 para compatibilidad RTL */
+    margin-right: 0.5rem;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+        /* Visible en pantallas grandes */
+        width: 15rem;
     }
 
-    .container {
-        padding: 0 20px; /* Padding para pequeños márgenes */
+    #page-content-wrapper {
+        width: calc(100% - 15rem);
+        /* Ancho ajustado cuando el menú está visible */
+        margin-left: 0;
+        /* No necesitamos margen izquierdo aquí */
     }
 
-    .form-label {
-        font-size: 1.1rem; /* Reducir tamaño de texto en pantallas pequeñas */
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -15rem;
+        /* Oculta el menú */
     }
 
-    .img-preview {
-        max-width: 100%; /* Hacer la imagen responsiva */
-        height: auto; /* Ajustar altura proporcionalmente */
-    }
-
-    /* Colocar las columnas de formulario y imagen en una sola fila en pantallas pequeñas */
-    .col-md-6 {
-        flex: 1 1 100%;
+    #wrapper.toggled #page-content-wrapper {
+        width: 100%;
+        /* Ocupa todo el ancho cuando el menú está colapsado */
+        margin-left: 0;
+        /* Aseguramos que no haya margen */
     }
 }
+
+/*
+Si decides usar el componente offcanvas de Bootstrap, este CSS sería una alternativa:
+
+.offcanvas {
+    width: 15rem !important;
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+    transition: margin-left .25s ease-out;
+    margin-left: 0;
+    width: 100%;
+}
+
+.offcanvas.show ~ #page-content-wrapper {
+    margin-left: 15rem;
+    width: calc(100% - 15rem);
+}
+
+.list-group-item-action {
+    border: none;
+    color: var(--bs-body-color);
+}
+
+.list-group-item-action:hover {
+    background-color: var(--bs-list-group-hover-bg);
+}
+
+.offcanvas-header {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}
+
+.me-2 {
+    margin-right: 0.5rem;
+}
+
+@media (min-width: 768px) {
+    .offcanvas {
+        transform: none !important;
+        visibility: visible !important;
+        top: 0 !important;
+        border-right: var(--bs-border-width) solid var(--bs-border-color);
+    }
+
+    #page-content-wrapper {
+        width: calc(100% - 15rem);
+        margin-left: 15rem;
+    }
+
+    .offcanvas-backdrop {
+        display: none !important;
+    }
+}
+*/

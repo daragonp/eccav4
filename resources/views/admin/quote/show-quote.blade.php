@@ -32,14 +32,6 @@
                 <label>Imagen</label>
                 <input type="file" name="image" accept="image/*" class="form-control">
             </div>
-            {{-- <div class="form-group mb-2">
-                <label>Audio</label>
-                <input type="file" name="audio" accept="audio/*" class="form-control">
-            </div>
-            <div class="form-group mb-2">
-                <label>Video</label>
-                <input type="file" name="video" accept="video/*" class="form-control">
-            </div> --}}
         </div>
     </div>
 @endsection
