@@ -9,11 +9,11 @@
     --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <script src="https://kit.fontawesome.com/71f1c28685.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{{ asset('css/topbar.css') }}">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.0/css/dataTables.dataTables.css" />
-
+    <script src="https://kit.fontawesome.com/71f1c28685.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -85,7 +85,6 @@
     @yield('datatablscr')
     @include('layouts.logout')
     @include('layouts.suggestions')
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"
         integrity="sha512-2rNj2KJ+D8s1ceNasTIex6z4HWyOnEYLVC3FigGOmyQCZc2eBXKgOxQmo3oKLHyfcj53uz4QMsRCWNbLd32Q1g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -94,9 +93,6 @@
         integrity="sha512-ykZ1QQr0Jy/4ZkvKuqWn4iF3lqPZyij9iRv6sGqLRdTPkY69YX6+7wvVGmsdBbiIfN/8OdsI7HABjvEok6ZopQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> --}}
-
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-        crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script>
     {{-- <script src="{{ asset('js/spanishdt.js') }}"></script> --}}
     <footer class="sticky-footer bg-white">

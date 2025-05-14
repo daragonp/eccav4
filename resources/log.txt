@@ -11,3 +11,7 @@ Versión 4.5.0:
 Versión 4.5.1:
     Ajustes en landing page.
     Nuevo dashboard.
+
+Versión 4.5.2:
+    Corrección de error que impedía desplegar el modal de actualización de datos en los diferentes datatables.
+    Ajustes en el footer.

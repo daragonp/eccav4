@@ -1,4 +1,4 @@
-<a href="{{$formAction}}" data-toggle="modal" data-target="#EditModal_{{ $tableM->id }}"
+<a href="{{$formAction}}" data-bs-toggle="modal" data-bs-target="#EditModal_{{ $tableM->id }}"
     class="edit btn btn-warning btn-sm">
     <i class="fa-sharp fa-solid fa-pen-to-square"></i>
 </a>
@@ -6,19 +6,19 @@
     <i class="fa-sharp fa-solid fa-eye"></i>
 </a>
 @if ($tableM->deleted_at != NULL)
-    <a style="margin-left: 10px;" href="{{ $activate }}" data-toggle="modal"
-        data-target="#ActivateModal_{{ $tableM->id }}" class="btn btn-success btn-sm">
+    <a style="margin-left: 10px;" href="{{ $activate }}" data-bs-toggle="modal"
+        data-bs-target="#ActivateModal_{{ $tableM->id }}" class="btn btn-success btn-sm">
         <i class="fa-sharp fa-solid fa-toggle-on"></i>
     </a>
 @else
-    <a style="margin-left: 10px;" href="{{ $softdelete }}" data-toggle="modal"
-        data-target="#DeleteModal_{{ $tableM->id }}" class="btn btn-danger btn-sm">
+    <a style="margin-left: 10px;" href="{{ $softdelete }}" data-bs-toggle="modal"
+        data-bs-target="#DeleteModal_{{ $tableM->id }}" class="btn btn-danger btn-sm">
         <i class="fa-sharp fa-solid fa-power-off"></i>
     </a>
 @endif
 @if ( auth()->user()->roles->pluck('id')[0] ?? '' === 1 )
-    <a style="margin-left: 10px;" href="{{ $realdelete }}" data-toggle="modal"
-        data-target="#RealModal_{{ $tableM->id }}" class="btn btn-dark btn-sm">
+    <a style="margin-left: 10px;" href="{{ $realdelete }}" data-bs-toggle="modal"
+        data-bs-target="#RealModal_{{ $tableM->id }}" class="btn btn-dark btn-sm">
         <i class="fa-sharp fa-solid fa-trash"></i>
     </a>
 @endif

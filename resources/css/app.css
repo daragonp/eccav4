@@ -52,27 +52,77 @@ ul>li {
     list-style: none;
     font-weight: 600;
 }
-
 .custom-footer {
-    font-size: 0.85rem;
+    font-size: 0.85rem; /* Manteniendo tu tamaño de fuente base */
+    background-color: var(--green-dark); /* Usando tu variable de color */
+    color: var(--white); /* Usando tu variable de color */
+    padding-top: 2rem; /* Ajustando el padding superior */
+    padding-bottom: 2rem; /* Añadiendo padding inferior para equilibrio */
 }
 
 .custom-footer h5 {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 1rem; /* Manteniendo tu tamaño de fuente para el título */
+    font-weight: 700; /* Manteniendo tu peso de fuente para el título */
+    color: #ffc107; /* Usando el color amarillo de Bootstrap para destacar */
+    margin-bottom: 1rem; /* Espacio inferior para el título */
+    text-transform: uppercase; /* Haciendo los títulos en mayúsculas como en tu original */
+}
+
+.custom-footer ul {
+    list-style: none; /* Asegurando que no haya viñetas */
+    padding-left: 0; /* Eliminando el padding izquierdo predeterminado de las listas */
+    margin-bottom: 1.5rem; /* Espacio inferior para cada lista */
+}
+
+.custom-footer li {
+    margin-bottom: 0.5rem; /* Espacio entre los elementos de la lista */
 }
 
 .custom-footer a,
-.custom-footer p,
-.custom-footer li {
-    font-size: 0.8rem;
-    font-weight: 400;
-    line-height: 1.4;
+.custom-footer p {
+    font-size: 0.8rem; /* Manteniendo tu tamaño de fuente para enlaces y párrafos */
+    font-weight: 400; /* Manteniendo tu peso de fuente */
+    line-height: 1.4; /* Manteniendo tu interlineado */
+    color: var(--white); /* Asegurando que el color del texto sea blanco */
+    text-decoration: none; /* Asegurando que no haya subrayado en los enlaces */
 }
 
-.custom-footer .btn {
-    font-size: 0.75rem;
-    padding: 0.3rem 0.6rem;
+.custom-footer a:hover {
+    color: #f8f9fa; /* Un ligero cambio de color al pasar el ratón */
+}
+
+.custom-footer .btn-outline-light {
+    font-size: 0.75rem; /* Manteniendo tu tamaño de fuente para los botones */
+    padding: 0.3rem 0.6rem; /* Manteniendo tu padding para los botones */
+    border-color: var(--white); /* Asegurando que el borde sea blanco */
+    color: var(--white); /* Asegurando que el texto del botón sea blanco */
+    margin-bottom: 0.5rem; /* Espacio entre los botones */
+}
+
+.custom-footer .btn-outline-light:hover {
+    background-color: var(--white);
+    color: var(--green-dark);
+    border-color: var(--white); /* Mantenemos el borde blanco al pasar el ratón */
+}
+
+.custom-footer hr {
+    border-top: 1px solid #6c757d; /* Un color grisáceo claro para la línea divisoria */
+    margin-top: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.custom-footer .copyright {
+    font-size: 0.8rem; /* Ajustando el tamaño del texto de copyright */
+    color: #adb5bd; /* Un color gris más claro para el copyright */
+    margin-top: 1rem; /* Espacio superior para el copyright */
+    margin-bottom: 0; /* Eliminando el margen inferior predeterminado */
+}
+
+.custom-footer .logo-da {
+    width: 20px; /* Manteniendo el ancho del logo DA */
+    height: auto; /* Ajustando la altura automáticamente */
+    vertical-align: middle; /* Alineando verticalmente con el texto */
+    margin-left: 0.5rem; /* Espacio a la izquierda del logo */
 }
 
 /* Header */
