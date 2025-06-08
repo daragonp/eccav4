@@ -10,28 +10,28 @@
 @section('title', 'Versículos del día')
 
 
-@section('pageheading', 'Vesículos')
+@section('pageheading', 'Palabra de vida')
 
 @section('urlbtn', 'new-verse')
-@section('addbutton', 'Nuevo versículo')
-@section('mainheading', 'Listado de versículos del día')
+@section('addbutton', 'Agregar')
+@section('mainheading', 'Listado general')
 @section('formaction', 'addverse')
-{{-- CAMPOS PARA EL MODAL PARA AGREGAR UN REGISTRO --}}
+{{-- CAMPOS DEL MODAL PARA AGREGAR UN REGISTRO --}}
 @section('modalFields')
-    <div class="row">
-        <div class="col-md-12">            
-            <div class="form-group mb-2">
-                <label>Fecha</label>
-                <input type="date" name="date" min="1" max="31" class="form-control" required>
-            </div>
-            <div class="form-group mb-2">
-                <label>Documento PDF</label>
-                <input type="file" name="video" accept='.pdf' class="form-control">
-            </div>
-            <div class="form-group mb-2">
-                <label>Imagen</label>
-                <input type="file" name="image" accept="image/*" class="form-control">
-            </div>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label for="dateInput" class="form-label fw-semibold">Fecha</label>
+            <input id="dateInput" type="date" name="date" class="form-control shadow-sm border-primary" required>
+        </div>
+        <div class="col-md-6">
+            <label for="pdfInput" class="form-label fw-semibold">Documento PDF</label>
+            <input id="pdfInput" type="file" name="video" accept=".pdf"
+                class="form-control shadow-sm border-primary">
+        </div>
+        <div class="col-md-6">
+            <label for="imageInput" class="form-label fw-semibold">Imagen</label>
+            <input id="imageInput" type="file" name="image" accept="image/*"
+                class="form-control shadow-sm border-primary">
         </div>
     </div>
 @endsection

@@ -333,6 +333,16 @@ footer a {
     border-color: #2a3d1f;
     border-radius: 5px;
 }
+.carousel-item img {
+        max-height: 480px;
+        object-fit: cover;
+        width: 96%;
+    }
+
+    .carousel-item .col-md-6 {
+        padding: 0 10px; /* reduce espacio horizontal */
+    }
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -374,4 +384,17 @@ footer a {
         height: auto;
         max-height: 300px;
     }
+
+    .carousel-item .row {
+            flex-direction: column;
+        }
+
+        .carousel-item .col-md-6 {
+            max-width: 100%;
+            padding: 10px 0;
+        }
+
+        .carousel-item img {
+            max-height: 300px;
+        }
 }

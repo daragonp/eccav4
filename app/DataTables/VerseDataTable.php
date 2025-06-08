@@ -76,15 +76,15 @@ class VerseDataTable extends DataTable
 
 
     protected function renderVideoColumn($videoQuote)
-{
-    $url = asset("documents/quote/{$videoQuote->video}");
+    {
+        $url = asset("documents/quote/{$videoQuote->video}");
 
-    if (empty($videoQuote->video)) {
-        return "No se ha cargado un documento aún";
-    }
+        if (empty($videoQuote->video)) {
+            return "No se ha cargado un documento aún";
+        }
 
         return '<a href="' . $url . '" target="_blank" class="btn btn-sm btn-outline-info"><i class="fas fa-file-pdf me-1"></i> Ver PDF</a>';
-}
+    }
 
     protected function renderAudioColumn($audioQuote)
     {
@@ -112,7 +112,7 @@ class VerseDataTable extends DataTable
     {
         // Verifica si el usuario está autenticado
         if (Auth::check()) {
-            if (auth()->user()->roles->pluck('id')[0] ?? '' === 1) {
+            if (Auth::user()->roles->pluck('id')[0] ?? '' === 1) {
                 return $model->newQuery();
             } else {
                 return $model->newQuery()->whereNull('deleted_at');

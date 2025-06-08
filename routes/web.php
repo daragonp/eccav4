@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BischoolController;
 use App\Http\Controllers\RutasController;
 use App\Http\Controllers\VerseController;
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\DonateController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\WorshipController;
@@ -54,6 +55,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/delete-quote/{id}', [VerseController::class, 'destroy']);
     Route::get('/activate-quote/{id}', [VerseController::class, 'activate']);
     Route::get('/realdelete-quote/{id}', [VerseController::class, 'delete']);
+
+
+    //Rutas para administrador: Banner
+    Route::get('/show-slider', [BannerController::class, 'show']);
+    Route::post('/addslider', [BannerController::class, 'store']);
+    Route::get('/view-slider/{id}', [BannerController::class, 'view']);
+    Route::post('/update-slider/{id}', [BannerController::class, 'edit']);
+    Route::get('/delete-slider/{id}', [BannerController::class, 'destroy']);
+    Route::get('/activate-slider/{id}', [BannerController::class, 'activate']);
+    Route::get('/realdelete-slider/{id}', [BannerController::class, 'delete']);
 
 
     //Rutas para administrador: Mensaje de la semana (nueva versión)

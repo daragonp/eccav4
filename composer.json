@@ -10,6 +10,7 @@
         "davcpas1234/laravelpdfviewer": "*",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.10",
         "spatie/laravel-permission": "^6.10",
         "stevebauman/location": "*",
         "yajra/laravel-datatables": "11.0"

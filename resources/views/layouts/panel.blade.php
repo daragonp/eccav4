@@ -34,21 +34,23 @@
                 @if (isset($showModal) && $showModal)
                     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
                         aria-hidden="true">
-                        <div class="modal-dialog modal-xl" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
+                        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                            <div class="modal-content rounded-4 shadow-lg border-0">
+                                <div class="modal-header bg-success text-white rounded-top-4">
                                     <h5 class="modal-title" id="addModalLabel">Crear un nuevo registro</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    </button>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
                                 </div>
                                 <form action="@yield('formaction')" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    <div class="modal-body">
+                                    <div class="modal-body p-4">
                                         @yield('modalFields')
-                                        <button type="submit" style="float: right"
-                                            class="btn btn-success mb-4">Guardar</button>
-                                        <button type="button" style="float: right" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Cancelar</button>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary rounded-pill px-4"
+                                                data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit"
+                                                class="btn btn-success rounded-pill px-4">Guardar</button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -81,6 +83,28 @@
             </div>
         </div>
     </div>
+    <style>
+    /* Opcional: efectos extra para inputs */
+    .form-control:focus {
+        box-shadow: 0 0 8px rgba(8, 161, 136, 0.6);
+        border-color: #0dc20d;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .btn {
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #198754cc;
+        box-shadow: 0 4px 12px rgb(25 135 84 / 0.4);
+    }
+
+    .btn-secondary:hover {
+        background-color: #6c757dcc;
+        box-shadow: 0 4px 12px rgb(108 117 125 / 0.4);
+    }
+</style>
 
     @yield('datatablscr')
     @include('layouts.logout')

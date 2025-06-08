@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Banner;
 use Carbon\Carbon;
 use App\Models\News;
 use App\Models\Verse;
 use App\Models\Podcast;
-use App\Models\Present;
 use App\Models\Suscriber;
 use App\Models\Worship;
 use Illuminate\Http\Request;
@@ -26,6 +26,8 @@ class HomeContentController extends Controller
 
         $quote = Verse::whereDate('date', '=', $date)->first();
 
+        $slider = Banner::where('active', 1)->orderBy('created_at', 'desc')->get();
+
         $podcast = Podcast::all();
 
         $news = News::orderBy('created_at', 'DESC')->take(1)->get();
@@ -37,9 +39,9 @@ class HomeContentController extends Controller
             ->take(1)
             ->first();
 
-        //dd($quote);
+        //dd($slider);
 
-        return view('welcome', compact('quote', 'podcast', 'news', 'opinion', 'worship'));
+        return view('welcome', compact('quote', 'podcast', 'news', 'opinion', 'worship', 'slider'));
     }
 
     public function liveverse()

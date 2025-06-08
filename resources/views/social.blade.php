@@ -1,6 +1,6 @@
 <section class="links">
     <div class="card">
-        <a href="#" target="_blank" style="display: block;">
+        <a href="https://tunein.com/embed/player/s292735/" target="_blank" style="display: block;">
             <img src="{{ asset('images/brands/radio.png') }}" target="_blank" alt="Radio" class="icon-img">
             <p>Radio ECCA</p>
         </a>

@@ -8,7 +8,7 @@
     </div> --}}
     <div>
         <div>
-            @include('eccard')
+            @include('carrusel')
         </div>
     </div>
     <div class="mt-1">
