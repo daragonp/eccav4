@@ -1,0 +1,401 @@
+/* Contenedor principal del reproductor */
+.radio-player-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #222;
+    /* Color de fondo oscuro y elegante */
+    color: #f0f0f0;
+    /* Texto claro */
+    padding: 15px 20px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+    /* Sombra para que se vea "flotante" */
+    z-index: 1000;
+    /* Asegura que esté por encima de otros elementos */
+    display: flex;
+    flex-direction: column;
+    /* Para apilar controles y detalles */
+    align-items: center;
+    font-family: 'Roboto', sans-serif;
+    /* Fuente moderna */
+    transition: all 0.3s ease-in-out;
+    /* Transiciones suaves */
+}
+
+/* Controles del reproductor */
+.player-controls {
+    display: flex;
+    justify-content: space-between;
+    /* Espacia los elementos */
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    /* Ancho máximo para centrar en pantallas grandes */
+    margin-bottom: 10px;
+    /* Espacio entre controles y detalles */
+    gap: 30px;
+
+}
+
+/* Branding de la emisora (nuevo) */
+.station-branding {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Espacio entre los elementos de branding */
+    margin-right: auto;
+    /* Empuja los controles a la derecha */
+}
+
+.station-logo {
+    height: 40px;
+    /* Tamaño del logo */
+    width: auto;
+    border-radius: 8px;
+    /* Bordes ligeramente redondeados */
+    object-fit: contain;
+    /* Asegura que la imagen no se recorte */
+}
+
+.station-name {
+    font-size: 1.4em;
+    /* Tamaño del nombre */
+    font-weight: 700;
+    color: #f0f0f0;
+    white-space: nowrap;
+    /* Evita que el nombre se rompa en varias líneas */
+}
+
+/* Indicador EN VIVO (nuevo) */
+.live-indicator {
+    background-color: #e74c3c;
+    /* Rojo brillante */
+    color: white;
+    padding: 4px 8px;
+    border-radius: 5px;
+    /* Bordes redondeados */
+    font-size: 0.8em;
+    font-weight: 700;
+    margin-left: 10px;
+    animation: pulse 1.5s infinite;
+    /* Animación de pulsación */
+    text-transform: uppercase;
+}
+
+/* Animación de pulsación para EN VIVO */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+    }
+}
+
+
+/* Botones genéricos */
+.player-button {
+    background: none;
+    border: none;
+    color: #f0f0f0;
+    /* Color del icono */
+    font-size: 24px;
+    /* Tamaño del icono */
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.player-button:hover {
+    color: #00bcd4;
+    /* Color de hover */
+    transform: scale(1.1);
+}
+
+/* Estilo para los iconos de Font Awesome dentro de los botones */
+.player-button i {
+    display: block;
+    /* Asegura que el icono ocupe todo el espacio del botón */
+    line-height: 1;
+    /* Elimina espacio extra */
+}
+
+
+/* Controles de volumen */
+.volume-controls {
+    display: flex;
+    align-items: center;
+    margin-left: 200px;
+    /* Espacio entre el botón de play/pause y los controles de volumen */
+    margin-right: auto;
+    /* Empuja el toggle a la derecha */
+}
+
+.volume-slider {
+    display: none;
+    width: 80px;
+    margin: 0 10px;
+    -webkit-appearance: none;
+    /* Eliminar estilo predeterminado */
+    appearance: none;
+    height: 6px;
+    background: #555;
+    outline: none;
+    border-radius: 3px;
+    transition: background 0.2s ease-in-out;
+}
+
+.volume-slider-popup.active {
+    display: flex;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00bcd4;
+    /* Color del thumb */
+    cursor: grab;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #00bcd4;
+    cursor: grab;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Animación de la flecha de despliegue */
+.toggle-arrow i {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Cuando el contenedor principal tiene la clase 'expanded', rota la flecha */
+.radio-player-container.expanded .toggle-arrow i {
+    transform: rotate(180deg);
+    /* Rota la flecha hacia abajo */
+}
+
+/* Detalles del programa (inicialmente ocultos) */
+.program-details {
+    max-height: 0;
+    overflow: hidden;
+    width: 100%;
+    max-width: 900px;
+    text-align: center;
+    transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+    opacity: 0;
+}
+
+.program-details.expanded {
+    max-height: 200px;
+    /* Ajusta según el contenido, debe ser lo suficientemente grande */
+    opacity: 1;
+    padding-top: 15px;
+    /* Espacio para separar de los controles */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.program-details h3 {
+    margin-top: 0;
+    color: #00bcd4;
+}
+
+.director-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.director-info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+    border: 2px solid #00bcd4;
+}
+
+.program-details p {
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .radio-player-container {
+        padding: 10px 15px;
+        /* Reducir padding vertical y horizontal */
+    }
+
+    .player-controls {
+        flex-direction: row;
+        /* ¡Importante! Poner los elementos en una fila */
+        flex-wrap: wrap;
+        /* Permitir que los elementos salten de línea si es necesario */
+        justify-content: space-around;
+        /* Distribuir elementos equitativamente */
+        align-items: center;
+        gap: 8px;
+        /* Espacio entre los elementos */
+        margin-bottom: 5px;
+    }
+
+    /* Ajustes para el branding en móviles */
+    .station-branding {
+        flex-direction: row;
+        /* Logo y nombre en una línea */
+        gap: 5px;
+        /* Menos espacio entre logo y nombre */
+        margin-right: 0;
+        margin-bottom: 0;
+        /* Eliminar margen inferior */
+        /* width: auto; Permitir que el ancho se ajuste al contenido */
+    }
+
+    .station-logo {
+        height: 25px;
+        /* Reducir aún más el tamaño del logo */
+    }
+
+    .station-name {
+        font-size: 0.9em;
+        /* ¡CAMBIO! Reducir tamaño del nombre de la emisora */
+        margin-left: 0;
+        /* Eliminar margen si se necesita */
+        white-space: nowrap;
+        /* Evitar que el nombre se rompa */
+    }
+
+    .live-indicator {
+        font-size: 0.7em;
+        /* Reducir el tamaño del indicador EN VIVO */
+        padding: 2px 5px;
+        /* Reducir padding */
+        margin-left: 0;
+    }
+
+    /* Ajustes para los botones principales (play/pause, flecha) */
+    .player-button {
+        font-size: 20px;
+        /* Reducir tamaño de los iconos de los botones */
+        padding: 5px;
+    }
+
+    /* Controles de volumen (mobile-specific) */
+    .volume-control-wrapper {
+        position: relative;
+        /* Para posicionar el popup del slider */
+        display: flex;
+        /* Para contener el botón de volumen */
+        align-items: center;
+        justify-content: center;
+        /* margin-left: auto; */
+        /* Eliminar este si se usa justify-content en player-controls */
+    }
+
+    .volume-slider-popup {
+        display: none !important;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgb(14, 104, 38);
+        padding: 10px 5px;
+        border-radius: 8px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4);
+        z-index: 1001;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        min-height: 80px;
+    }
+
+    .volume-slider-popup.active {
+        display: flex !important;
+    }
+
+
+    .volume-slider {
+        /* Remove or comment out the deprecated properties */
+        /* -webkit-appearance: slider-vertical; */
+        /* appearance: slider-vertical; */
+
+        /* Add the standard properties for vertical orientation */
+        writing-mode: vertical-lr;
+        /* Makes the slider vertical, left-to-right */
+        direction: rtl;
+        /* Reverses the direction so min is at the bottom, max at the top */
+
+        width: 6px;
+        /* Ancho de la barra del slider */
+        height: 80px;
+        /* Altura del slider */
+        margin: 0;
+        /* Eliminar márgenes */
+        background: rgb(81, 83, 87);
+        /* Color de la pista del slider */
+    }
+
+    /* El thumb del slider para modo vertical */
+    .volume-slider::-webkit-slider-thumb {
+        /* No changes needed here, as these are specific to the thumb styling */
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        /* Ancho del control */
+        height: 16px;
+        /* Alto del control */
+        border-radius: 50%;
+        background: rgb(239, 252, 116);
+        cursor: grab;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+    }
+
+    .volume-slider::-moz-range-thumb {
+        /* Firefox */
+        /* No changes needed here */
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: rgb(239, 252, 116);
+        cursor: grab;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Asegurar que los detalles del programa no sean excesivamente altos */
+    .program-details.expanded {
+        max-height: 250px;
+        /* Ajustar a una altura razonable */
+        padding-top: 10px;
+    }
+
+    .director-info {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .director-info img {
+        width: 50px;
+        height: 50px;
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    .program-details p {
+        font-size: 0.9em;
+    }
+}
+

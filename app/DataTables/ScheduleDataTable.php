@@ -59,8 +59,7 @@ class ScheduleDataTable extends DataTable
     {
         // Verifica si el usuario está autenticado
         if (Auth::check()) {
-            if (auth()->user()->roles->pluck('id')[0] ?? '' === 1) {
-                // Si el usuario tiene 'role_id' igual a 1, muestra todos los registros
+            if (Auth::user()->roles->pluck('id')[0] ?? '' === 1) {
                 return $model->newQuery();
             } else {
                 return $model->newQuery()->whereNull('deleted_at');

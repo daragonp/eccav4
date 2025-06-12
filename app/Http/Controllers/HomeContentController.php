@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\News;
 use App\Models\Verse;
 use App\Models\Podcast;
+use App\Models\Schedule;
 use App\Models\Suscriber;
 use App\Models\Worship;
 use Illuminate\Http\Request;
@@ -39,7 +40,24 @@ class HomeContentController extends Controller
             ->take(1)
             ->first();
 
-        //dd($slider);
+        /*$now = Carbon::now();
+        $dayOfWeek = $now->dayOfWeek; // 0 = Domingo, 1 = Lunes, etc.
+        $currentTime = $now->format('H:i'); // Ejemplo: "17:30"
+        $programinfo = Schedule::where('day',  $dayOfWeek)->get;
+        /* $programaActual =NULL;
+        if (!$programaActual) {
+            return response()->json([
+                'nombre_programa' => 'Música Continua',
+                'director' => 'Equipo de la Emisora',
+                'foto_director' => asset('images/default-radio.jpg'), // Asegúrate de que esta imagen exista
+                'horarios_emision' => ['24/7'],
+                'descripcion_programa' => 'Disfruta de la mejor música sin interrupciones y con la mejor compañía.',
+            ]);
+        }
+*/
+        //return response()->json($programinfo);
+
+        //dd($programinfo);
 
         return view('welcome', compact('quote', 'podcast', 'news', 'opinion', 'worship', 'slider'));
     }
@@ -89,5 +107,41 @@ class HomeContentController extends Controller
 
         // Return the search view with the resluts compacted
         return view('search', compact('buscar'));
+    }
+
+    public function getProgramaActual()
+    {
+        $now = Carbon::now();
+        $currentDay = $now->dayOfWeekIso;
+        $currentTime = $now->format('H:i:s'); // Usar H:i:s para comparaciones de tiempo precisas
+
+        $programaActual = Schedule::where('day', $currentDay)
+            ->where('start', '<=', $currentTime)
+            ->where('end', '>', $currentTime) // 'end' es exclusivo
+            ->first();
+
+        //dd($programaActual);
+        if (!$programaActual) {
+            return response()->json([
+                'nombre_programa' => 'Música Continua',
+                'director' => 'Equipo de la Emisora',
+                'foto_director' => asset('images/logo/logo.png'),
+                'horarios_emision' => ['¡Siempre al aire!'], // Puedes ajustar esto
+                'descripcion_programa' => 'Disfruta de la mejor música sin interrupciones y con la mejor compañía.',
+            ]);
+        }
+
+        $horarios = "De " . Carbon::parse($programaActual->start)->format('H:i') .
+            " a " . Carbon::parse($programaActual->end)->format('H:i');
+
+
+        return response()->json([
+            'nombre_programa' => $programaActual->name,
+            'director' => $programaActual->host,
+            'foto_director' => asset('images/logo/ImagenRadio.jpg'), // imagen del programa
+            //'foto_director' => asset('images/' . $programaActual->image), // imagen del programa
+            'horarios_emision' => [$horarios],
+            'descripcion_programa' => $programaActual->about,
+        ]);
     }
 }

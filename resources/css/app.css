@@ -52,77 +52,113 @@ ul>li {
     list-style: none;
     font-weight: 600;
 }
+
 .custom-footer {
-    font-size: 0.85rem; /* Manteniendo tu tamaño de fuente base */
-    background-color: var(--green-dark); /* Usando tu variable de color */
-    color: var(--white); /* Usando tu variable de color */
-    padding-top: 2rem; /* Ajustando el padding superior */
-    padding-bottom: 2rem; /* Añadiendo padding inferior para equilibrio */
+    font-size: 0.85rem;
+    /* Manteniendo tu tamaño de fuente base */
+    background-color: var(--green-dark);
+    /* Usando tu variable de color */
+    color: var(--white);
+    /* Usando tu variable de color */
+    padding-top: 2rem;
+    /* Ajustando el padding superior */
+    padding-bottom: 2rem;
+    /* Añadiendo padding inferior para equilibrio */
 }
 
 .custom-footer h5 {
-    font-size: 1rem; /* Manteniendo tu tamaño de fuente para el título */
-    font-weight: 700; /* Manteniendo tu peso de fuente para el título */
-    color: #ffc107; /* Usando el color amarillo de Bootstrap para destacar */
-    margin-bottom: 1rem; /* Espacio inferior para el título */
-    text-transform: uppercase; /* Haciendo los títulos en mayúsculas como en tu original */
+    font-size: 1rem;
+    /* Manteniendo tu tamaño de fuente para el título */
+    font-weight: 700;
+    /* Manteniendo tu peso de fuente para el título */
+    color: #ffc107;
+    /* Usando el color amarillo de Bootstrap para destacar */
+    margin-bottom: 1rem;
+    /* Espacio inferior para el título */
+    text-transform: uppercase;
+    /* Haciendo los títulos en mayúsculas como en tu original */
 }
 
 .custom-footer ul {
-    list-style: none; /* Asegurando que no haya viñetas */
-    padding-left: 0; /* Eliminando el padding izquierdo predeterminado de las listas */
-    margin-bottom: 1.5rem; /* Espacio inferior para cada lista */
+    list-style: none;
+    /* Asegurando que no haya viñetas */
+    padding-left: 0;
+    /* Eliminando el padding izquierdo predeterminado de las listas */
+    margin-bottom: 1.5rem;
+    /* Espacio inferior para cada lista */
 }
 
 .custom-footer li {
-    margin-bottom: 0.5rem; /* Espacio entre los elementos de la lista */
+    margin-bottom: 0.5rem;
+    /* Espacio entre los elementos de la lista */
 }
 
 .custom-footer a,
 .custom-footer p {
-    font-size: 0.8rem; /* Manteniendo tu tamaño de fuente para enlaces y párrafos */
-    font-weight: 400; /* Manteniendo tu peso de fuente */
-    line-height: 1.4; /* Manteniendo tu interlineado */
-    color: var(--white); /* Asegurando que el color del texto sea blanco */
-    text-decoration: none; /* Asegurando que no haya subrayado en los enlaces */
+    font-size: 0.8rem;
+    /* Manteniendo tu tamaño de fuente para enlaces y párrafos */
+    font-weight: 400;
+    /* Manteniendo tu peso de fuente */
+    line-height: 1.4;
+    /* Manteniendo tu interlineado */
+    color: var(--white);
+    /* Asegurando que el color del texto sea blanco */
+    text-decoration: none;
+    /* Asegurando que no haya subrayado en los enlaces */
 }
 
 .custom-footer a:hover {
-    color: #f8f9fa; /* Un ligero cambio de color al pasar el ratón */
+    color: #f8f9fa;
+    /* Un ligero cambio de color al pasar el ratón */
 }
 
 .custom-footer .btn-outline-light {
-    font-size: 0.75rem; /* Manteniendo tu tamaño de fuente para los botones */
-    padding: 0.3rem 0.6rem; /* Manteniendo tu padding para los botones */
-    border-color: var(--white); /* Asegurando que el borde sea blanco */
-    color: var(--white); /* Asegurando que el texto del botón sea blanco */
-    margin-bottom: 0.5rem; /* Espacio entre los botones */
+    font-size: 0.75rem;
+    /* Manteniendo tu tamaño de fuente para los botones */
+    padding: 0.3rem 0.6rem;
+    /* Manteniendo tu padding para los botones */
+    border-color: var(--white);
+    /* Asegurando que el borde sea blanco */
+    color: var(--white);
+    /* Asegurando que el texto del botón sea blanco */
+    margin-bottom: 0.5rem;
+    /* Espacio entre los botones */
 }
 
 .custom-footer .btn-outline-light:hover {
     background-color: var(--white);
     color: var(--green-dark);
-    border-color: var(--white); /* Mantenemos el borde blanco al pasar el ratón */
+    border-color: var(--white);
+    /* Mantenemos el borde blanco al pasar el ratón */
 }
 
 .custom-footer hr {
-    border-top: 1px solid #6c757d; /* Un color grisáceo claro para la línea divisoria */
+    border-top: 1px solid #6c757d;
+    /* Un color grisáceo claro para la línea divisoria */
     margin-top: 2rem;
     margin-bottom: 1.5rem;
 }
 
 .custom-footer .copyright {
-    font-size: 0.8rem; /* Ajustando el tamaño del texto de copyright */
-    color: #adb5bd; /* Un color gris más claro para el copyright */
-    margin-top: 1rem; /* Espacio superior para el copyright */
-    margin-bottom: 0; /* Eliminando el margen inferior predeterminado */
+    font-size: 0.8rem;
+    /* Ajustando el tamaño del texto de copyright */
+    color: #adb5bd;
+    /* Un color gris más claro para el copyright */
+    margin-top: 1rem;
+    /* Espacio superior para el copyright */
+    margin-bottom: 0;
+    /* Eliminando el margen inferior predeterminado */
 }
 
 .custom-footer .logo-da {
-    width: 20px; /* Manteniendo el ancho del logo DA */
-    height: auto; /* Ajustando la altura automáticamente */
-    vertical-align: middle; /* Alineando verticalmente con el texto */
-    margin-left: 0.5rem; /* Espacio a la izquierda del logo */
+    width: 20px;
+    /* Manteniendo el ancho del logo DA */
+    height: auto;
+    /* Ajustando la altura automáticamente */
+    vertical-align: middle;
+    /* Alineando verticalmente con el texto */
+    margin-left: 0.5rem;
+    /* Espacio a la izquierda del logo */
 }
 
 /* Header */
@@ -143,22 +179,29 @@ ul>li {
 /* Estilos para el menú */
 /* Estilos del navbar */
 .navbar {
-    padding: 1rem 0; /* Ajusta el espaciado vertical */
+    padding: 1rem 0;
+    /* Ajusta el espaciado vertical */
 }
 
 .navbar-brand img {
-    max-height: 120px; /* Asegura que el logo no sea demasiado grande */
+    max-height: 120px;
+    /* Asegura que el logo no sea demasiado grande */
 }
 
 .navbar-nav .nav-link {
-    font-size: 1.2rem; /* Tamaño de fuente base para los enlaces */
-    margin: 0 15px; /* Espacio entre los enlaces */
-    color: #333; /* Color del texto */
-    transition: color 0.3s ease; /* Transición suave al pasar el ratón */
+    font-size: 1.2rem;
+    /* Tamaño de fuente base para los enlaces */
+    margin: 0 15px;
+    /* Espacio entre los enlaces */
+    color: #333;
+    /* Color del texto */
+    transition: color 0.3s ease;
+    /* Transición suave al pasar el ratón */
 }
 
 .navbar-nav .nav-link:hover {
-    color: #007bff; /* Cambia el color al pasar el ratón */
+    color: #007bff;
+    /* Cambia el color al pasar el ratón */
 }
 
 .dropdown-menu {
@@ -175,6 +218,7 @@ ul>li {
 .dropdown-item:hover {
     background-color: #f8f9fa;
 }
+
 /* Hero Section */
 .hero-image {
     width: 100%;
@@ -333,18 +377,19 @@ footer a {
     border-color: #2a3d1f;
     border-radius: 5px;
 }
+
 .carousel-item img {
-        max-height: 480px;
-        object-fit: cover;
-        width: 96%;
-    }
+    max-height: 480px;
+    object-fit: cover;
+    width: 96%;
+}
 
-    .carousel-item .col-md-6 {
-        padding: 0 10px; /* reduce espacio horizontal */
-    }
+.carousel-item .col-md-6 {
+    padding: 0 10px;
+    /* reduce espacio horizontal */
+}
 
-
-/* Responsive */
+/* Responsive Design */
 @media (max-width: 768px) {
 
 
@@ -386,15 +431,15 @@ footer a {
     }
 
     .carousel-item .row {
-            flex-direction: column;
-        }
+        flex-direction: column;
+    }
 
-        .carousel-item .col-md-6 {
-            max-width: 100%;
-            padding: 10px 0;
-        }
+    .carousel-item .col-md-6 {
+        max-width: 100%;
+        padding: 10px 0;
+    }
 
-        .carousel-item img {
-            max-height: 300px;
-        }
+    .carousel-item img {
+        max-height: 300px;
+    }
 }

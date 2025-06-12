@@ -149,6 +149,9 @@ Route::get('/', [HomeContentController::class, 'index']);
 Route::get('/seeds', [HomeContentController::class, 'seeds']);
 Route::post('/newsuscriber', [HomeContentController::class, 'suscriberemail']);
 Route::get('/search', [HomeContentController::class, 'search']);
+// Ruta API para obtener la información del programa actual
+Route::get('/api/programa-actual', [HomeContentController::class, 'getProgramaActual']);
+
 
 Route::get('/objetivos', [RutasController::class, 'objetivos']);
 Route::get('/mision', [RutasController::class, 'mision']);

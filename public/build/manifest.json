@@ -4,6 +4,11 @@
     "src": "resources/css/app.css",
     "isEntry": true
   },
+  "resources/css/radio-player.css": {
+    "file": "assets/radio-player-CMClOcM2.css",
+    "src": "resources/css/radio-player.css",
+    "isEntry": true
+  },
   "resources/js/app.js": {
     "file": "assets/app-BXKgFlQ6.js",
     "name": "app",
@@ -14,6 +19,12 @@
     "file": "assets/menu-l0sNRNKZ.js",
     "name": "menu",
     "src": "resources/js/menu.js",
+    "isEntry": true
+  },
+  "resources/js/radio-player.js": {
+    "file": "assets/radio-player-zsiOM08U.js",
+    "name": "radio-player",
+    "src": "resources/js/radio-player.js",
     "isEntry": true
   },
   "resources/sass/app.scss": {
