@@ -121,7 +121,7 @@ class WorshipController extends Controller
         return redirect('show-worship')->with('success', 'Se ha agregado el culto dominical');
     }
 
-    public function history()
+    /*public function history()
     {
         //
         $feed = Worship::orderBy('created_at', 'desc')->first();
@@ -136,7 +136,7 @@ class WorshipController extends Controller
         $post = Worship::where('slug', $slug)->first();
         //dd($slug);
         return view('single-feed', compact('post'));
-    }
+    }*/
 
     public function view($id)
     {

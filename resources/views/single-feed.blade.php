@@ -3,7 +3,7 @@
 @section('title', $post->title)
 
 @section('content')
-    <div class="container" style="margin-top: 20px">
+    {{-- <div class="container" style="margin-top: 20px">
         <div class="row">
             <div class="container">
                 <div class="row">
@@ -56,5 +56,5 @@
             <div class="col">
             </div>
         </div>
-    </div>
+    </div> --}}
 @stop

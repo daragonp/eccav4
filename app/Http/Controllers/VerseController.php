@@ -15,7 +15,7 @@ class VerseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -109,7 +109,7 @@ class VerseController extends Controller
         //
         $this->validate($request, [
             'date' => 'required',
-            
+
         ], [
             'date.required' => 'El campo día es obligatorio.',
         ]);
@@ -155,7 +155,7 @@ class VerseController extends Controller
         $quote->created_at = Carbon::now();
 
         $quote->updated_at = Carbon::now();
-        
+
 
         $quote->save();
 
@@ -214,5 +214,28 @@ class VerseController extends Controller
         $quote->delete();
 
         return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
+    }
+
+    public function history()
+    {
+        //
+        $today = Carbon::today();
+        $twoMonthsAgo = $today->copy()->subMonths(2);
+
+        $verses = Verse::whereBetween('date', [$twoMonthsAgo, $today])
+            ->orderBy('date', 'desc')
+            ->get()
+            ->groupBy(function ($item) {
+                return Carbon::parse($item->date)->translatedFormat('F Y'); // Ej: Junio 2025
+            });
+
+        return view('worship-home', compact('verses'));
+    }
+
+    public function single($date)
+    {
+
+        $verse = Verse::whereDate('date', $date)->firstOrFail();
+        return view('single-feed', compact('verse'));
     }
 }

@@ -128,8 +128,8 @@ Route::get('/history', [NewsController::class, 'history']);
 Route::get('/newsweek', [NewsController::class, 'newsweek']);
 
 
-Route::get('/worship-home', [WorshipController::class, 'history']);
-Route::get('/single-feed/{slug}', [WorshipController::class, 'single']);
+Route::get('/worship-home', [VerseController::class, 'history']);
+Route::get('/single-feed/{slug}', [VerseController::class, 'single']);
 
 
 Route::get('/showpost/{slug}', [NewsController::class, 'index']);
