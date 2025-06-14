@@ -25,3 +25,6 @@ Versión 4.7:
 Versión 4.7.5:
     Página de Palabra de vida, visualización por mes y día específico.
     Mejoras a la página Palabra de vida
+
+Versión 4.7.6:
+    Ver un versículo del día, seleccionando una fecha específica.

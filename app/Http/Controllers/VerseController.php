@@ -217,25 +217,32 @@ class VerseController extends Controller
     }
 
     public function history()
-    {
-        //
-        $today = Carbon::today();
-        $twoMonthsAgo = $today->copy()->subMonths(2);
+{
+    $today = Carbon::today();
+    $twoMonthsAgo = $today->copy()->subMonths(2);
 
-        $verses = Verse::whereBetween('date', [$twoMonthsAgo, $today])
-            ->orderBy('date', 'desc')
-            ->get()
-            ->groupBy(function ($item) {
-                return Carbon::parse($item->date)->translatedFormat('F Y'); // Ej: Junio 2025
-            });
+    $verses = Verse::whereBetween('date', [$twoMonthsAgo, $today])
+        ->orderBy('date', 'desc')
+        ->get()
+        ->groupBy(function ($item) {
+            return Carbon::parse($item->date)->translatedFormat('F Y');
+        });
 
-        return view('worship-home', compact('verses'));
-    }
+    $availableDates = Verse::pluck('date')->map(function ($date) {
+        return Carbon::parse($date)->format('Y-m-d');
+    });
+
+    return view('worship-home', compact('verses', 'availableDates'));
+}
+
 
     public function single($date)
     {
-
-        $verse = Verse::whereDate('date', $date)->firstOrFail();
-        return view('single-feed', compact('verse'));
+        try {
+            $verse = Verse::whereDate('date', $date)->firstOrFail();
+            return view('single-feed', compact('verse'));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return redirect()->route('home')->with('error', 'No se encontró el contenido para la fecha seleccionada.');
+        }
     }
 }

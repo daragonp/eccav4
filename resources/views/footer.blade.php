@@ -75,7 +75,7 @@
         </div>
         <hr class="bg-light mt-4 mb-3">
         <div class="d-flex justify-content-center align-items-center flex-column flex-md-row text-center text-md-start">
-            <p class="mb-0 me-md-auto copyright">&copy; {{ date('Y') }} Derechos Reservados - Emancipación Cristiana Afro | Ver. 4.7.0</p>
+            <p class="mb-0 me-md-auto copyright">&copy; {{ date('Y') }} Derechos Reservados - Emancipación Cristiana Afro | Ver. 4.7.6</p>
             <img src="{{ asset('images/brands/logoda.png') }}" width="20" height="20" class="ms-md-2 logo-da" alt="Logo DA">
         </div>
     </div>

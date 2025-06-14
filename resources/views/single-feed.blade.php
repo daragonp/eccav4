@@ -1,60 +1,49 @@
 @extends('layouts.main')
 
-@section('title', $post->title)
+@section('title', 'Versículo del día')
 
 @section('content')
-    {{-- <div class="container" style="margin-top: 20px">
-        <div class="row">
-            <div class="container">
-                <div class="row">
-                    <div class="">
-                        <div class="wrapper">
-                            <div class="headernews">{{ $post->title }}</div><br>
-                            <div class="content">{{ $post->abstract }}</div><br>
-                            <div class="image"
-                                style="background-image: url('{{ asset('images/worship/' . $post->image) }}');">
-                            </div>
-                        </div>
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-uppercase text-success">
+                Palabra de Vida
+            </h2>
+            <p class="text-muted fs-5">
+                {{ \Carbon\Carbon::parse($verse->date)->locale('es')->isoFormat('D [de] MMMM [de] YYYY') }}
+            </p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+
+                {{-- Imagen con lightbox --}}
+                <a href="{{ asset('images/bible/' . $verse->image) }}"
+                   data-lightbox="verse-image"
+                   data-title="Derechos Reservados E.C.C.A.">
+                    <img src="{{ asset('images/bible/' . $verse->image) }}"
+                         alt="Versículo"
+                         class="img-fluid rounded shadow mb-4 hover-shadow"
+                         style="max-height: 500px; transition: transform 0.3s ease-in-out;">
+                </a>
+
+                {{-- Video embebido o mensaje --}}
+                @if ($verse->video)
+                    <div class="ratio ratio-16x9 mb-4">
+                        <iframe src="{{ asset('documents/quote/' . $verse->video) }}"
+                                allowfullscreen
+                                class="rounded border border-success-subtle shadow-sm"></iframe>
                     </div>
-                </div>
+                @else
+                    <div class="alert alert-warning">
+                        Documento PDF no disponible para esta fecha.
+                    </div>
+                @endif
+
+                {{-- Botón de regreso --}}
+                <a href="{{ url()->previous() }}" class="btn btn-outline-success mt-3">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Volver
+                </a>
             </div>
-            <table class="table table-responsive">
-                <tr>
-                    @if ($post->audio)
-                        <th>Audio</th>
-                        <td><audio controls>
-                                <source src="../audio/worship/{{ $post->audio }}" type="audio/mpeg">
-                                Su navegador no soporta este elemento de audio. Pero puede leer el
-                                artículo.
-                            </audio>
-                        </td>
-                    @endif
-                </tr>
-                <tr>
-                    @if ($post->video)
-                        <th>Video</th>
-                        <td><video width="50%" controls>
-                                <source src="../video/worship/{{ $post->video }}" type="video/mp4">
-                                <source src="movie.ogg" type="video/ogg">
-                                Your browser does not support the video tag.
-                            </video>
-                        </td>
-                    @endif
-                </tr>
-            </table>
         </div>
     </div>
-    @if ($post->pdfdoc)
-        <div class="container">
-            <iframe src ="{{ asset('/laraview/#../documents/worship/' . $post->pdfdoc) }}" width="100%" height="600px"
-                style="padding-top: 20px;">
-            </iframe>
-        </div>
-    @endif
-    <div class="container">
-        <div class="row">
-            <div class="col">
-            </div>
-        </div>
-    </div> --}}
-@stop
+@endsection

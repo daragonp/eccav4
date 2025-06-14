@@ -1,11 +1,11 @@
 @extends('layouts.main')
 
-@section('title', 'Culto dominical')
+@section('title', 'Palabra de vida')
 
 @section('content')
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <input type="date" id="datePicker" class="form-control w-auto" />
+            <input type="date" id="datePicker" max="{{ date('Y-m-d') }}" class="form-control w-auto" />
             <h2>Historial</h2>
         </div>
 
@@ -38,7 +38,7 @@
                                     <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#pdfModal"
                                         data-pdf="{{ asset('documents/quote/' . $verse->video) }}">
-                                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> <strong>Ver PDF</strong> 
+                                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> <strong>Ver PDF</strong>
                                     </button>
                                 @else
                                     <p>Pendiente de documento</p>
@@ -75,13 +75,49 @@
         </div>
     </div>
     <script>
-        document.getElementById('datePicker').addEventListener('change', function() {
-            const selectedDate = this.value;
-            if (selectedDate) {
-                window.open(`/verses/${selectedDate}`, '_blank');
-            }
+        // Lista de fechas disponibles en formato YYYY-MM-DD
+        const availableDates = @json($availableDates); // Esta variable debes pasarla desde el controlador
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const datePicker = document.getElementById('datePicker');
+            const today = new Date().toISOString().split('T')[0];
+
+            // Establece la fecha máxima como hoy
+            datePicker.setAttribute('max', today);
+
+            datePicker.addEventListener('change', function() {
+                const selectedDate = new Date(this.value).toISOString().split('T')[0];
+
+                // Validar si es fecha futura
+                if (selectedDate > today) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fecha inválida',
+                        text: 'No puedes seleccionar una fecha futura.',
+                        confirmButtonColor: '#2a3d1f',
+                        confirmButtonText: 'Entendido'
+                    });
+                    this.value = '';
+                    return;
+                }
+
+                // Validar si hay datos para esa fecha
+                if (availableDates.includes(selectedDate)) {
+                    window.open(`/single-feed/${selectedDate}`, '_blank');
+                } else {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Sin contenido',
+                        text: 'No hay registro disponible para esta fecha.',
+                        confirmButtonColor: '#2a3d1f',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    this.value = '';
+                }
+            });
         });
     </script>
+
     <script>
         const pdfModal = document.getElementById('pdfModal');
         pdfModal.addEventListener('show.bs.modal', function(event) {

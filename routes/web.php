@@ -129,7 +129,7 @@ Route::get('/newsweek', [NewsController::class, 'newsweek']);
 
 
 Route::get('/worship-home', [VerseController::class, 'history']);
-Route::get('/single-feed/{slug}', [VerseController::class, 'single']);
+Route::get('/single-feed/{date}', [VerseController::class, 'single']);
 
 
 Route::get('/showpost/{slug}', [NewsController::class, 'index']);
