@@ -1,16 +1,16 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-BwJYsKR6.css",
+    "file": "assets/app-CuNq7giN.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/radio-player.css": {
-    "file": "assets/radio-player-CMClOcM2.css",
+    "file": "assets/radio-player-Caie_LZL.css",
     "src": "resources/css/radio-player.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BXKgFlQ6.js",
+    "file": "assets/app-DM1immYA.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
@@ -22,13 +22,13 @@
     "isEntry": true
   },
   "resources/js/radio-player.js": {
-    "file": "assets/radio-player-zsiOM08U.js",
+    "file": "assets/radio-player-isJ4leEQ.js",
     "name": "radio-player",
     "src": "resources/js/radio-player.js",
     "isEntry": true
   },
   "resources/sass/app.scss": {
-    "file": "assets/app-Lkbm8zIe.css",
+    "file": "assets/app-DvizVfst.css",
     "src": "resources/sass/app.scss",
     "isEntry": true
   }

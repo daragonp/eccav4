@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('image')->default('genericprogramimage.png');
+            $table->string('image')->default('logoprogramacion.jpg');
             $table->string('slug');
             $table->mediumText('about');
             $table->time('start');

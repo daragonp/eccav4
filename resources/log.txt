@@ -28,3 +28,9 @@ Versión 4.7.5:
 
 Versión 4.7.6:
     Ver un versículo del día, seleccionando una fecha específica.
+    Fechas futuras bloqueadas.
+
+Versión 4.7.7:
+    Mejoras en el reproductor, ahora información del programa que está en emisión.
+    Backend para administración de la programación diaria.
+    

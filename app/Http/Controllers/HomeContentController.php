@@ -112,21 +112,21 @@ class HomeContentController extends Controller
     public function getProgramaActual()
     {
         $now = Carbon::now();
-        $currentDay = $now->dayOfWeekIso;
-        $currentTime = $now->format('H:i:s'); // Usar H:i:s para comparaciones de tiempo precisas
+        $currentDay = $now->dayOfWeekIso; // 1 = lunes, 7 = domingo
+        $currentTime = $now->format('H:i:s');
 
         $programaActual = Schedule::where('day', $currentDay)
             ->where('start', '<=', $currentTime)
-            ->where('end', '>', $currentTime) // 'end' es exclusivo
+            ->where('end', '>', $currentTime)
+            ->whereNull('deleted_at') // si usas soft deletes
             ->first();
 
-        //dd($programaActual);
         if (!$programaActual) {
             return response()->json([
                 'nombre_programa' => 'Música Continua',
                 'director' => 'Equipo de la Emisora',
                 'foto_director' => asset('images/logo/logo.png'),
-                'horarios_emision' => ['¡Siempre al aire!'], // Puedes ajustar esto
+                'horarios_emision' => ['¡Siempre al aire!'],
                 'descripcion_programa' => 'Disfruta de la mejor música sin interrupciones y con la mejor compañía.',
             ]);
         }
@@ -134,12 +134,10 @@ class HomeContentController extends Controller
         $horarios = "De " . Carbon::parse($programaActual->start)->format('H:i') .
             " a " . Carbon::parse($programaActual->end)->format('H:i');
 
-
         return response()->json([
             'nombre_programa' => $programaActual->name,
             'director' => $programaActual->host,
-            'foto_director' => asset('images/logo/ImagenRadio.jpg'), // imagen del programa
-            //'foto_director' => asset('images/' . $programaActual->image), // imagen del programa
+            'foto_director' => asset('images/schedule/' . $programaActual->image),
             'horarios_emision' => [$horarios],
             'descripcion_programa' => $programaActual->about,
         ]);

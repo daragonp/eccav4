@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\DataTables\ScheduleDataTable;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage; // Asegúrate de tener esta importación
 
 class ScheduleController extends Controller
 {
@@ -17,20 +17,32 @@ class ScheduleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    private function hayConflictoHorario($start, $end, $day, $emissionKey = null)
     {
-        //
+        return Schedule::where('day', $day)
+            ->whereNull('deleted_at')
+            ->when($emissionKey, function ($query) use ($emissionKey) {
+                // Excluye los registros que pertenecen al mismo bloque que se está editando.
+                // Esto permite que un programa se "solape consigo mismo" si se está editando.
+                $query->where('emission_key', '!=', $emissionKey);
+            })
+            ->where(function ($query) use ($start, $end) {
+                // Lógica de solapamiento de horarios:
+                // (Inicio entre el nuevo rango) OR (Fin entre el nuevo rango) OR
+                // (Nuevo rango envuelve al existente) OR (Existente envuelve al nuevo rango)
+                $query->where(function ($q) use ($start, $end) {
+                    $q->where('start', '<', $end)->where('end', '>', $start);
+                });
+            })
+            ->exists();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    private function traducirDia($numero)
     {
-        //
+        $dias = [1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles', 4 => 'Jueves', 5 => 'Viernes', 6 => 'Sábado', 7 => 'Domingo'];
+        return $dias[$numero] ?? 'Día desconocido';
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -40,158 +52,158 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-        //
         $this->validate($request, [
             'name' => 'required',
-            'start' => 'required',
-            'end' => 'required',
+            'start' => 'required|date_format:H:i',
+            'end' => 'required|date_format:H:i|after:start',
             'host' => 'required',
-            'day' => 'required|array|min:1|max:7', // al menos un día y máximo 7 días
-        ], [
-            'name.required' => 'El campo nombre del programa es obligatorio.',
-            'start.required' => 'El campo hora de inicio es obligatorio.',
-            'end.required' => 'El campo hora de finalización es obligatorio.',
-            'host.required' => 'El campo director(a) es obligatorio.',
-            'day.required' => 'Debe seleccionar al menos un día de emisión',
+            'day' => 'required|array|min:1|max:7',
+            'about' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-        $selectedDays = $request->input('day');
 
-        foreach ($selectedDays as $selectedDay) {
+        $start = Carbon::createFromFormat('H:i', $request->start);
+        $end = Carbon::createFromFormat('H:i', $request->end);
 
-            $program = new Schedule();
+        $emissionKey = uniqid(); // Generar clave única para el bloque
 
-            $program->name = $request->input('name');
+        $imgName = 'genericprogramimage.png';
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $image = $request->file('image');
+            $imgName = uniqid() . '.' . $image->getClientOriginalExtension();
+            // Usar Storage Facade para guardar la imagen
+            Storage::disk('public')->putFileAs('images/schedule', $image, $imgName);
+        }
 
-            $image = $request->image;
-
-            if ($image) {
-                if ($image->isValid()) {
-                    $imgName = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
-                    Storage::put('images/schedule/' . $imgName, file_get_contents($image));
-                    $program->image = $imgName;
-                } else {
-                    // Manejar el error de subida
-                    dd($image->getError());
-                }
+        foreach ($request->day as $day) {
+            // Usar la función hayConflictoHorario para la creación (sin emissionKey)
+            if ($this->hayConflictoHorario($request->start, $request->end, $day)) {
+                return back()->withErrors(['day' => 'Ya existe un programa en ese horario para el día ' . $this->traducirDia($day) . '.'])->withInput();
             }
 
-            $slug = Str::slug($request->name);
-            $str = preg_replace('/[^a-z0-9]/', '-', $slug);
-            $program->slug = $str;
-            $program->about = $request->input('about');
-            $program->start = $request->input('start');
-            $program->end = $request->input('end');
-
-            $inicio = Carbon::createFromFormat('H:i', $request->input('start'));
-            $fin = Carbon::createFromFormat('H:i', $request->input('end'));
-
-            $program->host = $request->input('host');
-            $program->day = $selectedDay;
-            $program->duration =  $inicio->diffInMinutes($fin);
-            $program->created_at = Carbon::now();
-            $program->updated_at = Carbon::now();
-
-            //dd($program);
-
-            $program->save();
+            Schedule::create([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'start' => $request->start,
+                'end' => $request->end,
+                'duration' => $start->diffInMinutes($end),
+                'host' => $request->host,
+                'about' => $request->about,
+                'day' => $day,
+                'image' => $imgName,
+                'emission_key' => $emissionKey,
+            ]);
         }
-        return redirect('/show-schedule')->with('success', 'El programa ha sido agregado');
+
+        return redirect('/show-schedule')->with('success', 'Programa agregado correctamente.');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Schedule  $schedule
-     * @return \Illuminate\Http\Response
-     */
     public function show(ScheduleDataTable $schedule)
     {
-        //
         return $schedule->render('admin.schedule.show-schedule');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Procesar la solicitud de actualización del recurso especificado.
+     * Este es tu actual método 'edit' que procesa el formulario.
      *
-     * @param  \App\Models\Schedule  $schedule
+     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function edit($id, Request $request)
+    public function edit($id, Request $request) // Tu método actual para procesar la actualización
     {
-        //
-
         $this->validate($request, [
             'name' => 'required',
-            'start' => 'required',
-            'end' => 'required',
+            'start' => 'required|date_format:H:i',
+            'end' => 'required|date_format:H:i|after:start',
             'host' => 'required',
-            'day' => 'required|array|min:1|max:7', // al menos un día y máximo 7 días
-        ], [
-            'name.required' => 'El campo nombre del programa es obligatorio.',
-            'start.required' => 'El campo hora de inicio es obligatorio.',
-            'end.required' => 'El campo hora de finalización es obligatorio.',
-            'host.required' => 'El campo director(a) es obligatorio.',
-            'day.required' => 'Debe seleccionar al menos un día de emisión',
+            'day' => 'required|array|min:1|max:7',
+            'about' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
-        $selectedDays = $request->input('day');
 
-        foreach ($selectedDays as $selectedDay) {
+        $original = Schedule::findOrFail($id);
+        // Usamos la emission_key existente o generamos una nueva si por alguna razón no existiera
+        $emissionKey = $original->emission_key ?? uniqid();
 
-            $program = Schedule::find($id);
+        $start = Carbon::createFromFormat('H:i', $request->start);
+        $end = Carbon::createFromFormat('H:i', $request->end);
 
-            $program->name = $request->input('name');
-
-            $image = $request->image;
-
-            if ($image) {
-                if ($image->isValid()) {
-                    $imgName = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
-                    Storage::put('images/schedule/' . $imgName, file_get_contents($image));
-                    $program->image = $imgName;
-                } else {
-                    // Manejar el error de subida
-                    dd($image->getError());
-                }
+        // --- Lógica de Validación de Solapamiento para Edición ---
+        // Itera sobre los DÍAS PROPUESTOS por el usuario en el formulario.
+        foreach ($request->day as $day) {
+            // Llama a hayConflictoHorario, pasando la emissionKey del bloque actual.
+            // Esto le dice a la función que ignore cualquier programa con esta misma clave
+            // (es decir, el programa que estamos editando), evitando que se solape consigo mismo.
+            if ($this->hayConflictoHorario($request->start, $request->end, $day, $emissionKey)) {
+                return back()->withErrors([
+                    'day' => "Ya existe un programa en ese horario el {$this->traducirDia($day)}."
+                ])->withInput(); // ¡Importante para mantener los datos del formulario!
             }
-
-            $slug = Str::slug($request->name);
-            $str = preg_replace('/[^a-z0-9]/', '-', $slug);
-            $program->slug = $str;
-            $program->about = $request->input('about');
-            $program->start = $request->input('start');
-            $program->end = $request->input('end');
-            try {
-                $inicio = Carbon::createFromFormat('H:i', $request->input('start'));
-                $fin = Carbon::createFromFormat('H:i', $request->input('end'));
-                $program->duration =  $inicio->diffInMinutes($fin);
-
-            } catch (\Exception $e) {
-                // Manejar la excepción, por ejemplo, imprimir el mensaje de error.
-                $e->getMessage();
-            }
-            $program->host = $request->input('host');
-            $program->day = $selectedDay;
-            $program->created_at = Carbon::now();
-            $program->updated_at = Carbon::now();
-
-            $program->save();
         }
-        return redirect('/show-schedule')->with('success', 'El programa ha sido agregado');
+        // --- Fin Lógica de Validación ---
+
+        // Si la validación de solapamiento pasa:
+        // 1. Borrar todos los registros ANTERIORES del bloque (soft delete)
+        // Esto elimina las entradas existentes para este emission_key antes de recrearlas.
+        Schedule::where('emission_key', $emissionKey)->delete();
+
+        // 2. Procesar imagen
+        $imgName = $original->image; // Mantener la imagen original por defecto
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            // Eliminar imagen antigua si no es la genérica y existe
+            if ($imgName != 'genericprogramimage.png' && Storage::disk('public')->exists('images/schedule/' . $imgName)) {
+                Storage::disk('public')->delete('images/schedule/' . $imgName);
+            }
+            $image = $request->file('image');
+            $imgName = uniqid() . '.' . $image->getClientOriginalExtension();
+            // Usar Storage Facade para mayor control y guardar la nueva imagen
+            Storage::disk('public')->putFileAs('images/schedule', $image, $imgName);
+        }
+
+        // 3. Crear los nuevos registros por día con la información actualizada
+        foreach ($request->day as $day) {
+            Schedule::create([
+                'name' => $request->name,
+                'slug' => Str::slug($request->name),
+                'start' => $request->start,
+                'end' => $request->end,
+                'duration' => $start->diffInMinutes($end),
+                'host' => $request->host,
+                'about' => $request->about,
+                'day' => $day,
+                'image' => $imgName,
+                'emission_key' => $emissionKey, // Asegura que la clave de emisión sea la misma
+            ]);
+        }
+
+        return redirect('/show-schedule')->with('success', 'Programa actualizado correctamente.');
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mostrar el formulario para editar el recurso especificado.
+     * Este es tu actual método 'update' que muestra el formulario.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Schedule  $schedule
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($id)
+    public function update($id) // Tu método actual para mostrar el formulario de edición
     {
-        //
-        $schedule = Schedule::find($id);
+        $schedule = Schedule::findOrFail($id);
 
-        return view('admin.update-schedule', compact('schedule'));
+        // Importante: obtener todos los días asociados a la misma emission_key
+        // para marcar correctamente los checkboxes en el formulario.
+        $daysSelected = Schedule::where('emission_key', $schedule->emission_key)
+                                ->pluck('day')
+                                ->toArray();
+
+        // Asegúrate de que la variable que pasas a la vista coincida con lo que tu Blade espera,
+        // que según tu formulario es '$tableM'.
+        return view('admin.update-schedule', [
+            'tableM' => $schedule,
+            'daysSelected' => $daysSelected
+        ]);
     }
 
     /**
@@ -202,35 +214,42 @@ class ScheduleController extends Controller
      */
     public function destroy($id)
     {
-        //
-        $schedule = Schedule::findorFail($id);
+        $program = Schedule::findOrFail($id);
+        Schedule::where('emission_key', $program->emission_key)->delete();
 
-        $schedule->deleted_at = Carbon::now();
+        // Opcional: Eliminar la imagen física si no es la genérica y existe
+        // if ($program->image != 'genericprogramimage.png' && Storage::disk('public')->exists('images/schedule/' . $program->image)) {
+        //     Storage::disk('public')->delete('images/schedule/' . $program->image);
+        // }
 
-        $schedule->save();
-
-        return redirect()->back()->with('mensaje', 'La publicación no está disponible al público');
+        return redirect()->back()->with('success', 'El bloque del programa ha sido eliminado definitivamente.');
     }
+
 
     public function activate($id)
     {
-        //
-        $schedule = Schedule::findorFail($id);
+        $program = Schedule::findOrFail($id);
+        Schedule::where('emission_key', $program->emission_key)
+            ->update(['deleted_at' => null]);
 
-        $schedule->deleted_at = NULL;
-
-        $schedule->save();
-
-        return redirect()->back()->with('success', 'La publicación ha sido activada al público');
+        return redirect()->back()->with('success', 'El bloque del programa ha sido activado.');
     }
+
+
 
     public function delete($id)
     {
-        //
+        $program = Schedule::findOrFail($id);
+        Schedule::where('emission_key', $program->emission_key)
+            ->update(['deleted_at' => now()]);
+
+        return redirect()->back()->with('success', 'El bloque del programa ha sido desactivado.');
+    }
+
+
+    public function view($id)
+    {
         $schedule = Schedule::findorFail($id);
-
-        $schedule->delete();
-
-        return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
+        return view('admin.schedule.view-schedule', compact('schedule'));
     }
 }

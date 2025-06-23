@@ -19,12 +19,12 @@ class Schedule extends Model
         'end',
         'host',
         'duration',
-        'day'
+        'day',
+        'emission_key'
     ];
 
     public function week()
     {
         return $this->belongsTo(Week::class, 'day');
     }
-
 }

@@ -47,13 +47,13 @@
             </div>
             <div class="form-group mb-2">
                 <label>Día(s) de emisión</label><br>
-                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="2"> Lunes <br>
-                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="3"> Martes <br>
-                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="4"> Miércoles<br>
-                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="5"> Jueves<br>
-                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="6"> Viernes<br>
-                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="7"> Sábado<br>
-                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="1"> Domingo
+                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="1"> Lunes <br>
+                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="2"> Martes <br>
+                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="3"> Miércoles<br>
+                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="4"> Jueves<br>
+                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="5"> Viernes<br>
+                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="6"> Sábado<br>
+                <input class="form-check-input" type="checkbox" name="day[]" id="day" value="7"> Domingo
             </div>
         </div>
     </div>

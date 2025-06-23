@@ -1,8 +1,6 @@
-// Fonts
+// Use all SCSS partials first
+@use 'variables' as *;
+@use 'bootstrap/scss/bootstrap' as bootstrap;
+
+// Now any CSS imports (fonts, etc.) come **after** `@use`
 @import url('https://fonts.bunny.net/css?family=Nunito');
-
-// Variables
-@import 'variables';
-
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';

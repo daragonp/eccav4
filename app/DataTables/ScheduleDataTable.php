@@ -4,7 +4,6 @@ namespace App\DataTables;
 
 use App\Models\Schedule;
 use Yajra\DataTables\Html\Column;
-use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Services\DataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -13,22 +12,51 @@ use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 class ScheduleDataTable extends DataTable
 {
     /**
-     * Build DataTable class.
-     * @param QueryBuilder $query Results from query() method.
-     * @return \Yajra\DataTables\EloquentDataTable
+     * Construye la tabla con las columnas personalizadas.
      */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+            ->addColumn('estado', function ($row) {
+                return $row->deleted_at
+                    ? '<span class="badge bg-danger">Inactivo</span>'
+                    : '<span class="badge bg-success">Activo</span>';
+            })
             ->addColumn('action', function ($schedule) {
                 return $this->renderActionColumn($schedule);
             })
-            ->rawColumns(['image', 'action', 'editing']);
+            ->filterColumn('days', function ($query, $keyword) {
+                $dias = [
+                    'lunes' => 1,
+                    'martes' => 2,
+                    'miércoles' => 3,
+                    'miercoles' => 3,
+                    'jueves' => 4,
+                    'viernes' => 5,
+                    'sábado' => 6,
+                    'sabado' => 6,
+                    'domingo' => 7,
+                ];
+
+                $keyword = strtolower($keyword);
+                if (array_key_exists($keyword, $dias)) {
+                    $query->where('day', $dias[$keyword]);
+                }
+            }) // ← OJO aquí estaba el problema, faltaba este cierre correcto
+            ->rawColumns(['estado', 'action']);
     }
+
+    /**
+     * Renderiza la columna de acciones con modales y botones.
+     */
     protected function renderActionColumn($schedule)
     {
         $folder = 'schedule';
-        $id = $schedule->id;
+
+        // Obtenemos un registro real del bloque
+        $tableM = Schedule::where('emission_key', $schedule->emission_key)->firstOrFail();
+
+        $id = $tableM->id;
         $modalId = 'EditModal_' . $id;
         $formAction = url("update-schedule", $id);
         $softdelete = url("delete-schedule", $id);
@@ -36,46 +64,59 @@ class ScheduleDataTable extends DataTable
         $activate = url("activate-schedule", $id);
         $realdelete = url("realdelete-schedule", $id);
 
+        $daysSelected = Schedule::where('emission_key', $schedule->emission_key)->pluck('day')->toArray();
+
         return view('layouts.actions', [
             'folder' => $folder,
-            'tableM' => $schedule,
+            'tableM' => $tableM,
             'modalId' => $modalId,
             'formAction' => $formAction,
             'softdelete' => $softdelete,
             'view' => $view,
             'activate' => $activate,
             'realdelete' => $realdelete,
+            'daysSelected' => $daysSelected,
         ])->render();
     }
 
-
     /**
-     * Get query source of dataTable.
-     *
-     * @param \App\Models\Schedule $model
-     * @return \Illuminate\Database\Eloquent\Builder
+     * Consulta con GROUP BY usando emission_key para evitar repeticiones.
      */
     public function query(Schedule $model): QueryBuilder
     {
-        // Verifica si el usuario está autenticado
-        if (Auth::check()) {
-            if (Auth::user()->roles->pluck('id')[0] ?? '' === 1) {
-                return $model->newQuery();
-            } else {
-                return $model->newQuery()->whereNull('deleted_at');
-            }
-        }
-
-        // Si el usuario no está autenticado o no tiene 'role_id' igual a 1, retorna una consulta que filtra los registros que cumplan con tus criterios específicos.
-        return $model->newQuery()->whereNull('deleted_at')->where('otro_campo', 'valor'); // Puedes definir tu propio criterio de filtro.
-
-
+        return $model->newQuery()
+            ->select([
+                'emission_key',
+                \DB::raw('MAX(id) as id'),
+                \DB::raw('MAX(name) as name'),
+                \DB::raw('MAX(slug) as slug'),
+                \DB::raw('MAX(start) as start'),
+                \DB::raw('MAX(end) as end'),
+                \DB::raw('MAX(host) as host'),
+                \DB::raw('MAX(duration) as duration'),
+                \DB::raw('MAX(image) as image'),
+                \DB::raw('MAX(about) as about'),
+                \DB::raw('MAX(deleted_at) as deleted_at'),
+                \DB::raw("
+                    GROUP_CONCAT(
+                        CASE day
+                            WHEN 1 THEN 'Lunes'
+                            WHEN 2 THEN 'Martes'
+                            WHEN 3 THEN 'Miércoles'
+                            WHEN 4 THEN 'Jueves'
+                            WHEN 5 THEN 'Viernes'
+                            WHEN 6 THEN 'Sábado'
+                            WHEN 7 THEN 'Domingo'
+                        END
+                        ORDER BY day ASC SEPARATOR ', '
+                    ) as days
+                ")
+            ])
+            ->groupBy('emission_key');
     }
 
     /**
-     * Optional method if you want to use html builder.
-     *
-     * @return \Yajra\DataTables\Html\Builder
+     * Configura el HTML del DataTable.
      */
     public function html(): HtmlBuilder
     {
@@ -87,32 +128,27 @@ class ScheduleDataTable extends DataTable
     }
 
     /**
-     * Get the dataTable columns definition.
-     *
-     * @return array
+     * Columnas visibles en la tabla.
      */
     public function getColumns(): array
     {
-
         return [
             Column::make('name')->title('Programa'),
             Column::make('start')->title('Inicia'),
             Column::make('end')->title('Termina'),
             Column::make('host')->title('Dirige'),
-            Column::make('duration')->title('Duración'),
-            Column::make('day')->title('Día'),
-            Column::make('deleted_at')->title('Estado'),
+            Column::make('duration')->title('Duración (min)'),
+            Column::make('days')->title('Días de emisión'),
+            Column::make('estado')->title('Estado'),
             Column::computed('action')->title('Acciones')
-                ->exportable(true)
+                ->exportable(false)
                 ->printable(false)
                 ->addClass('text-center'),
         ];
     }
 
     /**
-     * Get filename for export.
-     *
-     * @return string
+     * Nombre del archivo al exportar.
      */
     protected function filename(): string
     {
