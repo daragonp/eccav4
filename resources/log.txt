@@ -33,4 +33,7 @@ Versión 4.7.6:
 Versión 4.7.7:
     Mejoras en el reproductor, ahora información del programa que está en emisión.
     Backend para administración de la programación diaria.
+
+Versión 4.7.8:
+    Mejoras en el home.
     

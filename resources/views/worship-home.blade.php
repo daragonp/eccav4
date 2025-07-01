@@ -13,51 +13,54 @@
             <div class="text-start">
                 <span class="month-badge">{{ $month }}</span>
             </div>
-            <table class="table table-bordered table-responsive table-hover text-center align-middle">
-                <thead class="table-warning">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Imagen</th>
-                        <th>Documento</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($group as $verse)
-                        <tr>
-                            <td>{{ \Carbon\Carbon::parse($verse->date)->format('d/m/Y') }}</td>
-                            <td>
-                                <a href="{{ asset('images/bible/' . $verse->image) }}"
-                                    data-title="Derechos Reservados E.C.C.A." data-lightbox="verse-{{ $verse->date }}">
-                                    <img src="{{ asset('images/bible/' . $verse->image) }}" alt="Imagen"
-                                        style="width: 80px;">
-                                </a>
-                            </td>
+            <div class="table-responsive-custom mb-4">
+                <table class="table table-bordered table-hover text-center align-middle">
 
-                            <td>
-                                @if ($verse->video)
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#pdfModal"
-                                        data-pdf="{{ asset('documents/quote/' . $verse->video) }}">
-                                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> <strong>Ver PDF</strong>
-                                    </button>
-                                @else
-                                    <p>Pendiente de documento</p>
-                                @endif
-                            </td>
-                            {{--  <td>
+                    <thead class="table-success">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Imagen</th>
+                            <th>Documento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($group as $verse)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($verse->date)->format('d/m/Y') }}</td>
+                                <td>
+                                    <a href="{{ asset('images/bible/' . $verse->image) }}"
+                                        data-title="Derechos Reservados E.C.C.A." data-lightbox="verse-{{ $verse->date }}">
+                                        <img src="{{ asset('images/bible/' . $verse->image) }}" alt="Imagen"
+                                            style="width: 80px;">
+                                    </a>
+                                </td>
+
+                                <td>
+                                    @if ($verse->video)
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#pdfModal"
+                                            data-pdf="{{ asset('documents/quote/' . $verse->video) }}">
+                                            <i class="bi bi-file-earmark-pdf-fill me-1"></i> <strong>Ver PDF</strong>
+                                        </button>
+                                    @else
+                                        <p>Pendiente de documento</p>
+                                    @endif
+                                </td>
+                                {{--  <td>
                             <a href="{{route('verses.show', $verse->date) }}" target="_blank" class="btn btn-sm btn-primary">LEER</a>
                         </td> --}}
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="table-success">
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Imagen</th>
+                            <th>Documento</th>
                         </tr>
-                    @endforeach
-                </tbody>
-                <tfoot class="table-warning">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Imagen</th>
-                        <th>Documento</th>
-                    </tr>
-                </tfoot>
-            </table>
+                    </tfoot>
+                </table>
+            </div>
         @endforeach
     </div>
     <!-- Modal -->

@@ -217,23 +217,23 @@ class VerseController extends Controller
     }
 
     public function history()
-{
-    $today = Carbon::today();
-    $twoMonthsAgo = $today->copy()->subMonths(2);
+    {
+        $today = Carbon::today();
+        $twoMonthsAgo = $today->copy()->subMonths(2);
 
-    $verses = Verse::whereBetween('date', [$twoMonthsAgo, $today])
-        ->orderBy('date', 'desc')
-        ->get()
-        ->groupBy(function ($item) {
-            return Carbon::parse($item->date)->translatedFormat('F Y');
+        $verses = Verse::whereBetween('date', [$twoMonthsAgo, $today])
+            ->orderBy('date', 'desc')
+            ->get()
+            ->groupBy(function ($item) {
+                return Carbon::parse($item->date)->translatedFormat('F Y');
+            });
+
+        $availableDates = Verse::pluck('date')->map(function ($date) {
+            return Carbon::parse($date)->format('Y-m-d');
         });
 
-    $availableDates = Verse::pluck('date')->map(function ($date) {
-        return Carbon::parse($date)->format('Y-m-d');
-    });
-
-    return view('worship-home', compact('verses', 'availableDates'));
-}
+        return view('worship-home', compact('verses', 'availableDates'));
+    }
 
 
     public function single($date)
