@@ -2,12 +2,36 @@
 
 @section('title', 'Mensajero veloz')
 
+@section('page-hero')
+  <div>
+    <h1 class="page-title">Mensajero veloz</h1>
+    <div class="hr-brand"></div>
+    <p class="page-subtle">Compartiendo el evangelio con diligencia.</p>
+  </div>
+@endsection
+
 @section('content')
-    <div class="container"><br>
-            <h3 class="center">E.C.A un mensajero veloz para el pueblo Morat: Pueblo de tez brillante.</h3>
-        <hr>
-        <p>Para cumplir el llamado de enviar mensajeros veloces para el pueblo de tez brillante, es la emisora <strong><em>Emancipación Cristiana Afro (</em></strong><strong><em>E.C.A</em></strong><strong><em>)</em></strong>.</p>
-        <p>El objetivo de <strong><em>E.C.A</em></strong> es <em>hacer discípulos en el pueblo de tez brillante, bautizándolos en el nombre del Padre, y del Hijo, y del Espíritu Santo; enseñándoles que guarden todas las cosas que nuestro Señor Jesucristo nos ha mandado; con la certeza que Él está con nosotros todos los días, hasta el fin del mundo</em>.</p>
-        <p>Predicamos y ensañamos el evangelio desde una perspectiva afro, para la gloria de Dios.</p>
+  <section class="panel space-y-6">
+    <p class="leading-relaxed text-gray-700 dark:text-gray-200">
+      Este programa promueve y coordina acciones de evangelización, oración y servicio
+      en la comunidad, con foco en las poblaciones afro.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h2 class="text-lg font-semibold mb-2">¿Cómo participar?</h2>
+        <ul class="content-list">
+          <li>Únete a equipos de visita y oración.</li>
+          <li>Comparte recursos y materiales de discipulado.</li>
+          <li>Apoya iniciativas de ayuda y acompañamiento.</li>
+        </ul>
+      </div>
+      <aside class="space-y-2">
+        <h3 class="text-sm uppercase tracking-wide text-gray-500 dark:text-gray-400">Contacto</h3>
+        <a href="mailto:radio@emancipacioncristianaafro.org" class="content-link inline-flex items-center gap-2">
+          <i class="fa-solid fa-envelope"></i> radio@emancipacioncristianaafro.org
+        </a>
+      </aside>
     </div>
-@stop
+  </section>
+@endsection

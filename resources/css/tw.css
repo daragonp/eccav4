@@ -1,0 +1,161 @@
+/* Habilitar dark mode por CLASE .dark (Tailwind v4, CSS-first) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* =======================
+   Base / Tema
+   ======================= */
+@layer base {
+  :root {
+    --green-dark: #2a3d1f;
+    --green-light: #8aa446;
+    --white: #fff;
+
+    /* gutter horizontal que usa tu .page-container: px-4 / sm:px-6 / lg:px-8 */
+    --container-px: 1rem;      /* base = px-4 */
+    /* ancho de scrollbar real: 100vw (incluye barra) - 100% (área útil) */
+    --sbw: calc(100vw - 100%);
+  }
+
+  @media (min-width: 640px) { :root { --container-px: 1.5rem; } } /* sm:px-6 */
+  @media (min-width: 1024px){ :root { --container-px: 2rem;   } } /* lg:px-8 */
+
+  html { color-scheme: light dark; }
+  body { @apply font-sans text-gray-900 bg-white dark:bg-gray-900 dark:text-gray-100; }
+}
+
+/* =======================
+   Utilidades
+   ======================= */
+@layer utilities {
+  .bg-brand-dark   { background: var(--green-dark); }
+  .bg-brand-light  { background: var(--green-light); }
+  .text-brand-dark { color: var(--green-dark); }
+  .text-brand-light{ color: var(--green-light); }
+  .btn-brand       { @apply inline-flex items-center rounded px-3 py-2 text-white; background: var(--green-dark); }
+  .btn-brand:hover { filter: brightness(1.05); }
+
+  /* ---- FULL-BLEED (seguro, sin corrimientos) ----
+     Truco: compensamos scrollbar con var(--sbw) y mantenemos el fondo a 100% del viewport
+     sin provocar desplazamientos ni scroll horizontal. NO uses overflow-x global. */
+  .full-bleed {
+    position: relative;
+    /* ancho del viewport menos el ancho de la barra de scroll (si existe) */
+    width: calc(100vw - var(--sbw));
+    max-width: calc(100vw - var(--sbw));
+    box-sizing: border-box;
+    /* centrado respecto al viewport, no al contenedor; compensamos el scrollbar a ambos lados */
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Si el navegador soporta d*v*w (excluye UI / barras), úsalo aún más preciso */
+  @supports (width: 100dvw) {
+    .full-bleed {
+      width: 100dvw;
+      max-width: 100dvw;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  /* Si necesitas quitar padding horizontal del propio bloque */
+  .px-none { padding-left: 0 !important; padding-right: 0 !important; }
+}
+
+/* =======================
+   Dark Mode ajustes suaves
+   ======================= */
+.dark body { background-color: #0f172a; color: #f3f4f6; }
+
+.dark .links { background-color: transparent; }
+
+.dark .card { background-color: var(--green-dark); color: #fff; }
+.dark .card p { color: #f9fafb; }
+
+.dark .daily-word-section { background-color: transparent; }
+.dark .title { color: var(--green-light); }
+
+.dark .circle-badge { background-color: #111827; color: #f9fafb; border-color: #374151; }
+
+.dark .right-block img { border-color: var(--green-light); }
+
+.dark footer a { color: #f9fafb; }
+.dark .hero-image { background-color: transparent; }
+.dark .header { background-color: #0f172a; border-bottom-color: #1f2937; }
+
+.dark .custom-footer { background-color: #0f172a; color: #e5e7eb; }
+.dark .custom-footer a,
+.dark .custom-footer p { color: #e5e7eb; }
+.dark .custom-footer hr { border-top-color: rgba(255,255,255,.12); }
+.dark .bg-dark { background-color: #0f172a !important; }
+.dark .custom-footer i { color: #e5e7eb; }
+
+/* =======================
+   Componentes
+   ======================= */
+@layer components {
+  .page-container { @apply mx-auto max-w-5xl px-4 sm:px-6 lg:px-8; }
+  .page-hero     { @apply pt-6 sm:pt-10; }
+  .page-title    { @apply text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--green-dark)] dark:text-[var(--green-light)]; }
+  .page-subtle   { @apply text-sm text-gray-500 dark:text-gray-400; }
+  .hr-brand      { @apply h-1 w-16 rounded-full bg-[var(--green-light)] dark:bg-[var(--green-light)] mb-6; }
+  .panel         { @apply rounded-xl bg-white dark:bg-gray-900 shadow-md ring-1 ring-gray-200 dark:ring-gray-800 p-6 sm:p-8; }
+  .content-list  { @apply list-disc list-inside space-y-3 text-lg text-gray-700 dark:text-gray-200; }
+  .content-link  { @apply text-[var(--green-dark)] hover:underline focus:outline-none focus-visible:ring-2
+                          focus-visible:ring-[var(--green-light)] focus-visible:ring-offset-2
+                          focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900; }
+  .chip          { @apply inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm
+                          border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10 transition
+                          focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-light)]
+                          focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900; }
+}
+
+/* =======================
+   Imágenes (dark) – ajustes finos
+   ======================= */
+
+/* 1) Iconos con fondo transparente: invierte sutilmente en dark (no afecta fotos) */
+.dark .icon-img {
+  filter: invert(1) hue-rotate(180deg) saturate(0.9) brightness(1.1) contrast(1.02);
+}
+
+/* 2) Logo: ligera separación del fondo en dark */
+.dark header img[alt="ECCA_LOGO"] {
+  filter: drop-shadow(0 0 1px rgba(255,255,255,.25));
+}
+
+/* 3) Hero (si existe): leve impulso para que no quede “apagada” */
+.dark .hero-image img { filter: brightness(1.06) contrast(1.04); }
+
+/* 4) Boost solo en secciones full-bleed (carrusel y quote) sin tocar iconos ni logo */
+.dark .full-bleed img:not(.icon-img):not([alt="ECCA_LOGO"]) {
+  filter: brightness(1.08) contrast(1.06);
+  transition: filter .2s ease;
+}
+
+/* Opt-in por si alguna imagen concreta necesita ajuste diferente */
+@layer utilities {
+  .img-no-filter { filter: none !important; }
+  .img-boost     { filter: brightness(1.10) contrast(1.08) !important; }
+  .img-boost-md  { filter: brightness(1.14) contrast(1.10) !important; }
+  .img-invert    { filter: invert(1) hue-rotate(180deg) saturate(0.9) brightness(1.05) !important; }
+  .img-ring {
+    outline: 1px solid rgba(255,255,255,.14);
+    outline-offset: -1px;
+    border-radius: .375rem;
+    background-color: rgba(255,255,255,.02);
+  }
+}
+
+/* =======================
+   Header / Logo (tamaño)
+   ======================= */
+@layer base {
+  header img[alt="ECCA_LOGO"] { height: 3rem !important; }    /* 48px */
+  @media (min-width: 640px) {
+    header img[alt="ECCA_LOGO"] { height: 4rem !important; }  /* 64px */
+  }
+}

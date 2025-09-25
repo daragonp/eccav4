@@ -1,21 +1,24 @@
-import { defineConfig } from 'vite';
-const laravel = await import('laravel-vite-plugin');
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+import tailwind from '@tailwindcss/vite'
 
 export default defineConfig({
-  build: {
-    outDir: 'public/build', // Asegúrate de que los archivos generados se guarden aquí
-  },
+  build: { outDir: 'public/build' },
   plugins: [
-    laravel.default({
+    laravel({
       input: [
-        'resources/css/app.css',
-        'resources/sass/app.scss',
+        // CSS
+        'resources/css/app.css',       // ⬅️ Tu CSS (sin bootstrap)
+        'resources/css/tw.css',        // ⬅️ Tailwind v4
+        'resources/css/radio-player.css',
+
+        // JS
         'resources/js/app.js',
         'resources/js/menu.js',
-        'resources/css/radio-player.css',
-        'resources/js/radio-player.js', 
+        'resources/js/radio-player.js',
       ],
       refresh: true,
     }),
+    tailwind(),
   ],
-});
+})
