@@ -1,3 +1,21 @@
+/* Altura del player (fallback inicial, se sobrescribe vía JS) */
+:root {
+  --player-h: 88px; /* valor base para desktop */
+}
+
+/* Reserva espacio al final del documento para que el player no tape nada */
+body.has-player {
+  padding-bottom: var(--player-h);
+  /* En dispositivos con notch/gestures añade safe-area si está disponible */
+  padding-bottom: calc(var(--player-h) + env(safe-area-inset-bottom));
+}
+
+/* Ajuste aproximado en móviles antes de que JS calcule la altura exacta */
+@media (max-width: 768px) {
+  :root { --player-h: 120px; }
+}
+
+/* ------------------------ Player ------------------------ */
 .radio-player-container {
   position: fixed;
   bottom: 0;
@@ -103,7 +121,7 @@
   display: none;
   position: absolute;
   bottom: 100%; /* Posiciona el popup justo encima del botón padre (.volume-group) */
-  left: 0; 
+  left: 0;
   margin-bottom: 10px; /* Espacio entre el botón y el slider */
   background: #333;
   padding: 8px 12px;
@@ -111,7 +129,7 @@
   min-width: 120px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
   white-space: nowrap;
-  z-index: 1001; /* Asegura que esté por encima de otros elementos del reproductor */
+  z-index: 1001; /* Por encima de otros elementos del reproductor */
 }
 
 .volume-slider-popup.active {
@@ -250,7 +268,6 @@
   }
 
   .volume-slider-popup {
-    /* En móvil, podemos volver a centrar si los botones están distribuidos */
     left: 50%;
     transform: translateX(-50%);
   }

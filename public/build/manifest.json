@@ -5,29 +5,23 @@
     "isEntry": true
   },
   "resources/css/radio-player.css": {
-    "file": "assets/radio-player-Caie_LZL.css",
+    "file": "assets/radio-player-DWesfXGC.css",
     "src": "resources/css/radio-player.css",
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-BLtnjt07.css",
+    "file": "assets/tw-CxZS5arZ.css",
     "src": "resources/css/tw.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-A8pEgPzb.js",
+    "file": "assets/app-BBCJMkHM.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
   },
-  "resources/js/menu.js": {
-    "file": "assets/menu-l0sNRNKZ.js",
-    "name": "menu",
-    "src": "resources/js/menu.js",
-    "isEntry": true
-  },
   "resources/js/radio-player.js": {
-    "file": "assets/radio-player-isJ4leEQ.js",
+    "file": "assets/radio-player-B5kot5h7.js",
     "name": "radio-player",
     "src": "resources/js/radio-player.js",
     "isEntry": true

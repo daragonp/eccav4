@@ -3,18 +3,18 @@
 @section('title', 'Tez brillante')
 
 @section('content')
-{{--     <div>
-        @include('ticker')
-    </div> --}}
-    <div>
-        <div>
-            @include('carrusel')
-        </div>
-    </div>
-    <div class="mt-1">
-        @include('social')
-    </div>
-    <div class="mt-2">
-        @include('quote')
-    </div>
+  <section aria-labelledby="home-quote">
+    <h2 id="home-quote" class="sr-only">Palabra del día</h2>
+    @include('quote')
+  </section>
+
+  <section aria-labelledby="home-links" class="mt-8">
+    <h2 id="home-links" class="sr-only">Enlaces principales</h2>
+    @include('social')
+  </section>
+
+  <section aria-labelledby="home-carousel" class="mt-4">
+    <h2 id="home-carousel" class="sr-only">Banners</h2>
+    @include('carrusel')
+  </section>
 @endsection

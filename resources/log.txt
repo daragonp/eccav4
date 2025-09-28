@@ -42,3 +42,6 @@ Versión 4.7.9:
     Implementación de reproductor mytuner en menú sidebar del dashboard.
     Modo oscuro con Tailwind.
     Arreglos menores.
+
+Versión 4.7.9.1:
+    Arreglos menores.

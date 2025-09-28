@@ -8,13 +8,12 @@ export default defineConfig({
     laravel({
       input: [
         // CSS
-        'resources/css/app.css',       // ⬅️ Tu CSS (sin bootstrap)
-        'resources/css/tw.css',        // ⬅️ Tailwind v4
+        'resources/css/app.css',
+        'resources/css/tw.css',
         'resources/css/radio-player.css',
 
         // JS
         'resources/js/app.js',
-        'resources/js/menu.js',
         'resources/js/radio-player.js',
       ],
       refresh: true,

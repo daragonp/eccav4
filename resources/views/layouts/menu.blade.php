@@ -1,4 +1,10 @@
-<header class="bg-white/90 dark:bg-gray-900/90 backdrop-blur sticky top-0 border-b border-gray-200 dark:border-gray-700">
+<header
+  class="sticky top-0 z-50
+         bg-white/85 dark:bg-gray-900/85
+         supports-[backdrop-filter]:bg-white/40 supports-[backdrop-filter]:dark:bg-gray-900/30
+         backdrop-blur-md
+         border-b border-gray-200/80 dark:border-gray-700/60
+         transition-colors duration-300">
   <nav x-data="{ open:false }" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
     {{-- Barra principal (una sola franja) --}}
@@ -24,7 +30,7 @@
         </a>
       </div>
 
-      {{-- *** Menú de escritorio centrado (misma franja, centrado vertical y horizontal) *** --}}
+      {{-- Menú de escritorio centrado --}}
       <div
         class="hidden lg:flex absolute inset-y-0 left-1/2 -translate-x-1/2 z-10
                items-center justify-center gap-6">
@@ -41,7 +47,6 @@
             </svg>
           </button>
 
-          {{-- El dropdown se abre justo debajo, centrado al botón --}}
           <div x-show="dd" @click.outside="dd=false" x-transition
                class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-md
                       border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg p-2">
@@ -60,7 +65,7 @@
       {{-- Derecha: toggle tema --}}
       <div class="flex items-center gap-2">
         <button id="toggleTheme"
-                class="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                class="px-3 py-1 rounded bg-gray-200/90 dark:bg-gray-700/90 text-gray-900 dark:text-gray-100">
           <span id="themeIcon">🌙</span>
         </button>
       </div>
@@ -86,7 +91,7 @@
     </div>
   </nav>
 
-  {{-- Toggle dark --}}
+  {{-- Toggle dark + sombra al hacer scroll --}}
   <script>
     const root = document.documentElement;
     const icon = document.getElementById('themeIcon');
@@ -99,5 +104,14 @@
       localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
       syncIcon();
     });
+
+    // Sombra sutil cuando se hace scroll (más “flotante”)
+    const headerEl = document.currentScript.closest('header');
+    const onScroll = () => {
+      const y = window.scrollY || document.documentElement.scrollTop;
+      headerEl.classList.toggle('shadow-sm', y > 4);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
   </script>
 </header>
