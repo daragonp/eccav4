@@ -45,8 +45,9 @@
                   {{ \Carbon\Carbon::parse($verse->date)->format('d/m/Y') }}
                 </td>
                 <td class="px-3 py-2">
-                  {{-- LIGHTBOX --}}
+                  {{-- LIGHTBOX (desactivar Turbo en estos enlaces) --}}
                   <a href="{{ asset('images/bible/' . $verse->image) }}"
+                     data-turbo="false"
                      data-lightbox="verses"
                      data-title="Derechos Reservados E.C.C.A. — {{ \Carbon\Carbon::parse($verse->date)->format('d/m/Y') }}">
                     <img src="{{ asset('images/bible/' . $verse->image) }}"
@@ -98,15 +99,15 @@
            document.body.classList.add('overflow-hidden');
          });
        "
-       @keydown.escape.window="show=false; pdfSrc=''; document.body.classList.remove('overflow-hidden')"
+       x-on:keydown.escape.window="show=false; pdfSrc=''; document.body.classList.remove('overflow-hidden')"
        x-cloak>
     <div x-show="show"
          x-transition.opacity
-         @click.self="show=false; pdfSrc=''; document.body.classList.remove('overflow-hidden')"
+         x-on:click.self="show=false; pdfSrc=''; document.body.classList.remove('overflow-hidden')"
          class="fixed inset-0 z-[2147483647] grid place-items-center p-4 bg-black/60"
          role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle">
       <div class="w-full max-w-6xl bg-white dark:bg-gray-900 rounded-xl shadow-xl ring-1 ring-gray-200 dark:ring-gray-800 overflow-hidden"
-           @click.stop>
+           x-on:click.stop>
         <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-800">
           <h3 id="pdfModalTitle" class="text-base font-semibold">Vista previa del PDF</h3>
           <button type="button"
@@ -114,7 +115,7 @@
                          hover:bg-black/5 dark:hover:bg-white/10 focus:outline-none
                          focus-visible:ring-2 focus-visible:ring-[var(--green-light)]"
                   aria-label="Cerrar"
-                  @click="show=false; pdfSrc=''; document.body.classList.remove('overflow-hidden')">
+                  x-on:click="show=false; pdfSrc=''; document.body.classList.remove('overflow-hidden')">
             <i class="fa-solid fa-xmark text-lg"></i>
           </button>
         </div>
@@ -130,29 +131,31 @@
 @endpush
 
 @push('scripts')
-  <script>
-    // Configuración Lightbox (desactiva scroll y añade transiciones)
-    if (window.lightbox && typeof lightbox.option === 'function') {
-      lightbox.option({
-        fadeDuration: 200,
-        resizeDuration: 200,
-        wrapAround: true,
-        disableScrolling: true,
-        positionFromTop: 50
-      });
-    }
+<script data-turbo-eval="true">
+(function(){
+  // availableDates viene del servidor en formato 'YYYY-MM-DD'
+  const AVAILABLE = new Set(@json($availableDates ?? []));
 
-    // Selector de fecha
-    const availableDates = @json($availableDates);
-    document.addEventListener('DOMContentLoaded', function () {
-      const datePicker = document.getElementById('datePicker');
-      const today = new Date().toISOString().split('T')[0];
-      datePicker.setAttribute('max', today);
+  function bindDatepicker() {
+    const datePicker = document.getElementById('datePicker');
+    if (!datePicker || datePicker.dataset.bound === '1') return; // evita doble binding con Turbo
+    datePicker.dataset.bound = '1';
 
-      datePicker.addEventListener('change', function () {
-        const selectedDate = new Date(this.value).toISOString().split('T')[0];
+    // Max hoy (formato local sin zona horaria)
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${yyyy}-${mm}-${dd}`;
+    datePicker.setAttribute('max', todayStr);
 
-        if (selectedDate > today) {
+    datePicker.addEventListener('change', function () {
+      // Usa el valor tal cual del input (YYYY-MM-DD) — sin toISOString()
+      const selectedDate = this.value;
+      if (!selectedDate) return;
+
+      if (selectedDate > todayStr) {
+        if (window.Swal && typeof Swal.fire === 'function') {
           Swal.fire({
             icon: 'error',
             title: 'Fecha inválida',
@@ -160,13 +163,23 @@
             confirmButtonColor: '#2a3d1f',
             confirmButtonText: 'Entendido'
           });
-          this.value = '';
-          return;
-        }
-
-        if (availableDates.includes(selectedDate)) {
-          window.open(`/single-feed/${selectedDate}`, '_blank');
         } else {
+          alert('No puedes seleccionar una fecha futura.');
+        }
+        this.value = '';
+        return;
+      }
+
+      if (AVAILABLE.has(selectedDate)) {
+        const url = '/single-feed/' + selectedDate;
+        // Navega en la misma pestaña (Turbo si está disponible)
+        if (window.Turbo && typeof window.Turbo.visit === 'function') {
+          window.Turbo.visit(url);
+        } else {
+          window.location.href = url;
+        }
+      } else {
+        if (window.Swal && typeof Swal.fire === 'function') {
           Swal.fire({
             icon: 'warning',
             title: 'Sin contenido',
@@ -174,9 +187,17 @@
             confirmButtonColor: '#2a3d1f',
             confirmButtonText: 'Aceptar'
           });
-          this.value = '';
+        } else {
+          alert('No hay registro disponible para esa fecha.');
         }
-      });
+        this.value = '';
+      }
     });
-  </script>
+  }
+
+  // Soporta primer load y navegaciones Turbo
+  document.addEventListener('DOMContentLoaded', bindDatepicker);
+  document.addEventListener('turbo:load', bindDatepicker);
+})();
+</script>
 @endpush

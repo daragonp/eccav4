@@ -60,3 +60,22 @@ window.addEventListener('load', () => {
     lightbox.option({ fadeDuration: 180, resizeDuration: 180, positionFromTop: 40, wrapAround: true })
   }
 })
+
+document.addEventListener('turbo:click', (e) => {
+    const a = e.target.closest && e.target.closest('a[data-lightbox]');
+    if (a) e.preventDefault(); // deja que Lightbox maneje el click
+  });
+  
+  // Reaplica opciones de Lightbox tras cada navegación Turbo (opcional)
+  document.addEventListener('turbo:load', () => {
+    if (window.lightbox?.option) {
+      lightbox.option({
+        fadeDuration: 200,
+        resizeDuration: 200,
+        wrapAround: true,
+        disableScrolling: true,
+        positionFromTop: 50,
+      });
+    }
+  });
+  
