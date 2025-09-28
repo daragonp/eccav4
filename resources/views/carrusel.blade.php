@@ -1,6 +1,7 @@
 @php
 use Illuminate\Support\Str;
 
+// Normaliza banners
 $slides = collect($slider ?? [])->map(function ($b) {
     $left  = $b->izq ?? $b->left ?? $b->image_left ?? $b->left_image ?? null;
     $right = $b->der ?? $b->right ?? $b->image_right ?? $b->right_image ?? null;
@@ -22,6 +23,11 @@ if ($slides->isEmpty()) {
         ['left' => asset('images/slider/izq_placeholder.png'), 'right' => asset('images/slider/der_placeholder.png')],
     ]);
 }
+
+// Wrapper interior: 95% del viewport si 'narrow'; si no, ancho usual limitado.
+$inner = !empty($narrow)
+  ? 'mx-auto w-[95dvw] max-w-7xl'
+  : 'mx-auto max-w-7xl';
 @endphp
 
 <section
@@ -50,25 +56,28 @@ if ($slides->isEmpty()) {
   aria-label="Banners promocionales"
   aria-live="polite">
 
-  <div class="overflow-hidden bg-white dark:bg-gray-800">
-    <template x-for="(slide, i) in slides" :key="i">
-      <div x-show="index === i" x-transition.opacity class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
-        <div class="text-center p-2">
-          <img :src="slide.left"
-               class="mx-auto max-h-[480px] w-full object-cover rounded shadow"
-               :alt="`Banner izquierdo ${i+1}`"
-               loading="lazy" decoding="async" draggable="false">
+  <div class="{{ $inner }}">
+    <div class="overflow-hidden bg-white dark:bg-gray-800">
+      <template x-for="(slide, i) in slides" :key="i">
+        <div x-show="index === i" x-transition.opacity class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
+          <div class="text-center p-2">
+            <img :src="slide.left"
+                 class="mx-auto max-h-[480px] w-full object-cover rounded shadow"
+                 :alt="`Banner izquierdo ${i+1}`"
+                 loading="lazy" decoding="async" draggable="false">
+          </div>
+          <div class="text-center p-2">
+            <img :src="slide.right"
+                 class="mx-auto max-h-[480px] w-full object-cover rounded shadow"
+                 :alt="`Banner derecho ${i+1}`"
+                 loading="lazy" decoding="async" draggable="false">
+          </div>
         </div>
-        <div class="text-center p-2">
-          <img :src="slide.right"
-               class="mx-auto max-h-[480px] w-full object-cover rounded shadow"
-               :alt="`Banner derecho ${i+1}`"
-               loading="lazy" decoding="async" draggable="false">
-        </div>
-      </div>
-    </template>
+      </template>
+    </div>
   </div>
 
+  {{-- Controles izq/der (absolutos respecto al section full-bleed) --}}
   <template x-if="slides.length > 1">
     <div>
       <button @click="prev"
@@ -80,6 +89,7 @@ if ($slides->isEmpty()) {
     </div>
   </template>
 
+  {{-- Bullets --}}
   <template x-if="slides.length > 1">
     <div
       class="absolute bottom-3 left-1/2 -translate-x-1/2 z-10

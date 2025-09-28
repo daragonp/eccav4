@@ -1,4 +1,5 @@
 <header
+  data-turbo-permanent
   class="sticky top-0 z-50
          bg-white/85 dark:bg-gray-900/85
          supports-[backdrop-filter]:bg-white/40 supports-[backdrop-filter]:dark:bg-gray-900/30
@@ -91,27 +92,40 @@
     </div>
   </nav>
 
-  {{-- Toggle dark + sombra al hacer scroll --}}
-  <script>
-    const root = document.documentElement;
-    const icon = document.getElementById('themeIcon');
-    function syncIcon(){ if(icon) icon.textContent = root.classList.contains('dark') ? '☀️' : '🌙'; }
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark') root.classList.add('dark');
-    syncIcon();
-    document.getElementById('toggleTheme')?.addEventListener('click', () => {
-      root.classList.toggle('dark');
-      localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
-      syncIcon();
-    });
+  {{-- Toggle dark + sombra al hacer scroll (forzado a evaluar con Turbo) --}}
+  <script data-turbo-eval="true">
+    (function () {
+      const root = document.documentElement;
+      const icon = document.getElementById('themeIcon');
 
-    // Sombra sutil cuando se hace scroll (más “flotante”)
-    const headerEl = document.currentScript.closest('header');
-    const onScroll = () => {
-      const y = window.scrollY || document.documentElement.scrollTop;
-      headerEl.classList.toggle('shadow-sm', y > 4);
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
+      function syncIcon(){ if(icon) icon.textContent = root.classList.contains('dark') ? '☀️' : '🌙'; }
+
+      // Aplica preferencia guardada
+      try {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') root.classList.add('dark');
+        if (saved === 'light') root.classList.remove('dark');
+      } catch (_) {}
+      syncIcon();
+
+      // Toggle
+      const btn = document.getElementById('toggleTheme');
+      if (btn) {
+        btn.onclick = () => {
+          root.classList.toggle('dark');
+          localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+          syncIcon();
+        };
+      }
+
+      // Sombra sutil al hacer scroll
+      const headerEl = document.currentScript.closest('header');
+      const onScroll = () => {
+        const y = window.scrollY || document.documentElement.scrollTop;
+        headerEl.classList.toggle('shadow-sm', y > 4);
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    })();
   </script>
 </header>

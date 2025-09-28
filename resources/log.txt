@@ -45,3 +45,7 @@ Versión 4.7.9:
 
 Versión 4.7.9.1:
     Arreglos menores.
+
+Versión 4.7.9.2:
+    Reproductor persistente.
+    Algunos arreglos menores.
