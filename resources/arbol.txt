@@ -1,0 +1,177 @@
+Listado de rutas de carpetas
+El número de serie del volumen es A0E0-6478
+C:.
+¦   arbol.txt
+¦   log.txt
+¦   
++---css
+¦       admin.css
+¦       dashboard.css
+¦       datatables.css
+¦       menu-fix.css
+¦       radio-player.css
+¦       tw.css
+¦       
++---js
+¦       admin.js
+¦       app.js
+¦       bootstrap.js
+¦       datatables-es.json
+¦       modal-enhancements.js
+¦       radio-player.js
+¦       
++---lang
+¦   +---en
+¦           auth.php
+¦           pagination.php
+¦           passwords.php
+¦           validation.php
+¦           
++---sass
+¦       app.scss
+¦       _variables.scss
+¦       
++---views
+    ¦   bischool-home.blade.php
+    ¦   carrusel.blade.php
+    ¦   data.blade.php
+    ¦   declaracion.blade.php
+    ¦   donate.blade.php
+    ¦   facebook.blade.php
+    ¦   footer.blade.php
+    ¦   history.blade.php
+    ¦   ivoox.blade.php
+    ¦   lumbrera.blade.php
+    ¦   mensajero.blade.php
+    ¦   meta.blade.php
+    ¦   mision.blade.php
+    ¦   mytunerpl.blade.php
+    ¦   nav.blade.php
+    ¦   news.blade.php
+    ¦   newsweek.blade.php
+    ¦   now.blade.php
+    ¦   objetivos.blade.php
+    ¦   ojos.blade.php
+    ¦   opinion.blade.php
+    ¦   pick.blade.php
+    ¦   player.blade.php
+    ¦   podcastplayer.blade.php
+    ¦   pqr.blade.php
+    ¦   privacy.blade.php
+    ¦   quote.blade.php
+    ¦   rights.blade.php
+    ¦   search.blade.php
+    ¦   showpostpdf.blade.php
+    ¦   single-feed.blade.php
+    ¦   social.blade.php
+    ¦   ticker.blade.php
+    ¦   verse.blade.php
+    ¦   week.blade.php
+    ¦   welcome.blade.php
+    ¦   worship-home.blade.php
+    ¦   worships.blade.php
+    ¦   
+    +---admin
+    ¦   ¦   create-pdf.blade.php
+    ¦   ¦   dashboard.blade.php
+    ¦   ¦   footer.blade.php
+    ¦   ¦   player-mini.blade.php
+    ¦   ¦   profile.blade.php
+    ¦   ¦   show-categories.blade.php
+    ¦   ¦   show-feeder.blade.php
+    ¦   ¦   
+    ¦   +---bischool
+    ¦   ¦       editmodal.blade.php
+    ¦   ¦       show-bis.blade.php
+    ¦   ¦       show-course.blade.php
+    ¦   ¦       view-bis.blade.php
+    ¦   ¦       
+    ¦   +---news
+    ¦   ¦       show-looks.blade.php
+    ¦   ¦       show-news.blade.php
+    ¦   ¦       view-news.blade.php
+    ¦   ¦       
+    ¦   +---partials
+    ¦   ¦       actions.blade.php
+    ¦   ¦       media.blade.php
+    ¦   ¦       universal-edit-modal.blade.php
+    ¦   ¦       
+    ¦   +---quote
+    ¦   ¦       bye.php
+    ¦   ¦       show-quote.blade.php
+    ¦   ¦       view-quote.blade.php
+    ¦   ¦       
+    ¦   +---role
+    ¦   ¦       show-role.blade.php
+    ¦   ¦       
+    ¦   +---schedule
+    ¦   ¦       show-schedule.blade.php
+    ¦   ¦       view-schedule.blade.php
+    ¦   ¦       
+    ¦   +---slider
+    ¦   ¦       editmodal.blade.php
+    ¦   ¦       show-slider.blade.php
+    ¦   ¦       view-slider.blade.php
+    ¦   ¦       
+    ¦   +---user
+    ¦   ¦       editmodal.blade.php
+    ¦   ¦       show-user.blade.php
+    ¦   ¦       view-user.blade.php
+    ¦   ¦       
+    ¦   +---worship
+    ¦           editmodal.blade.php
+    ¦           show-worship.blade.php
+    ¦           view-worship.blade.php
+    ¦           
+    +---auth
+    ¦   ¦   confirm-password.blade.php
+    ¦   ¦   forgot-password.blade.php
+    ¦   ¦   login.blade.php
+    ¦   ¦   reset-password.blade.php
+    ¦   ¦   verify-email.blade.php
+    ¦   ¦   verify.blade.php
+    ¦   ¦   
+    ¦   +---passwords
+    ¦           confirm.blade.php
+    ¦           email.blade.php
+    ¦           reset.blade.php
+    ¦           
+    +---biblia
+    ¦       index.blade.php
+    ¦       
+    +---components
+    ¦       application-logo.blade.php
+    ¦       auth-card.blade.php
+    ¦       auth-session-status.blade.php
+    ¦       auth-validation-errors.blade.php
+    ¦       button.blade.php
+    ¦       dropdown-link.blade.php
+    ¦       dropdown.blade.php
+    ¦       input.blade.php
+    ¦       label.blade.php
+    ¦       nav-link.blade.php
+    ¦       responsive-nav-link.blade.php
+    ¦       
+    +---errors
+    ¦       404.blade.php
+    ¦       
+    +---layouts
+        ¦   actions.blade.php
+        ¦   app.blade.php
+        ¦   flash.blade.php
+        ¦   footer.blade.php
+        ¦   guest.blade.php
+        ¦   main.blade.php
+        ¦   media.blade.php
+        ¦   menu.blade.php
+        ¦   panel.blade.php
+        ¦   sidebar.blade.php
+        ¦   suggestions.blade.php
+        ¦   topbar.blade.php
+        ¦   
+        +---modal
+                activate.blade.php
+                delete.blade.php
+                softdelete.blade.php
+                update.blade.php
+                

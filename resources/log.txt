@@ -49,3 +49,7 @@ Versión 4.7.9.1:
 Versión 4.7.9.2:
     Reproductor persistente.
     Algunos arreglos menores.
+
+Versión 4.8:
+    Implementación de la Biblia Reina-Valera 1960 para consulta pública.
+    Nuevo dashboard.

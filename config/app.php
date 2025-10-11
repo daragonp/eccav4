@@ -27,6 +27,8 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
+    'stream_url' => env('RADIO_STREAM_URL', ''),
+
 
     /*
     |--------------------------------------------------------------------------

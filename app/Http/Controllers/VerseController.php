@@ -6,214 +6,124 @@ use Carbon\Carbon;
 use App\Models\Verse;
 use Illuminate\Http\Request;
 use App\DataTables\VerseDataTable;
-use App\Http\Controllers\Controller;
 
 class VerseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-
         $this->validate($request, [
             'image' => 'required',
-            'date' => 'required',
+            'date'  => 'required',
         ], [
-            'image.required' => 'Debe seleccionar la fecha en la que se mostrará el recurso.',
-            'date.required' => 'Debe seleccionar la fecha en la que se mostrará el recurso.',
+            'image.required' => 'Debe seleccionar la imagen del recurso.',
+            'date.required'  => 'Debe seleccionar la fecha en la que se mostrará el recurso.',
         ]);
 
         $quote = new Verse();
 
-        $image = $request->image;
-
-        if ($image) {
-
-            $imgName = time() . '.' . $image->getClientOriginalExtension();
-
-            $request->image->move('images/bible', $imgName);
-
+        if ($request->hasFile('image')) {
+            $imgName = time().'.'.$request->file('image')->getClientOriginalExtension();
+            $request->file('image')->move('images/bible', $imgName);
             $quote->image = $imgName;
         }
 
-        $audio = $request->audio;
-
-        if ($audio) {
-
-            $audioName = time() . '.' . $audio->getClientOriginalExtension();
-
-            $request->audio->move('audio/quote', $audioName);
-
+        if ($request->hasFile('audio')) {
+            $audioName = time().'.'.$request->file('audio')->getClientOriginalExtension();
+            $request->file('audio')->move('audio/quote', $audioName);
             $quote->audio = $audioName;
         }
-        $video = $request->video;
 
-        if ($video) {
-
-            $videoName = time() . '.' . $video->getClientOriginalExtension();
-
-            $request->video->move('documents/quote', $videoName);
-
+        if ($request->hasFile('video')) {
+            $videoName = time().'.'.$request->file('video')->getClientOriginalExtension();
+            $request->file('video')->move('documents/quote', $videoName);
             $quote->video = $videoName;
         }
 
-        $quote->date = $request->input('date');
-
+        $quote->date       = $request->input('date');
         $quote->created_at = Carbon::now();
-
         $quote->updated_at = Carbon::now();
-
-        //dd($quote);
         $quote->save();
 
-        return redirect()->back()->with('success', 'El recurso ha sido creado');
+        return back()->with('success', 'El recurso ha sido creado');
     }
 
     public function view($id)
     {
-        //
-        $quote = Verse::findorFail($id);
-
+        $quote = Verse::findOrFail($id);
         return view('admin.quote.view-quote', compact('quote'));
     }
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show(VerseDataTable $dataTable)
     {
-        //
         return $dataTable->render('admin.quote.show-quote');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id, Request $request)
     {
-        //
         $this->validate($request, [
             'date' => 'required',
-
         ], [
             'date.required' => 'El campo día es obligatorio.',
         ]);
 
-        $quote = Verse::findorFail($id);
+        $quote = Verse::findOrFail($id);
 
-        $image = $request->image;
-
-        if ($image) {
-
-            $imgName = time() . '.' . $image->getClientOriginalExtension();
-
-            $request->image->move('images/bible', $imgName);
-
+        if ($request->hasFile('image')) {
+            $imgName = time().'.'.$request->file('image')->getClientOriginalExtension();
+            $request->file('image')->move('images/bible', $imgName);
             $quote->image = $imgName;
         }
 
-        $audio = $request->audio;
-
-        if ($audio) {
-
-            $audioName = time() . '.' . $audio->getClientOriginalExtension();
-
-            $request->audio->move('audio/quote', $audioName);
-
+        if ($request->hasFile('audio')) {
+            $audioName = time().'.'.$request->file('audio')->getClientOriginalExtension();
+            $request->file('audio')->move('audio/quote', $audioName);
             $quote->audio = $audioName;
         }
 
-        $video = $request->video;
-
-        if ($video) {
-
-            $videoName = time() . '.' . $video->getClientOriginalExtension();
-
-            $request->video->move('documents/quote', $videoName);
-
+        if ($request->hasFile('video')) {
+            $videoName = time().'.'.$request->file('video')->getClientOriginalExtension();
+            $request->file('video')->move('documents/quote', $videoName);
             $quote->video = $videoName;
         }
 
-
-        $quote->date = $request->input('date');
-
-        $quote->created_at = Carbon::now();
-
+        $quote->date       = $request->input('date');
+        // NO tocar created_at en edición
         $quote->updated_at = Carbon::now();
-
-
         $quote->save();
 
-        return redirect()->back()->with('success', 'El versículo ha sido actualizado');
+        return back()->with('success', 'El versículo ha sido actualizado');
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
         $quote = Verse::find($id);
-
         return view('admin.quote.update-quote', compact('quote'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
-        $quote = Verse::findorFail($id);
-
+        $quote = Verse::findOrFail($id);
         $quote->deleted_at = Carbon::now();
-
         $quote->save();
 
-        return redirect()->back()->with('success', 'La publicación no está disponible al público');
+        return back()->with('success', 'La publicación no está disponible al público');
     }
+
     public function activate($id)
     {
-        //
-        $quote = Verse::findorFail($id);
-
-        $quote->deleted_at = NULL;
-
+        $quote = Verse::findOrFail($id);
+        $quote->deleted_at = null;
         $quote->save();
 
-        return redirect()->back()->with('success', 'La publicación ha sido activada al público');
+        return back()->with('success', 'La publicación ha sido activada al público');
     }
 
     public function delete($id)
     {
-        //
-        $quote = Verse::findorFail($id);
-
+        $quote = Verse::findOrFail($id);
         $quote->delete();
 
-        return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
+        return back()->with('success', 'La publicación ha sido eliminada definitivamente.');
     }
 
     public function history()
@@ -224,17 +134,12 @@ class VerseController extends Controller
         $verses = Verse::whereBetween('date', [$twoMonthsAgo, $today])
             ->orderBy('date', 'desc')
             ->get()
-            ->groupBy(function ($item) {
-                return Carbon::parse($item->date)->translatedFormat('F Y');
-            });
+            ->groupBy(fn ($item) => Carbon::parse($item->date)->translatedFormat('F Y'));
 
-        $availableDates = Verse::pluck('date')->map(function ($date) {
-            return Carbon::parse($date)->format('Y-m-d');
-        });
+        $availableDates = Verse::pluck('date')->map(fn($date) => Carbon::parse($date)->format('Y-m-d'));
 
         return view('worship-home', compact('verses', 'availableDates'));
     }
-
 
     public function single($date)
     {

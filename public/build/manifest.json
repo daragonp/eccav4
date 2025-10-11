@@ -1,7 +1,27 @@
 {
+  "resources/css/admin.css": {
+    "file": "assets/admin-BmNo8OIP.css",
+    "src": "resources/css/admin.css",
+    "isEntry": true
+  },
   "resources/css/app.css": {
     "file": "assets/app-DApLW3KM.css",
     "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/dashboard.css": {
+    "file": "assets/dashboard-jKcPKb7i.css",
+    "src": "resources/css/dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/datatables.css": {
+    "file": "assets/datatables-C8orcQAL.css",
+    "src": "resources/css/datatables.css",
+    "isEntry": true
+  },
+  "resources/css/menu-fix.css": {
+    "file": "assets/menu-fix-DLE64Pzr.css",
+    "src": "resources/css/menu-fix.css",
     "isEntry": true
   },
   "resources/css/radio-player.css": {
@@ -10,14 +30,26 @@
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-D_tbcmSf.css",
+    "file": "assets/tw-DU4RlXDg.css",
     "src": "resources/css/tw.css",
     "isEntry": true
   },
+  "resources/js/admin.js": {
+    "file": "assets/admin-B7DGumop.js",
+    "name": "admin",
+    "src": "resources/js/admin.js",
+    "isEntry": true
+  },
   "resources/js/app.js": {
-    "file": "assets/app-B8FlA8iI.js",
+    "file": "assets/app-DULze0pw.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/datatables-es.json": {
+    "file": "assets/datatables-es-l0sNRNKZ.js",
+    "name": "datatables-es",
+    "src": "resources/js/datatables-es.json",
     "isEntry": true
   },
   "resources/js/radio-player.js": {

@@ -1,0 +1,1011 @@
+/* === IMPORTS === */
+@import 'datatables.net-dt';
+@import 'datatables.net-responsive-dt';
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* ==========================================================================
+   1) VARIABLES Y TEMA
+   ========================================================================== */
+:root {
+  /* Tokens del CSS #1 */
+  --green-dark: #2a3d1f;
+  --green-light: #8aa446;
+  --white: #fff;
+
+  /* Tokens del CSS #2 (marca) */
+  --brand-yellow: rgb(239, 252, 116);
+  --brand-green:  rgb(14, 104, 38);
+  --brand-blue:   rgb(80, 58, 242);
+  --brand-black:  rgb(0, 0, 0);
+
+  --ink:   #0f172a; /* slate-900 */
+  --paper: #ffffff;
+  --ring:  rgba(15,23,42,.08);
+  --brand-violet: #7c3aed;
+
+  /* Gradientes suaves de fondo */
+  --bg-grad-1: #0ea5e9;
+  --bg-grad-2: #22c55e;
+  --bg-grad-3: #a78bfa;
+}
+
+/* --- ESTILOS BASE DEL BODY --- */
+body {
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  @apply font-sans text-slate-800 min-h-svh;
+  background-color: #ffffff;
+  background:
+    radial-gradient(1200px 800px at -10% -10%, color-mix(in oklab, var(--bg-grad-1) 18%, white) 0%, transparent 60%),
+    radial-gradient(1200px 800px at 110% 0%,  color-mix(in oklab, var(--bg-grad-2) 16%, white) 0%, transparent 60%),
+    radial-gradient(800px 600px  at 50% 120%, color-mix(in oklab, var(--bg-grad-3) 12%, white) 0%, transparent 60%),
+    linear-gradient(180deg, #f8fafc, #ffffff);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  @apply text-slate-100;
+  background-color: #0f172a;
+  background:
+    radial-gradient(1200px 800px at -10% -10%, color-mix(in oklab, var(--bg-grad-1) 12%, #0f172a) 0%, transparent 60%),
+    radial-gradient(1200px 800px at 110% 0%,  color-mix(in oklab, var(--bg-grad-2) 10%, #0f172a) 0%, transparent 60%),
+    radial-gradient(800px 600px  at 50% 120%, color-mix(in oklab, var(--bg-grad-3) 10%, #0f172a) 0%, transparent 60%),
+    linear-gradient(180deg, #0b1220, #0f172a);
+}
+
+/* Evita "flash" al usar Alpine.js x-cloak */
+[x-cloak] { display: none !important; }
+
+/* ==========================================================================
+   2) LAYOUT DEL PANEL
+   ========================================================================== */
+.panel-shell { 
+  @apply min-h-svh w-full flex; 
+}
+
+.panel-sidebar {
+  @apply w-72 shrink-0 border-r bg-white/70 dark:bg-slate-900/90 backdrop-blur-md;
+  border-color: color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent);
+  box-shadow: 0 10px 30px rgba(0,0,0,.06);
+  transition: all 0.3s ease;
+}
+
+.panel-sidebar.collapsed {
+  @apply w-0 overflow-hidden;
+}
+
+.panel-main { 
+  @apply flex-1 min-w-0 transition-all duration-300 ease-in-out; 
+}
+
+.panel-sidebar.collapsed ~ .panel-main {
+  @apply ml-0;
+}
+
+.panel-topbar {
+  @apply sticky top-0 z-40 h-14 bg-white/80 dark:bg-slate-900/90 backdrop-blur-md flex items-center justify-between px-4;
+  border-bottom: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ==========================================================================
+   3) COMPONENTES BASE
+   ========================================================================== */
+.panel { 
+  @apply rounded-xl bg-white dark:bg-slate-900 shadow-md ring-1 ring-gray-200 dark:ring-gray-700 p-6 sm:p-8; 
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card {
+  @apply rounded-2xl bg-white/80 dark:bg-slate-900/90 backdrop-blur-lg;
+  box-shadow: 0 10px 20px rgba(2,6,23,.06), 0 2px 10px rgba(2,6,23,.04);
+  border: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover { 
+  box-shadow: 0 14px 28px rgba(2,6,23,.08), 0 6px 16px rgba(2,6,23,.06); 
+}
+
+.card-body { @apply p-5; }
+
+.card-solid { 
+  @apply rounded-xl bg-white dark:bg-slate-900 shadow-md ring-1 ring-gray-200 dark:ring-gray-700; 
+  transition: background-color 0.3s ease;
+}
+
+.dark .card.brand, .card.brand-dark { 
+  background-color: #2a3d1f; 
+  color: #fff; 
+}
+
+.dark .card.brand p, .card.brand-dark p { 
+  color: #f9fafb; 
+}
+
+/* Tarjetas Dashboard */
+.card-stats-users { 
+  @apply rounded-2xl bg-white/80 dark:bg-slate-900/90 backdrop-blur-lg; 
+  box-shadow: 0 10px 20px rgba(2,6,23,.06), 0 2px 10px rgba(2,6,23,.04); 
+  border: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent); 
+  background: linear-gradient(135deg, rgb(239, 252, 116), #fff8b3); 
+  transition: background-color 0.3s ease;
+}
+
+.dark .card-stats-users { 
+  background: linear-gradient(135deg, #475569, #334155); 
+  color: white; 
+}
+
+.card-stats-verses { 
+  @apply rounded-2xl text-white backdrop-blur-lg; 
+  box-shadow: 0 10px 20px rgba(2,6,23,.06), 0 2px 10px rgba(2,6,23,.04); 
+  border: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent); 
+  background: linear-gradient(135deg, #a5b4fc, rgb(80, 58, 242)); 
+  transition: background-color 0.3s ease;
+}
+
+.dark .card-stats-verses { 
+  background: linear-gradient(135deg, #6366f1, #4f46e5); 
+}
+
+.card-stats-schedules { 
+  @apply rounded-2xl text-white backdrop-blur-lg; 
+  box-shadow: 0 10px 20px rgba(2,6,23,.06), 0 2px 10px rgba(2,6,23,.04); 
+  border: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent); 
+  background: linear-gradient(135deg, #bbf7d0, rgb(14, 104, 38)); 
+  transition: background-color 0.3s ease;
+}
+
+.dark .card-stats-schedules { 
+  background: linear-gradient(135deg, #15803d, #166534); 
+}
+
+.card-stats-banners, .card-stats-news { 
+  @apply rounded-2xl text-white backdrop-blur-lg; 
+  box-shadow: 0 10px 20px rgba(2,6,23,.06), 0 2px 10px rgba(2,6,23,.04); 
+  border: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent); 
+  background: linear-gradient(135deg, #7c3aed, #d8b4fe); 
+  transition: background-color 0.3s ease;
+}
+
+.dark .card-stats-banners, .dark .card-stats-news { 
+  background: linear-gradient(135deg, #7c3aed, #6d28d9); 
+}
+
+.dark .card-stats-banners, .dark .card-stats-news {
+  color: white; 
+}
+
+.alert { 
+  @apply p-4 rounded-lg mb-4 border; 
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.alert-danger { 
+  @apply bg-red-100 border-red-400 text-red-700 dark:bg-red-900/30 dark:border-red-600 dark:text-red-300; 
+}
+
+.alert-success { 
+  @apply bg-green-100 border-green-400 text-green-700 dark:bg-green-900/30 dark:border-green-600 dark:text-green-300; 
+}
+
+.table-wrap { @apply overflow-x-auto; }
+
+.btn { 
+  @apply inline-flex items-center gap-2 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition; 
+}
+
+.btn i { @apply mr-2; }
+
+.btn-ghost { 
+  @apply text-slate-700 dark:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-800/50; 
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary { 
+  @apply bg-gray-300 text-gray-900 hover:bg-gray-400 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600; 
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-primary { 
+  background: linear-gradient(135deg, rgb(14, 104, 38), color-mix(in oklab, rgb(14, 104, 38) 70%, rgb(239, 252, 116))); 
+  @apply text-white shadow; 
+  transition: filter 0.3s ease;
+}
+
+.btn-primary:hover { 
+  filter: brightness(1.05); 
+}
+
+.btn-primary-plain { 
+  @apply bg-[#2a3d1f] text-white hover:bg-[#8aa446]; 
+  transition: background-color 0.3s ease;
+}
+
+.btn-info { 
+  @apply text-white; 
+  background: linear-gradient(135deg, #2563eb, #3b82f6); 
+  transition: filter 0.3s ease;
+}
+
+.btn-success { 
+  @apply text-white; 
+  background: linear-gradient(135deg, #16a34a, #22c55e); 
+  transition: filter 0.3s ease;
+}
+
+.btn-warning { 
+  @apply text-black; 
+  background: linear-gradient(135deg, #f59e0b, #fbbf24); 
+  transition: filter 0.3s ease;
+}
+
+.btn-danger { 
+  @apply text-white; 
+  background: linear-gradient(135deg, #dc2626, #ef4444); 
+  transition: filter 0.3s ease;
+}
+
+.btn-info:hover, .btn-success:hover, .btn-warning:hover, .btn-danger:hover { 
+  filter: brightness(1.05); 
+}
+
+.chip-brand { 
+  @apply inline-flex items-center gap-2 rounded-full text-xs px-2.5 py-1 font-medium; 
+  background: color-mix(in oklab, rgb(239, 252, 116) 70%, #fff); 
+  color: rgb(14, 104, 38); 
+  border: 1px solid color-mix(in oklab, rgb(14, 104, 38) 55%, transparent); 
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==========================================================================
+   4) MODALES
+   ========================================================================== */
+.tw-modal-backdrop {
+  @apply fixed inset-0 bg-black/60 z-40 hidden;
+  transition: opacity 0.3s ease;
+}
+
+.tw-modal-backdrop.open {
+  @apply block;
+}
+
+.tw-modal {
+  @apply fixed inset-0 z-[9999] hidden p-4;
+}
+
+.tw-modal.open {
+  display: grid;
+  place-items: center;
+}
+
+.tw-modal-panel {
+  @apply w-full max-w-2xl rounded-3xl bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.tw-modal-header {
+  @apply px-6 py-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between;
+  transition: border-color 0.3s ease;
+}
+
+.tw-modal-body {
+  @apply px-6 py-5;
+  flex: 1;
+  overflow-y: auto;
+  max-height: calc(90vh - 140px);
+}
+
+.tw-modal-footer {
+  @apply px-6 py-5 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3;
+  transition: border-color 0.3s ease;
+  flex-shrink: 0;
+  margin-top: auto;
+  position: sticky;
+  bottom: 0;
+  background: inherit;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent);
+}
+
+#backdrop { 
+  @apply fixed inset-0 bg-black/50 z-40 hidden; 
+  transition: opacity 0.3s ease;
+}
+
+#backdrop.open { 
+  @apply block; 
+}
+
+.panel-shell .modal {
+  display: none !important;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-shell .modal.bs-open { 
+  display: flex !important; 
+}
+
+.panel-shell .modal .modal-dialog { 
+  width: 100%; 
+  max-width: 36rem; 
+  margin: 0 1rem; 
+}
+
+.panel-shell .modal .modal-content {
+  border-radius: 1rem;
+  background: rgba(255,255,255,.98);
+  z-index: 10000;
+  transition: background-color 0.3s ease;
+}
+
+.dark .panel-shell .modal .modal-content { 
+  background: rgba(15,23,42,.98); 
+  color: #fff; 
+}
+
+/* ==========================================================================
+   5) DATATABLES
+   ========================================================================== */
+.dataTables_wrapper .dataTables_paginate .paginate_button { 
+  @apply rounded-lg border border-transparent px-2.5 py-1.5 mx-0.5; 
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current { 
+  @apply bg-slate-900 text-white dark:bg-white dark:text-slate-900; 
+}
+
+.dataTables_wrapper .dataTables_filter input { 
+  @apply rounded-lg border border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-900/70 px-3 py-2 text-slate-900 dark:text-slate-100; 
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.dataTables_wrapper .dataTables_length select { 
+  @apply rounded-lg border border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-900/70 px-2 py-1.5 text-slate-900 dark:text-slate-100; 
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+table.dataTable>thead>tr>th { 
+  @apply bg-white/60 dark:bg-slate-900/50; 
+  border-bottom: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent); 
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+table.dataTable.no-footer { 
+  border-bottom: 1px solid color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent); 
+  transition: border-color 0.3s ease;
+}
+
+.dark table.dataTable>thead>tr>th {
+  @apply bg-slate-900/50;
+  border-bottom-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark table.dataTable.no-footer {
+  border-bottom-color: rgba(30, 41, 59, 0.8);
+}
+
+/* Hacer las filas de la tabla más compactas */
+table.dataTable tbody tr {
+  @apply align-top;
+}
+
+table.dataTable tbody td {
+  @apply py-2 align-top;
+}
+
+/* Reducir el tamaño de los badges de días */
+.day-badge {
+  @apply px-1.5 py-0.5 text-xs;
+}
+
+/* Asegurar que el texto no se desborde */
+.text-truncate {
+  @apply truncate;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* DataTables overrides: toolbar y controles alineados */
+.dataTables_wrapper .dt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+/* Anula floats del skin clásico */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  float: none !important;
+}
+
+/* Etiquetas length/filter en una línea con su control */
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin: 0;
+  font-weight: 500;
+  color: var(--ink, #0f172a);
+}
+
+/* Select de "Mostrar N" consistente con inputs del tema */
+.dataTables_wrapper .dataTables_length select {
+  height: 2.25rem;
+  padding: .25rem .5rem;
+  border: 1px solid rgba(15,23,42,.15);
+  border-radius: .5rem;
+  background-color: #fff;
+}
+
+html.dark .dataTables_wrapper .dataTables_length select {
+  border-color: rgba(148,163,184,.25);
+  background-color: #0b1220;
+  color: #e2e8f0;
+}
+
+/* Input de búsqueda */
+.dataTables_wrapper .dataTables_filter input {
+  height: 2.25rem;
+  padding: .5rem .75rem;
+  border: 1px solid rgba(15,23,42,.15);
+  border-radius: .5rem;
+  background-color: #fff;
+}
+
+html.dark .dataTables_wrapper .dataTables_filter input {
+  border-color: rgba(148,163,184,.25);
+  background-color: #0b1220;
+  color: #e2e8f0;
+}
+
+/* Zona inferior: info + paginación en fila */
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+/* Botones de paginación coherentes con el tema */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding: .5rem .75rem;
+  border-radius: .5rem;
+  border: 1px solid transparent;
+  color: #334155 !important;
+  background: transparent;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  color: #111827 !important;
+  border-color: rgba(15,23,42,.15);
+  background: #f8fafc;
+}
+
+html.dark .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+html.dark .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  color: #e2e8f0 !important;
+  border-color: rgba(148,163,184,.25);
+  background: rgba(148,163,184,.08);
+}
+
+/* Asegura separación vertical en móviles cuando se parte en 2 líneas */
+.dataTables_wrapper .dt-toolbar,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ==========================================================================
+   6) MENÚ LATERAL
+   ========================================================================== */
+.panel-sidebar a { 
+  @apply rounded-lg mx-2 my-0.5 transition-colors; 
+}
+
+.panel-sidebar a:hover { 
+  background: linear-gradient(90deg, rgba(255,255,255,.65), rgba(255,255,255,0)); 
+}
+
+.dark .panel-sidebar a:hover { 
+  background: linear-gradient(90deg, rgba(30,41,59,0.8), rgba(30,41,59,0)); 
+}
+
+#userMenu { 
+  z-index: 50; 
+  @apply bg-white dark:bg-slate-900;
+  transition: background-color 0.3s ease;
+}
+
+/* Menú colapsado (iconos) */
+#sidebar-collapsed {
+  @apply fixed left-0 top-0 h-full w-16 bg-white dark:bg-slate-900 shadow-lg z-30;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+#sidebar-collapsed.open {
+  transform: translateX(0);
+}
+
+/* Ajuste del panel principal cuando el sidebar colapsado está visible */
+#sidebar-collapsed.open ~ .panel-main {
+  @apply ml-16;
+}
+
+/* Elementos de navegación */
+.nav-item {
+  @apply flex items-center gap-3 px-3 py-2.5 rounded-lg mx-2 my-0.5 transition-all duration-200;
+}
+
+.nav-item:hover {
+  @apply bg-slate-100 dark:bg-slate-800;
+}
+
+.nav-item.active {
+  @apply bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-l-4 border-green-600;
+}
+
+.nav-icon {
+  @apply w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400;
+}
+
+.nav-item.active .nav-icon {
+  @apply bg-gradient-to-br from-green-600 to-emerald-600 text-white;
+}
+
+.nav-text {
+  @apply font-medium text-slate-700 dark:text-slate-300;
+}
+
+.nav-item.active .nav-text {
+  @apply font-semibold text-slate-900 dark:text-white;
+}
+
+/* Secciones del menú */
+.nav-section {
+  @apply mt-4;
+}
+
+.nav-section-title {
+  @apply px-5 py-1 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider;
+}
+
+/* Menú colapsado */
+.nav-item-collapsed {
+  @apply flex items-center justify-center w-12 h-12 rounded-lg mx-auto my-1 transition-all duration-200;
+}
+
+.nav-item-collapsed:hover {
+  @apply bg-slate-100 dark:bg-slate-800;
+}
+
+.nav-item-collapsed.active {
+  @apply bg-gradient-to-br from-green-600 to-emerald-600 text-white;
+}
+
+.nav-icon-collapsed {
+  @apply text-slate-600 dark:text-slate-400 text-lg;
+}
+
+.nav-item-collapsed.active .nav-icon-collapsed {
+  @apply text-white;
+}
+
+/* Forzar visibilidad de los íconos en el menú colapsado */
+#sidebar-collapsed .nav-icon-collapsed,
+#sidebar-collapsed .fa,
+#sidebar-collapsed .fas,
+#sidebar-collapsed .far,
+#sidebar-collapsed .fab {
+  display: block;
+  visibility: visible;
+}
+
+/* Menú de usuario */
+.menu-item {
+  @apply flex items-center gap-3 px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors w-full text-left;
+}
+
+.menu-item:hover {
+  @apply bg-slate-100 dark:bg-slate-800;
+}
+
+/* ==========================================================================
+   7) COMPONENTES ESPECÍFICOS
+   ========================================================================== */
+/* Mini reproductor */
+#miniPlayer {
+  @apply bg-white/80 dark:bg-slate-900/90;
+  border-color: color-mix(in oklab, rgba(15,23,42,.08) 100%, transparent);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dark #miniPlayer {
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark #miniPlayer .text-slate-500 {
+  @apply text-slate-400;
+}
+
+.dark #miniPlayer audio {
+  filter: invert(1);
+}
+
+/* Formularios */
+input, textarea, select {
+  @apply bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-700;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.dark input:focus, 
+.dark textarea:focus, 
+.dark select:focus {
+  border-color: rgb(99, 102, 241);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Enlaces */
+a {
+  @apply text-slate-700 dark:text-slate-300;
+  transition: color 0.3s ease;
+}
+
+.dark a:hover {
+  color: rgb(203, 213, 225);
+}
+
+/* Separadores */
+hr, .border-b, .border-t {
+  @apply border-slate-200 dark:border-slate-700;
+  transition: border-color 0.3s ease;
+}
+
+/* Mejoras para los campos de archivo */
+.file-input-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+.file-input-wrapper input[type=file] {
+  position: absolute;
+  left: -9999px;
+}
+
+.file-input-label {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid;
+  border-radius: 0.375rem;
+  background-color: white;
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dark .file-input-label {
+  background-color: #1f2937;
+  color: #f9fafb;
+  border-color: #374151;
+}
+
+.file-input-label:hover {
+  background-color: #f9fafb;
+}
+
+.dark .file-input-label:hover {
+  background-color: #374151;
+}
+
+/* Estilos para las secciones de archivos */
+.file-section {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dark .file-section {
+  border-color: #374151;
+}
+
+.file-section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.file-current {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+  background-color: #f3f4f6;
+  border-radius: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.dark .file-current {
+  background-color: #1f2937;
+}
+
+.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Mejoras para los iconos de acciones */
+.action-icon {
+  transition: all 0.2s ease;
+}
+
+.action-icon:hover {
+  transform: scale(1.1);
+}
+
+.action-icon.active {
+  color: #10b981;
+}
+
+.action-icon.inactive {
+  color: #f59e0b;
+}
+
+.action-icon.deleted {
+  color: #ef4444;
+}
+
+/* ==========================================================================
+   8) MODO OSCURO
+   ========================================================================== */
+/* Forzar modo oscuro en componentes específicos */
+.dark .panel-sidebar {
+  background-color: rgba(15, 23, 42, 0.95);
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark .panel-topbar {
+  background-color: rgba(15, 23, 42, 0.95);
+  border-bottom-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark .card {
+  background-color: rgba(15, 23, 42, 0.95);
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark .tw-modal-panel {
+  background-color: rgba(15, 23, 42, 0.98);
+}
+
+.dark #userMenu {
+  background-color: rgba(15, 23, 42, 0.98);
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark .tw-modal-header,
+.dark .tw-modal-footer {
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+/* Asegurar que los textos sean legibles en modo oscuro */
+.dark .text-slate-500 {
+  color: rgb(148, 163, 184);
+}
+
+.dark .text-slate-400 {
+  color: rgb(100, 116, 139);
+}
+
+.dark .text-slate-600 {
+  color: rgb(71, 85, 105);
+}
+
+.dark .text-slate-700 {
+  color: rgb(51, 65, 85);
+}
+
+/* Mejorar la apariencia de las tablas en modo oscuro */
+.dark table.dataTable {
+  background-color: rgba(15, 23, 42, 0.95);
+}
+
+.dark table.dataTable tbody tr {
+  background-color: transparent;
+}
+
+.dark table.dataTable tbody tr:nth-child(even) {
+  background-color: rgba(30, 41, 59, 0.3);
+}
+
+.dark table.dataTable tbody tr:hover {
+  background-color: rgba(30, 41, 59, 0.5);
+}
+
+/* Mejorar la apariencia de los botones en modo oscuro */
+.dark .btn-ghost {
+  color: rgb(203, 213, 225);
+}
+
+.dark .btn-ghost:hover {
+  background-color: rgba(30, 41, 59, 0.5);
+}
+
+/* Mejorar la apariencia de las alertas en modo oscuro */
+.dark .alert {
+  background-color: rgba(30, 41, 59, 0.8);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+/* Mejorar la apariencia de los chips en modo oscuro */
+.dark .chip-brand {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: rgb(203, 213, 225);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+/* Mejorar la apariencia del mini reproductor en modo oscuro */
+.dark #miniPlayer {
+  background-color: rgba(15, 23, 42, 0.95);
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark #miniPlayer .text-slate-500 {
+  color: rgb(148, 163, 184);
+}
+
+/* Mejorar la apariencia de los botones de paginación en modo oscuro */
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: rgb(203, 213, 225);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background-color: rgba(51, 65, 85, 0.8);
+}
+
+.dark .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background-color: rgb(99, 102, 241);
+  color: white;
+}
+
+/* Mejorar la apariencia de los controles de DataTables en modo oscuro */
+.dark .dataTables_wrapper .dataTables_filter input,
+.dark .dataTables_wrapper .dataTables_length select {
+  background-color: rgba(30, 41, 59, 0.8);
+  color: rgb(241, 245, 249);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+/* Asegurar que los separadores sean visibles en modo oscuro */
+.dark hr,
+.dark .border-b,
+.dark .border-t {
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+/* Mejorar la apariencia de los menús desplegables en modo oscuro */
+.dark .dropdown-menu {
+  background-color: rgba(15, 23, 42, 0.98);
+  border-color: rgba(30, 41, 59, 0.8);
+}
+
+.dark .dropdown-item {
+  color: rgb(203, 213, 225);
+}
+
+.dark .dropdown-item:hover {
+  background-color: rgba(30, 41, 59, 0.5);
+}
+
+/* ==========================================================================
+   9) ANIMACIONES Y RESPONSIVE
+   ========================================================================== */
+/* Animaciones */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Efectos para pantallas pequeñas */
+@media (max-width: 768px) {
+  .panel-sidebar {
+    @apply fixed inset-y-0 left-0 z-40 transform -translate-x-full;
+  }
+  
+  .panel-sidebar.open {
+    @apply translate-x-0;
+  }
+  
+  #sidebar-collapsed {
+    display: none;
+  }
+  
+  .panel-sidebar.open ~ .panel-main {
+    @apply ml-0;
+  }
+}
+
+/* Ajustes adicionales para pantallas medianas */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .panel-sidebar {
+    @apply w-64;
+  }
+}
+
+/* Controles de DataTables en línea */
+.dt-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.dt-length, .dt-filter {
+    flex: 0 0 auto;
+}
+
+.dt-length {
+    order: 1;
+}
+
+.dt-filter {
+    order: 2;
+}
+
+/* Asegurar que en móviles se muestren uno debajo del otro */
+@media (max-width: 768px) {
+    .dt-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .dt-length, .dt-filter {
+        width: 100%;
+    }
+}

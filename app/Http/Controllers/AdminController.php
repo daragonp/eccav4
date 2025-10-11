@@ -12,7 +12,7 @@ class AdminController extends Controller
 {
     //
 
-    public function index()
+    /*  public function index()
     {
 
         $user = auth()->user();
@@ -21,7 +21,25 @@ class AdminController extends Controller
         } else {
             return view('auth\login');
         }
+    } */
+
+    public function index()
+    {
+        $stats = [
+            'users'     => \App\Models\User::count(),
+            'verses'    => \App\Models\Verse::count(),
+            'schedules' => \App\Models\Schedule::count(),
+            'banners'   => \App\Models\Banner::count(),
+            'news'      => \App\Models\News::count(),
+        ];
+
+        $latestVerses = \App\Models\Verse::orderBy('date', 'desc')->take(5)->get(['id', 'date', 'image', 'video']);
+        $latestNews   = \App\Models\News::orderBy('created_at', 'desc')->take(5)->get(['id', 'title', 'created_at']);
+
+        return view('admin.dashboard', compact('stats', 'latestVerses', 'latestNews'));
     }
+
+
     public function profile()
     {
 

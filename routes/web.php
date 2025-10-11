@@ -15,6 +15,8 @@ use App\Http\Controllers\WorshipController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\HomeContentController;
+use App\Http\Controllers\BibleController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -76,6 +78,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/delete-news/{id}', [NewsController::class, 'destroy']);
     Route::get('/activate-news/{id}', [NewsController::class, 'activate']);
     Route::get('/realdelete-news/{id}', [NewsController::class, 'delete']);
+    Route::get('/admin/news', [NewsController::class, 'adminindex'])->name('news.index');
 
     //Rutas para administrador: Roles de usuario
     Route::get('/allroles', [RoleController::class, 'index']);
@@ -171,3 +174,25 @@ Route::get('/worships', [RutasController::class, 'worship']);
 Route::fallback(function () {
     return view('errors.404');
 });
+
+
+Route::prefix('biblia')->name('biblia.')->group(function () {
+    // Página
+    Route::get('/', [BibleController::class, 'index'])->name('index');
+
+    // Primero las rutas específicas (para que no las capture {libro})
+    Route::get('/api/buscar', [BibleController::class, 'apiSearch'])->name('api.search');
+    Route::get('/api/libros', [BibleController::class, 'apiBooks'])->name('api.books');
+
+    // Luego las dinámicas, con restricciones
+    Route::get('/api/{libro}/{cap}', [BibleController::class, 'apiChapter'])
+        ->where('libro', '[a-z0-9\-]+')
+        ->where('cap', '\d+')
+        ->name('api.chapter');
+
+    Route::get('/api/{libro}', [BibleController::class, 'apiChapters'])
+        ->where('libro', '[a-z0-9\-]+')
+        ->name('api.chapters');
+});
+
+

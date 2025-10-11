@@ -98,9 +98,11 @@ class ScheduleController extends Controller
         return redirect('/show-schedule')->with('success', 'Programa agregado correctamente.');
     }
 
-    public function show(ScheduleDataTable $schedule)
+    
+
+    public function show(ScheduleDataTable $dataTable)
     {
-        return $schedule->render('admin.schedule.show-schedule');
+        return $dataTable->render('admin.schedule.show-schedule');
     }
 
     /**
@@ -195,8 +197,8 @@ class ScheduleController extends Controller
         // Importante: obtener todos los días asociados a la misma emission_key
         // para marcar correctamente los checkboxes en el formulario.
         $daysSelected = Schedule::where('emission_key', $schedule->emission_key)
-                                ->pluck('day')
-                                ->toArray();
+            ->pluck('day')
+            ->toArray();
 
         // Asegúrate de que la variable que pasas a la vista coincida con lo que tu Blade espera,
         // que según tu formulario es '$tableM'.
