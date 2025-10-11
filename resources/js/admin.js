@@ -3,18 +3,50 @@ import './modal-enhancements.js';
 
 // --- El resto de tu código existente en admin.js ---
 
+// Script para prevenir parpadeo del tema y configurar icono inicial
+(function() {
+    // Obtener el tema guardado o la preferencia del sistema
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+
+    // Aplicar el tema inmediatamente
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+
+    // Guardar el tema si no estaba guardado
+    if (!savedTheme) {
+        localStorage.setItem('theme', theme);
+    }
+    
+    // Establecer el estado inicial del icono
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) {
+        if (theme === 'dark') {
+            themeIcon.innerHTML = '<i class="fa-sun"></i>';
+        } else {
+            themeIcon.innerHTML = '<i class="fa-moon"></i>';
+        }
+    }
+})();
+
 // JS por delegación para Sidebar, Menú usuario, modales y alertas
 document.addEventListener('click', (e) => {
   const t = e.target;
 
   // --- Sidebar ---
   if (t.closest('#toggleSidebar')) {
-    document.querySelector('.panel-sidebar')?.classList.toggle('hidden');
+    toggleSidebar();
   }
 
   // --- User menu ---
-  if (t.closest('.panel-topbar .btn.btn-ghost') && !t.closest('#themeToggle')) {
-    document.getElementById('userMenu')?.classList.toggle('hidden');
+  if (t.closest('#userMenuBtn')) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleUserMenu();
   }
 
   // --- Tailwind modal open ---
@@ -350,20 +382,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const cancelLogout = document.getElementById('cancelLogout');
   const backdrop = document.getElementById('backdrop');
   
-  let sidebarOpen = true;
+  let sidebarOpen = false;
   let collapsedOpen = false;
   
-  // Toggle sidebar
-  toggleSidebarBtn.addEventListener('click', function() {
+  // Función para toggle del sidebar
+  function toggleSidebar() {
     sidebarOpen = !sidebarOpen;
     
     if (window.innerWidth < 768) {
       // Para pantallas pequeñas: mostrar/ocultar sidebar completo
       if (sidebarOpen) {
         sidebar.classList.add('open');
-        sidebarCollapsed.classList.add('-translate-x-full');
+        backdrop.classList.add('open');
       } else {
         sidebar.classList.remove('open');
+        backdrop.classList.remove('open');
       }
     } else {
       // Para pantallas grandes: colapsar/expandir sidebar
@@ -377,23 +410,44 @@ document.addEventListener('DOMContentLoaded', function() {
         collapsedOpen = true;
       }
     }
+  }
+  
+  // Función para toggle del menú de usuario
+  function toggleUserMenu() {
+    userMenu.classList.toggle('hidden');
+  }
+  
+  // Toggle sidebar
+  toggleSidebarBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleSidebar();
   });
   
   // Toggle user menu
   userMenuBtn.addEventListener('click', function(e) {
+    e.preventDefault();
     e.stopPropagation();
-    
-    // Si el sidebar está colapsado, también abrir el menú de usuario
-    if (!sidebarOpen && window.innerWidth >= 768) {
-      userMenu.classList.toggle('hidden');
-    } else {
-      userMenu.classList.toggle('hidden');
-    }
+    toggleUserMenu();
   });
   
   // Close user menu when clicking outside
   document.addEventListener('click', function() {
     userMenu.classList.add('hidden');
+  });
+  
+  // Close sidebar when clicking backdrop (solo en móviles)
+  backdrop.addEventListener('click', function() {
+    if (window.innerWidth < 768 && sidebarOpen) {
+      sidebarOpen = false;
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('open');
+    }
+    
+    // Cerrar modales si están abiertos
+    document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
+    backdrop.classList.remove('open');
   });
   
   // Logout functionality
@@ -409,10 +463,19 @@ document.addEventListener('DOMContentLoaded', function() {
     backdrop.classList.remove('open');
   });
   
-  // Close modals when clicking backdrop
-  backdrop.addEventListener('click', function() {
-    logoutModal.classList.remove('open');
-    backdrop.classList.remove('open');
+  // Cerrar sidebar al hacer clic en un enlace (solo en móviles)
+  const sidebarLinks = sidebar.querySelectorAll('a');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      if (window.innerWidth < 768) {
+        // Permitir que el enlace se procese antes de cerrar el sidebar
+        setTimeout(() => {
+          sidebarOpen = false;
+          sidebar.classList.remove('open');
+          backdrop.classList.remove('open');
+        }, 300); // Pequeño retraso para asegurar que el enlace se procese
+      }
+    });
   });
   
   // Handle responsive sidebar

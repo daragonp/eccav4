@@ -216,18 +216,6 @@
                             <label for="broadcast" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha de emisión</label>
                             <input id="broadcast" type="date" name="broadcast" value="{{ $tableM->broadcast ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
-                        <div class="md:col-span-2">
-                            <label for="title" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Título</label>
-                            <input id="title" type="text" name="title" value="{{ $tableM->title ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="abstract" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Resumen</label>
-                            <textarea id="abstract" name="abstract" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ $tableM->abstract ?? '' }}</textarea>
-                        </div>
-                        <div>
-                            <label for="autor" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Autor</label>
-                            <input id="autor" type="text" name="autor" value="{{ $tableM->autor ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-                        </div>
                     </div>
 
                     {{-- Sección de archivos --}}
@@ -333,11 +321,11 @@
                         </div>
                         <div>
                             <label for="title" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Título</label>
-                            <input id="title" type="text" name="title" value="{{ $tableM->title ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            <input id="title" type="text" name="title" value="{{ $tableM->title ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div class="md:col-span-2">
                             <label for="verse" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Versículo</label>
-                            <input id="verse" type="text" name="verse" value="{{ $tableM->verse ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            <input id="verse" type="text" name="verse" value="{{ $tableM->verse ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                         <div class="md:col-span-2">
                             <label for="abstract" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Resumen</label>

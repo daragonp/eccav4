@@ -14,11 +14,11 @@
   <a href="{{ $view ?? '#' }}" class="btn btn-ghost text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" title="Ver">
     <i class="fa-solid fa-eye"></i>
   </a>
-
+<!-- 
   {{-- Editar (abre modal por fila) --}}
   <button class="btn btn-ghost text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300" title="Editar" data-modal-open="{{ $modalId }}">
     <i class="fa-solid fa-pen-to-square"></i>
-  </button>
+  </button> -->
 
   {{-- Activar / Desactivar --}}
   @if ($isDeleted)

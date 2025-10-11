@@ -14,28 +14,6 @@
     <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
     <title>@yield('title', 'Panel') — Emancipación Cristiana Afro</title>
 
-    <!-- Script para prevenir parpadeo del tema -->
-    <script>
-        (function() {
-            // Obtener el tema guardado o la preferencia del sistema
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-
-            // Aplicar el tema inmediatamente
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-
-            // Guardar el tema si no estaba guardado
-            if (!savedTheme) {
-                localStorage.setItem('theme', theme);
-            }
-        })();
-    </script>
-
     {{-- Google Fonts (evita @import en CSS que rompía PostCSS) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -175,7 +153,6 @@
         </aside>
 
         {{-- Sidebar colapsado (iconos) --}}
-        {{-- Sidebar colapsado (iconos) --}}
         <aside id="sidebar-collapsed" class="fixed left-0 top-0 h-full w-16 bg-white dark:bg-slate-900 shadow-lg z-30">
             <div class="flex flex-col h-full">
                 {{-- Logo --}}
@@ -267,13 +244,21 @@
                     <button id="toggleSidebar" class="btn btn-ghost" aria-label="Abrir/cerrar menú">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <h1 class="font-semibold">@yield('pageheading', 'Panel')</h1>
+                    <h1 class="page-title font-semibold">@yield('pageheading', 'Panel')</h1>
                 </div>
 
                 <div class="flex items-center gap-2">
+                    {{-- Enlace al dashboard de la emisora con texto --}}
+                    <a href="https://a12.asurahosting.com/station/199/" target="_blank" class="station-icon" title="Dashboard de la emisora">
+                        <i class="fas fa-broadcast-tower"></i>
+                        <span class="station-text">Emisora</span>
+                    </a>
+                    
                     {{-- Toggle dark/light --}}
                     <button id="themeToggle" class="btn btn-ghost" aria-label="Cambiar tema">
-                        <i id="themeIcon" class="fa-solid fa-moon"></i>
+                        <i id="themeIcon" class="fas">
+                            <!-- El icono se establecerá dinámicamente -->
+                        </i>
                     </button>
 
                     {{-- Menú de usuario --}}
@@ -304,7 +289,7 @@
                                 </div>
 
                                 {{-- Opciones del menú --}}
-                                <div class="py-2">
+                                <div class="py-2 max-h-96 overflow-y-auto">
                                     <a href="{{ url('profile') }}" class="menu-item" role="menuitem">
                                         <div class="flex items-center gap-3">
                                             <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -315,7 +300,7 @@
                                                 <div class="text-xs text-slate-500 dark:text-slate-400">Administra tu información personal</div>
                                             </div>
                                         </div>
-                                    </a><!-- 
+                                    </a>
 
                                     <a href="{{ url('settings') }}" class="menu-item" role="menuitem">
                                         <div class="flex items-center gap-3">
@@ -339,7 +324,20 @@
                                                 <div class="text-xs text-slate-500 dark:text-slate-400">Envía tus comentarios</div>
                                             </div>
                                         </div>
-                                    </a> -->
+                                    </a>
+                                    
+                                    {{-- Enlace al dashboard de la emisora --}}
+                                    <a href="https://a12.asurahosting.com/station/199/" target="_blank" class="menu-item" role="menuitem">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                                <i class="fas fa-broadcast-tower text-slate-600 dark:text-slate-400"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-slate-900 dark:text-white">Dashboard Emisora</div>
+                                                <div class="text-xs text-slate-500 dark:text-slate-400">Administración de la emisora</div>
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 {{-- Pie del menú --}}
@@ -388,10 +386,31 @@
                 </div>
                 @endif
 
+                <!-- Tarjeta mejorada con mejor tipografía y diseño -->
                 <div class="card">
-                    <div class="card-body">
-                        @yield('datatable')
+                    @hasSection('cardTitle')
+                    <div class="card-header bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                        <h2 class="text-xl font-semibold">@yield('cardTitle')</h2>
                     </div>
+                    @endif
+                    
+                    <div class="card-body">
+                        @hasSection('cardDescription')
+                        <div class="card-text">
+                            @yield('cardDescription')
+                        </div>
+                        @endif
+                        
+                        <div class="mt-4">
+                            @yield('datatable')
+                        </div>
+                    </div>
+                    
+                    @hasSection('cardFooter')
+                    <div class="card-footer">
+                        @yield('cardFooter')
+                    </div>
+                    @endif
                 </div>
             </div>
         </main>
@@ -446,7 +465,6 @@
             </footer>
         </div>
     </section>
-
 </body>
 
 </html>

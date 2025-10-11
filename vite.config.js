@@ -43,7 +43,7 @@ export default defineConfig({
         'resources/js/admin.js',
         './resources/css/menu-fix.css', 
         'resources/css/datatables.css', // Nuevo archivo CSS para DataTables
-        'resources/js/datatables-es.json', // Nuevo archivo JSON para idioma
+        'resources/js/datatables-es.json', // Nuevo archivo JSON para idiomaz
 
       ],
       refresh: true,

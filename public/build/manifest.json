@@ -1,6 +1,6 @@
 {
   "resources/css/admin.css": {
-    "file": "assets/admin-BmNo8OIP.css",
+    "file": "assets/admin-DUDlp8lc.css",
     "src": "resources/css/admin.css",
     "isEntry": true
   },
@@ -10,7 +10,7 @@
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-jKcPKb7i.css",
+    "file": "assets/dashboard-zyHyQy1d.css",
     "src": "resources/css/dashboard.css",
     "isEntry": true
   },
@@ -30,12 +30,12 @@
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-DU4RlXDg.css",
+    "file": "assets/tw-BMFgWXIq.css",
     "src": "resources/css/tw.css",
     "isEntry": true
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-B7DGumop.js",
+    "file": "assets/admin-CbFdYbX7.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true

@@ -1009,3 +1009,210 @@ hr, .border-b, .border-t {
         width: 100%;
     }
 }
+
+/* ==========================================================================
+   10) CORRECCIONES PARA MÓVILES
+   ========================================================================== */
+/* 
+   Problema: En móviles, el menú dropdown no se ve completamente en la pantalla
+   Solución: Ajustar el posicionamiento y tamaño del menú dropdown en móviles
+*/
+
+/* Estilos para el menú dropdown en móviles */
+@media (max-width: 768px) {
+  #userMenu {
+    position: fixed;
+    top: 56px; /* Altura del topbar */
+    right: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    border-radius: 0;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+  }
+  
+  /* Asegurar que el menú dropdown se muestre correctamente en modo oscuro */
+  .dark #userMenu {
+    background-color: rgba(15, 23, 42, 0.98);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Ajustar el espaciado de los elementos del menú en móviles */
+  #userMenu .menu-item {
+    padding: 1rem;
+  }
+  
+  /* Ajustar el tamaño del texto en móviles */
+  #userMenu .font-medium {
+    font-size: 0.95rem;
+  }
+  
+  #userMenu .text-xs {
+    font-size: 0.75rem;
+  }
+  
+  /* Asegurar que el contenedor de opciones del menú permita scroll */
+  #userMenu .py-2 {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+
+/* 
+   Problema: En móviles, el sidebar no se cierra automáticamente al seleccionar una opción
+   Solución: Agregar JavaScript para cerrar el sidebar después de hacer clic en una opción
+*/
+
+/* Estilos para el sidebar en móviles */
+@media (max-width: 768px) {
+  .panel-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    max-width: 85vw;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .panel-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Asegurar que el sidebar se muestre correctamente en modo oscuro */
+  .dark .panel-sidebar {
+    background-color: rgba(15, 23, 42, 0.98);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Ocultar el sidebar colapsado en móviles */
+  #sidebar-collapsed {
+    display: none;
+  }
+  
+  /* Ajustar el contenido principal cuando el sidebar está abierto */
+  .panel-sidebar.open ~ .panel-main {
+    margin-left: 0;
+  }
+  
+  /* Agregar un backdrop para el sidebar en móviles */
+  .panel-sidebar::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .panel-sidebar.open::before {
+    opacity: 1;
+  }
+}
+
+/* 
+   Problema: El título de la página se sale del topbar
+   Solución: Ajustar el tamaño y overflow del título
+*/
+
+.page-title {
+  @apply truncate;
+  max-width: 200px;
+  font-size: 1rem;
+}
+
+@media (max-width: 640px) {
+  .page-title {
+    max-width: 120px;
+    font-size: 0.875rem;
+  }
+}
+
+/* Mejoras generales para dispositivos móviles */
+@media (max-width: 768px) {
+  /* Ajustar el espaciado en el contenido principal */
+  .panel-main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  /* Ajustar el tamaño de los botones en móviles */
+  .btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Ajustar el tamaño de los encabezados en móviles */
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+  }
+  
+  h3 {
+    font-size: 1.1rem;
+  }
+  
+  /* Ajustar el espaciado de las tarjetas en móviles */
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  /* Ajustar el espaciado de las tablas en móviles */
+  .table-wrap {
+    margin-bottom: 1rem;
+  }
+  
+  /* Ajustar el tamaño de los badges en móviles */
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  /* Ajustar el tamaño de los iconos en móviles */
+  .nav-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  .nav-icon i {
+    font-size: 1rem;
+  }
+  
+  /* Ajustar el espaciado del menú lateral en móviles */
+  .nav-item {
+    padding: 0.75rem;
+  }
+  
+  .nav-text {
+    font-size: 0.9rem;
+  }
+  
+  /* Ajustar el espaciado de las secciones del menú en móviles */
+  .nav-section-title {
+    padding: 0.5rem 1rem;
+    font-size: 0.7rem;
+  }
+  
+  /* Ajustar el tamaño del texto de la emisora en móviles */
+  .station-text {
+    display: none;
+  }
+}

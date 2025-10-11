@@ -69,7 +69,7 @@
         }
     </script>
     
-    <!-- Script para prevenir parpadeo del tema -->
+    <!-- Script para prevenir parpadeo del tema y configurar icono inicial -->
     <script>
         (function() {
             // Obtener el tema guardado o la preferencia del sistema
@@ -87,6 +87,31 @@
             // Guardar el tema si no estaba guardado
             if (!savedTheme) {
                 localStorage.setItem('theme', theme);
+            }
+            
+            // Establecer el estado inicial del icono con estilos inline
+            // Esto garantiza que el icono correcto se muestre inmediatamente
+            document.addEventListener('DOMContentLoaded', function() {
+                const themeIcon = document.getElementById('themeIcon');
+                if (themeIcon) {
+                    if (theme === 'dark') {
+                        themeIcon.innerHTML = '<i class="fa-sun"></i>';
+                    } else {
+                        themeIcon.innerHTML = '<i class="fa-moon"></i>';
+                    }
+                }
+            });
+            
+            // También intentar establecerlo inmediatamente por si el DOM ya está disponible
+            if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                const themeIcon = document.getElementById('themeIcon');
+                if (themeIcon) {
+                    if (theme === 'dark') {
+                        themeIcon.innerHTML = '<i class="fa-sun"></i>';
+                    } else {
+                        themeIcon.innerHTML = '<i class="fa-moon"></i>';
+                    }
+                }
             }
         })();
     </script>
@@ -393,7 +418,9 @@
     <div class="fixed bottom-4 right-4 z-20">
         <button id="themeToggle" 
                 class="p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
-            <i id="themeIcon" class="fas fa-moon text-gray-700 dark:text-yellow-300"></i>
+            <i id="themeIcon" class="fas text-gray-700 dark:text-yellow-300">
+                <!-- El icono se establecerá dinámicamente -->
+            </i>
         </button>
     </div>
     
@@ -425,32 +452,19 @@
             const themeIcon = document.getElementById('themeIcon');
             const html = document.documentElement;
             
-            // Función para actualizar el icono del tema
-            function updateThemeIcon() {
-                if (html.classList.contains('dark')) {
-                    themeIcon.classList.remove('fa-moon');
-                    themeIcon.classList.add('fa-sun');
-                } else {
-                    themeIcon.classList.remove('fa-sun');
-                    themeIcon.classList.add('fa-moon');
-                }
-            }
-            
-            // Actualizar icono al cargar la página
-            updateThemeIcon();
-            
             if (themeToggle) {
                 themeToggle.addEventListener('click', function() {
                     if (html.classList.contains('dark')) {
                         html.classList.remove('dark');
                         localStorage.setItem('theme', 'light');
+                        // Actualizar icono inmediatamente
+                        themeIcon.innerHTML = '<i class="fa-moon"></i>';
                     } else {
                         html.classList.add('dark');
                         localStorage.setItem('theme', 'dark');
+                        // Actualizar icono inmediatamente
+                        themeIcon.innerHTML = '<i class="fa-sun"></i>';
                     }
-                    
-                    // Actualizar icono después del cambio
-                    updateThemeIcon();
                 });
             }
             

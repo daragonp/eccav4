@@ -11,6 +11,7 @@
     @endif
   </div>
 
+  
   <div class="space-y-4">
     <div>
       <label for="video_{{ $tableM->id }}" class="block text-sm mb-1">Documento PDF</label>

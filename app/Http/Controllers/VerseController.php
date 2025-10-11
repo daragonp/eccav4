@@ -63,7 +63,7 @@ class VerseController extends Controller
         $this->validate($request, [
             'date' => 'required',
         ], [
-            'date.required' => 'El campo día es obligatorio.',
+            'date.required' => 'El campo fecha es obligatorio.',
         ]);
 
         $quote = Verse::findOrFail($id);
