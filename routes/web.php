@@ -14,6 +14,7 @@ use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\WorshipController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\ScheduleOverrideController;
 use App\Http\Controllers\HomeContentController;
 use App\Http\Controllers\BibleController;
 
@@ -31,13 +32,42 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/profile', [AdminController::class, 'profile']);
 
     //Rutas para administrador: Programación
-    Route::get('/show-schedule', [ScheduleController::class, 'show']);
-    Route::post('/addschedule', [ScheduleController::class, 'store']);
-    Route::get('/view-schedule/{id}', [ScheduleController::class, 'view']);
-    Route::post('/update-schedule/{id}', [ScheduleController::class, 'edit']);
-    Route::get('/delete-schedule/{id}', [ScheduleController::class, 'destroy']);
-    Route::get('/activate-schedule/{id}', [ScheduleController::class, 'activate']);
-    Route::get('/realdelete-schedule/{id}', [ScheduleController::class, 'delete']);
+
+    // ===================================================================
+    // RUTAS PARA ADMINISTRADOR: PROGRAMACIÓN DE RADIO
+    // ===================================================================
+
+    // Programación regular
+    Route::get('/show-schedule', [ScheduleController::class, 'show'])->name('schedule.index');
+    Route::post('/addschedule', [ScheduleController::class, 'store'])->name('schedule.store');
+    Route::get('/view-schedule/{id}', [ScheduleController::class, 'view'])->name('schedule.view');
+    Route::post('/update-schedule/{id}', [ScheduleController::class, 'edit'])->name('schedule.update');
+    Route::get('/delete-schedule/{id}', [ScheduleController::class, 'delete'])->name('schedule.softDelete');
+    Route::get('/activate-schedule/{id}', [ScheduleController::class, 'activate'])->name('schedule.activate');
+    Route::get('/realdelete-schedule/{id}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
+
+    // Importación CSV
+    Route::get('/import-schedule', function () {
+        return view('admin.schedule.import-schedule');
+    })->name('schedule.import.view');
+    Route::post('/import-schedule-csv', [ScheduleController::class, 'importFromCSV'])->name('schedule.import');
+
+    // API para obtener programa actual (para reproductor web)
+    Route::get('/api/current-program', [ScheduleController::class, 'getCurrentProgram'])->name('api.current.program');
+    Route::get('/api/schedule/day/{day}', [ScheduleController::class, 'getDaySchedule'])->name('api.day.schedule');
+
+    // ===================================================================
+    // RUTAS PARA DÍAS FESTIVOS Y PROGRAMACIÓN ESPECIAL
+    // ===================================================================
+
+    Route::get('/holiday-schedule', [ScheduleOverrideController::class, 'index'])->name('override.index');
+    Route::post('/add-override', [ScheduleOverrideController::class, 'store'])->name('override.store');
+    Route::post('/update-override/{id}', [ScheduleOverrideController::class, 'update'])->name('override.update');
+    Route::get('/toggle-override/{id}', [ScheduleOverrideController::class, 'toggleActive'])->name('override.toggle');
+    Route::get('/delete-override/{id}', [ScheduleOverrideController::class, 'destroy'])->name('override.destroy');
+
+    // API para obtener programación considerando overrides
+    Route::get('/api/schedule/date/{date}', [ScheduleOverrideController::class, 'getScheduleForDate'])->name('api.date.schedule');
 
     //Rutas para administrador: Culto dominical
     Route::get('/show-worship', [WorshipController::class, 'show']);
@@ -49,6 +79,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/realdelete-worship/{id}', [WorshipController::class, 'delete']);
 
 
+    
     //Rutas para administrador: Versículo
     Route::get('/show-quote', [VerseController::class, 'show']);
     Route::post('/addverse', [VerseController::class, 'store']);
@@ -195,4 +226,16 @@ Route::prefix('biblia')->name('biblia.')->group(function () {
         ->name('api.chapters');
 });
 
+// Rutas públicas para ver programación
+Route::get('/programacion', function() {
+    $schedules = \App\Models\Schedule::whereNull('deleted_at')
+        ->orderBy('day')
+        ->orderBy('start')
+        ->get()
+        ->groupBy('day');
+    
+    return view('public.schedule', compact('schedules'));
+})->name('public.schedule');
 
+Route::get('/programa-actual', [ScheduleController::class, 'getCurrentProgram'])
+    ->name('public.current.program');

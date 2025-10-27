@@ -131,6 +131,17 @@
                                 <span class="nav-text">Programación</span>
                             </div>
                         </a>
+                        {{-- Después del enlace de Programación existente --}}
+                        <a href="{{ url('/holiday-schedule') }}"
+                            class="nav-item group {{ request()->is('holiday-schedule') ? 'active' : '' }}">
+                            <div class="flex items-center gap-3">
+                                <div class="nav-icon">
+                                    <i class="fas fa-calendar-star"></i>
+                                </div>
+                                <span class="nav-text">Días Festivos</span>
+                            </div>
+                        </a>
+
                         <a href="{{ url('show-news') }}" class="nav-item group {{ request()->is('show-news*') ? 'active' : '' }}">
                             <div class="flex items-center gap-3">
                                 <div class="nav-icon">
@@ -253,7 +264,7 @@
                         <i class="fas fa-broadcast-tower"></i>
                         <span class="station-text">Emisora</span>
                     </a>
-                    
+
                     {{-- Toggle dark/light --}}
                     <button id="themeToggle" class="btn btn-ghost" aria-label="Cambiar tema">
                         <i id="themeIcon" class="fas">
@@ -325,7 +336,7 @@
                                             </div>
                                         </div>
                                     </a>
-                                    
+
                                     {{-- Enlace al dashboard de la emisora --}}
                                     <a href="https://a12.asurahosting.com/station/199/" target="_blank" class="menu-item" role="menuitem">
                                         <div class="flex items-center gap-3">
@@ -393,19 +404,19 @@
                         <h2 class="text-xl font-semibold">@yield('cardTitle')</h2>
                     </div>
                     @endif
-                    
+
                     <div class="card-body">
                         @hasSection('cardDescription')
                         <div class="card-text">
                             @yield('cardDescription')
                         </div>
                         @endif
-                        
+
                         <div class="mt-4">
                             @yield('datatable')
                         </div>
                     </div>
-                    
+
                     @hasSection('cardFooter')
                     <div class="card-footer">
                         @yield('cardFooter')

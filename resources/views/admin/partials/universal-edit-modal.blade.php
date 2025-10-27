@@ -472,7 +472,7 @@
                             @endphp
                             @foreach ($dias as $num => $nombre)
                             <div class="flex items-center">
-                                <input id="day_{{ $num }}" type="checkbox" name="day[]" value="{{ $num }}"
+                                <input id="day{{ $num }}" type="checkbox" name="day[]" value="{{ $num }}" ...>
                                     class="rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-green-600 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-500"
                                     @if (in_array($num, $daysSelected)) checked @endif>
                                 <label for="day_{{ $num }}" class="ml-2 text-sm text-slate-700 dark:text-slate-300">{{ $nombre }}</label>
