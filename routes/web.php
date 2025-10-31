@@ -17,6 +17,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleOverrideController;
 use App\Http\Controllers\HomeContentController;
 use App\Http\Controllers\BibleController;
+use App\Http\Controllers\PrivacyController;
 
 
 Route::get('/', function () {
@@ -155,6 +156,17 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/delete-podcast/{id}', [PodcastController::class, 'delete']);
 });
 
+Route::post('/api/privacy-acceptance', [PrivacyController::class, 'recordAcceptance'])->name('privacy.acceptance');
+
+// Rutas para las políticas
+Route::prefix('legal')->group(function () {
+    Route::get('privacy', [PrivacyController::class, 'privacy'])->name('privacy-policy');
+    Route::get('cookies', [PrivacyController::class, 'cookies'])->name('cookies-policy');
+    Route::get('terms', [PrivacyController::class, 'terms'])->name('terms-conditions');
+});
+
+
+
 Route::get('/opinion', [NewsController::class, 'opinion']);
 
 Route::get('/history', [NewsController::class, 'history']);
@@ -214,8 +226,21 @@ Route::prefix('biblia')->name('biblia.')->group(function () {
     // Primero las rutas específicas (para que no las capture {libro})
     Route::get('/api/buscar', [BibleController::class, 'apiSearch'])->name('api.search');
     Route::get('/api/libros', [BibleController::class, 'apiBooks'])->name('api.books');
+    Route::get('/api/inicio', [BibleController::class, 'apiStart'])->name('api.start');
 
     // Luego las dinámicas, con restricciones
+    Route::get('/api/{libro}/{cap}/page/{page}', [BibleController::class, 'apiChapterPaginated'])
+        ->where('libro', '[a-z0-9\-]+')
+        ->where('cap', '\d+')
+        ->where('page', '\d+')
+        ->name('api.chapter.paginated');
+        
+    Route::get('/api/{libro}/{cap}/{vers}', [BibleController::class, 'apiVerse'])
+        ->where('libro', '[a-z0-9\-]+')
+        ->where('cap', '\d+')
+        ->where('vers', '\d+')
+        ->name('api.verse');
+
     Route::get('/api/{libro}/{cap}', [BibleController::class, 'apiChapter'])
         ->where('libro', '[a-z0-9\-]+')
         ->where('cap', '\d+')

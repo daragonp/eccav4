@@ -1,8 +1,7 @@
 {
-  "resources/css/admin.css": {
-    "file": "assets/admin-PEUwgrzk.css",
-    "src": "resources/css/admin.css",
-    "isEntry": true
+  "_module.esm-Cm4okMZt.js": {
+    "file": "assets/module.esm-Cm4okMZt.js",
+    "name": "module.esm"
   },
   "resources/css/app.css": {
     "file": "assets/app-DApLW3KM.css",
@@ -10,18 +9,18 @@
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-C5JOCrkD.css",
+    "file": "assets/dashboard-CelAM-LK.css",
     "src": "resources/css/dashboard.css",
-    "isEntry": true
-  },
-  "resources/css/datatables.css": {
-    "file": "assets/datatables-C8orcQAL.css",
-    "src": "resources/css/datatables.css",
     "isEntry": true
   },
   "resources/css/menu-fix.css": {
     "file": "assets/menu-fix-DLE64Pzr.css",
     "src": "resources/css/menu-fix.css",
+    "isEntry": true
+  },
+  "resources/css/privacy-notice.css": {
+    "file": "assets/privacy-notice-Fgb1_T6p.css",
+    "src": "resources/css/privacy-notice.css",
     "isEntry": true
   },
   "resources/css/radio-player.css": {
@@ -30,27 +29,42 @@
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-BmGBxIpN.css",
+    "file": "assets/tw-DLkOqjme.css",
     "src": "resources/css/tw.css",
     "isEntry": true
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-CbFdYbX7.js",
+    "file": "assets/admin-B64OPRo0.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DULze0pw.js",
+    "file": "assets/app-DtiTXgbV.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_module.esm-Cm4okMZt.js"
+    ],
+    "dynamicImports": [
+      "resources/js/privacy-notice.js"
+    ]
   },
   "resources/js/datatables-es.json": {
     "file": "assets/datatables-es-l0sNRNKZ.js",
     "name": "datatables-es",
     "src": "resources/js/datatables-es.json",
     "isEntry": true
+  },
+  "resources/js/privacy-notice.js": {
+    "file": "assets/privacy-notice-CADfzZ2w.js",
+    "name": "privacy-notice",
+    "src": "resources/js/privacy-notice.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "_module.esm-Cm4okMZt.js"
+    ]
   },
   "resources/js/radio-player.js": {
     "file": "assets/radio-player-yMntPcSr.js",

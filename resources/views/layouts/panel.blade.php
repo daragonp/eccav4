@@ -267,9 +267,7 @@
 
                     {{-- Toggle dark/light --}}
                     <button id="themeToggle" class="btn btn-ghost" aria-label="Cambiar tema">
-                        <i id="themeIcon" class="fas">
-                            <!-- El icono se establecerá dinámicamente -->
-                        </i>
+                        <i id="themeIcon"></i>
                     </button>
 
                     {{-- Menú de usuario --}}

@@ -14,6 +14,7 @@
     --white: #fff;
     --container-px: 1rem;       /* base = px-4 */
     --sbw: calc(100vw - 100%); /* ancho de scrollbar */
+    --verse-font-size: 16px;    /* tamaño de fuente para versículos */
   }
 
   @media (min-width: 640px) { :root { --container-px: 1.5rem; } }
@@ -24,6 +25,11 @@
 
   /* Evita "flash" al usar x-cloak */
   [x-cloak] { display: none !important; }
+  
+  /* Estilos para versículos */
+  .verse-content, .verse-text, .immersive-content {
+    font-size: var(--verse-font-size);
+  }
 }
 
 /* =======================
@@ -103,6 +109,7 @@
                     border-black/10 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/10 transition
                     focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--green-light)]
                     focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900; }
+  .panel         { @apply bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6; }
 }
 
 /* =======================
@@ -123,5 +130,139 @@
   header img[alt="ECCA_LOGO"] { height: 3rem !important; }
   @media (min-width: 640px) {
     header img[alt="ECCA_LOGO"] { height: 4rem !important; }
+  }
+}
+
+/* =======================
+   Animaciones
+   ======================= */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* =======================
+   Notificaciones
+   ======================= */
+.notification {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.notification.success {
+  background-color: #10b981;
+}
+
+.notification.error {
+  background-color: #ef4444;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =======================
+   Tema Sepia
+   ======================= */
+.sepia {
+  background-color: #f7f3e9;
+  color: #5c4b37;
+}
+
+.sepia .panel {
+  background-color: #f0ead6;
+  color: #5c4b37;
+}
+
+.sepia .verse-item {
+  background-color: #f0ead6;
+  color: #5c4b37;
+}
+
+.sepia .verse-card {
+  background-color: #f0ead6;
+  color: #5c4b37;
+}
+
+.sepia .settings-panel {
+  background-color: #f0ead6;
+  color: #5c4b37;
+}
+
+.sepia .immersive-mode {
+  background-color: #f7f3e9;
+  color: #5c4b37;
+}
+
+.sepia .immersive-header {
+  border-bottom-color: #d9c9a9;
+}
+
+.sepia .immersive-verse:hover {
+  background-color: #e9dcc0;
+}
+
+/* =======================
+   Accesibilidad
+   ======================= */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =======================
+   Impresión
+   ======================= */
+@media print {
+  .page-container {
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .panel {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .verse-item {
+    break-inside: avoid;
+  }
+  
+  .floating-reading-button,
+  .settings-button,
+  .settings-panel,
+  .verse-overlay,
+  .pagination {
+    display: none !important;
   }
 }

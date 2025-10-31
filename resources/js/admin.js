@@ -26,9 +26,9 @@ import './modal-enhancements.js';
     const themeIcon = document.getElementById('themeIcon');
     if (themeIcon) {
         if (theme === 'dark') {
-            themeIcon.innerHTML = '<i class="fa-sun"></i>';
+            themeIcon.className = 'fas fa-sun';
         } else {
-            themeIcon.innerHTML = '<i class="fa-moon"></i>';
+            themeIcon.className = 'fas fa-moon';
         }
     }
 })();
@@ -132,11 +132,15 @@ document.addEventListener('click', (e) => {
   
   // Función para actualizar el icono del tema
   function updateThemeIcon() {
-    const btn = document.getElementById('themeToggle');
-    if (!btn) return;
+    const themeIcon = document.getElementById('themeIcon');
+    if (!themeIcon) return;
     
-    // El icono se maneja ahora con clases en el HTML
-    // No necesitamos manipularlo con JS
+    const isDark = root.classList.contains('dark');
+    if (isDark) {
+      themeIcon.className = 'fas fa-sun';
+    } else {
+      themeIcon.className = 'fas fa-moon';
+    }
   }
   
   // Detectar preferencia del sistema si no hay tema guardado

@@ -57,3 +57,10 @@ Versión 4.8:
 Versión 4.8.1:
     Arreglos menores.
     Enlace a administración de emisora.
+
+Versión 4.8.2:
+    Arreglos menores.
+    Actualización de la programación.
+
+Versión 4.8.3:
+    Implementación inicial de la Sagrada Biblia Reina-Valera.

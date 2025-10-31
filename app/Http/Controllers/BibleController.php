@@ -100,6 +100,80 @@ class BibleController extends Controller
         ]);
     }
 
+    /** GET /biblia/api/{libro}/{cap}/page/{page} -> { book, chapter, verses:[{n, t}], pretty, pagination } */
+    public function apiChapterPaginated(string $libro, string $cap, int $page = 1)
+    {
+        $data = $this->bible();
+        if (!isset($data[$libro])) abort(404, 'Libro no encontrado');
+        if (!isset($data[$libro][$cap])) abort(404, 'Capítulo no encontrado');
+
+        $perPage = 20; // Versículos por página
+        $verses = $data[$libro][$cap];
+        $totalVerses = count($verses);
+        $totalPages = ceil($totalVerses / $perPage);
+        
+        // Asegurar que la página solicitada sea válida
+        $page = max(1, min($page, $totalPages));
+        $offset = ($page - 1) * $perPage;
+        
+        $versOk = [];
+        $versesSlice = array_slice($verses, $offset, $perPage, true);
+        
+        foreach ($versesSlice as $n => $t) {
+            $versOk[] = ['n' => (int)$n, 't' => $t];
+        }
+
+        return response()->json([
+            'book'   => $libro,
+            'chapter'=> (int)$cap,
+            'pretty' => $this->pretty($libro) . ' ' . $cap,
+            'verses' => $versOk,
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_verses' => $totalVerses,
+                'per_page' => $perPage,
+                'has_prev' => $page > 1,
+                'has_next' => $page < $totalPages,
+                'prev_page' => $page > 1 ? $page - 1 : null,
+                'next_page' => $page < $totalPages ? $page + 1 : null,
+            ]
+        ]);
+    }
+
+    /** GET /biblia/api/inicio -> { book, chapter, verses:[{n, t}], pretty } */
+    public function apiStart()
+    {
+        $data = $this->bible();
+        
+        // Génesis 1:1-10 por defecto
+        $libro = 'genesis';
+        $cap = '1';
+        
+        if (!isset($data[$libro]) || !isset($data[$libro][$cap])) {
+            // Si Génesis no está disponible, tomar el primer libro y capítulo disponibles
+            reset($data);
+            $libro = key($data);
+            $cap = key($data[$libro]);
+        }
+        
+        $versOk = [];
+        $count = 0;
+        foreach ($data[$libro][$cap] as $n => $t) {
+            if ($count >= 10) break;
+            $versOk[] = ['n' => (int)$n, 't' => $t];
+            $count++;
+        }
+
+        return response()->json([
+            'book'   => $libro,
+            'chapter'=> (int)$cap,
+            'pretty' => $this->pretty($libro) . ' ' . $cap,
+            'verses' => $versOk,
+            'is_start' => true,
+        ]);
+    }
+
     /** GET /biblia/api/buscar?q=palabra -> matches con fragmento */
     public function apiSearch(Request $req)
     {
@@ -122,12 +196,17 @@ class BibleController extends Controller
                         $start = max(0, $pos - 40);
                         $len   = 80 + mb_strlen($q);
                         $frag  = mb_substr($t, $start, $len);
+                        
+                        // Resaltar el texto encontrado
+                        $highlighted = str_ireplace($q, "<mark>{$q}</mark>", $t);
+                        
                         $results[] = [
                             'book'    => $libro,
                             'chapter' => (int)$cap,
                             'verse'   => (int)$n,
                             'ref'     => $this->pretty($libro)." $cap:$n",
                             'text'    => $t,
+                            'highlighted' => $highlighted,
                             'snippet' => ($start > 0 ? '…' : '') . $frag . (mb_strlen($t) > $start + $len ? '…' : ''),
                         ];
                         // Limita por rendimiento (p.ej. 200)
@@ -141,6 +220,76 @@ class BibleController extends Controller
             'q'       => $q,
             'total'   => count($results),
             'results' => $results,
+        ]);
+    }
+
+    /** GET /biblia/api/versiculo/{libro}/{cap}/{vers} -> { book, chapter, verse, text, pretty, navigation } */
+    public function apiVerse(string $libro, string $cap, string $vers)
+    {
+        $data = $this->bible();
+        if (!isset($data[$libro])) abort(404, 'Libro no encontrado');
+        if (!isset($data[$libro][$cap])) abort(404, 'Capítulo no encontrado');
+        if (!isset($data[$libro][$cap][$vers])) abort(404, 'Versículo no encontrado');
+
+        $verseText = $data[$libro][$cap][$vers];
+        $verseNum = (int)$vers;
+        $capNum = (int)$cap;
+        
+        // Navegación
+        $hasPrev = isset($data[$libro][$cap][$verseNum - 1]);
+        $prevVerse = $hasPrev ? ['verse' => $verseNum - 1, 'text' => $data[$libro][$cap][$verseNum - 1]] : null;
+        
+        $hasNext = isset($data[$libro][$cap][$verseNum + 1]);
+        $nextVerse = $hasNext ? ['verse' => $verseNum + 1, 'text' => $data[$libro][$cap][$verseNum + 1]] : null;
+        
+        // Navegación entre capítulos
+        $caps = array_keys($data[$libro]);
+        $currentCapIndex = array_search($cap, $caps);
+        
+        $hasPrevChapter = $currentCapIndex > 0;
+        $prevChapter = $hasPrevChapter ? [
+            'chapter' => (int)$caps[$currentCapIndex - 1],
+            'last_verse' => (int)array_key_last($data[$libro][$caps[$currentCapIndex - 1]])
+        ] : null;
+        
+        $hasNextChapter = $currentCapIndex < count($caps) - 1;
+        $nextChapter = $hasNextChapter ? [
+            'chapter' => (int)$caps[$currentCapIndex + 1],
+            'first_verse' => 1
+        ] : null;
+        
+        // Navegación entre libros
+        $books = array_keys($data);
+        $currentBookIndex = array_search($libro, $books);
+        
+        $hasPrevBook = $currentBookIndex > 0;
+        $prevBook = $hasPrevBook ? [
+            'book' => $books[$currentBookIndex - 1],
+            'last_chapter' => (int)array_key_last($data[$books[$currentBookIndex - 1]]),
+            'last_verse' => (int)array_key_last($data[$books[$currentBookIndex - 1]][array_key_last($data[$books[$currentBookIndex - 1]])])
+        ] : null;
+        
+        $hasNextBook = $currentBookIndex < count($books) - 1;
+        $nextBook = $hasNextBook ? [
+            'book' => $books[$currentBookIndex + 1],
+            'first_chapter' => 1,
+            'first_verse' => 1
+        ] : null;
+
+        return response()->json([
+            'book'   => $libro,
+            'chapter'=> $capNum,
+            'verse'  => $verseNum,
+            'text'   => $verseText,
+            'pretty' => $this->pretty($libro) . ' ' . $capNum . ':' . $verseNum,
+            'navigation' => [
+                'prev_verse' => $prevVerse,
+                'next_verse' => $nextVerse,
+                'prev_chapter' => $prevChapter,
+                'next_chapter' => $nextChapter,
+                'prev_book' => $prevBook,
+                'next_book' => $nextBook,
+            ]
         ]);
     }
 }
