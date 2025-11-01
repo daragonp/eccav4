@@ -64,3 +64,6 @@ Versión 4.8.2:
 
 Versión 4.8.3:
     Implementación inicial de la Sagrada Biblia Reina-Valera.
+
+Versión 4.8.4:
+    Arreglos menores.

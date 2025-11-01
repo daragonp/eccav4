@@ -140,7 +140,7 @@
 
     <div class="pt-1 flex flex-col md:flex-row items-center gap-3 text-center md:text-left">
       <p class="text-xs md:text-sm m-0">
-        &copy; {{ date('Y') }} Derechos Reservados - Emancipación Cristiana Afro | Ver. 4.8.2
+        &copy; {{ date('Y') }} Derechos Reservados - Emancipación Cristiana Afro | Ver. 4.8.4
       </p>
       <img src="{{ asset('images/brands/logoda.png') }}" class="h-5 w-5 md:ml-auto" alt="Logo DA">
     </div>
