@@ -13,48 +13,93 @@
 {{-- CAMPOS PARA EL MODAL PARA AGREGAR UN REGISTRO --}}
 @section('modalFields')
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {{-- Campo imagen izquierda --}}
     <div>
-        <label for="image_left" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">
-            Imagen de la izquierda
+        <label for="image_left" class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">
+            Imagen izquierda <span class="text-red-500">*</span>
         </label>
-        <div class="relative">
-            <input id="image_left" type="file" name="image_left" accept="image/*" 
-                   class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
-            <label class="absolute inset-0 w-full h-full cursor-pointer" for="image_left"></label>
-        </div>
-        <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-            Formatos admitidos: JPG, PNG, GIF, WebP (máx. 20MB)
+        <div class="space-y-2">
+            {{-- Input de archivo sin overlay --}}
+            <input 
+                id="image_left" 
+                type="file" 
+                name="image_left" 
+                accept="image/*" 
+                required
+                class="block w-full text-sm text-slate-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100
+                    dark:file:bg-blue-900 dark:file:text-blue-200
+                    dark:hover:file:bg-blue-800
+                    cursor-pointer
+                    rounded border border-slate-300 dark:border-slate-600
+                    p-2"
+            >
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+                JPG, PNG, GIF, WebP • Máx. 20MB
+            </p>
+            {{-- Nombre del archivo seleccionado --}}
+            <div id="filename-left" class="text-xs text-slate-600 dark:text-slate-400 italic hidden">
+                Archivo seleccionado: <span id="filename-left-name"></span>
+            </div>
         </div>
     </div>
+
+    {{-- Campo imagen derecha --}}
     <div>
-        <label for="image_right" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">
-            Imagen de la derecha
+        <label for="image_right" class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">
+            Imagen derecha <span class="text-red-500">*</span>
         </label>
-        <div class="relative">
-            <input id="image_right" type="file" name="image_right" accept="image/*" 
-                   class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
-            <label class="absolute inset-0 w-full h-full cursor-pointer" for="image_right"></label>
-        </div>
-        <div class="mt-2 text-xs text-slate-500 dark:text-slate-400">
-            Formatos admitidos: JPG, PNG, GIF, WebP (máx. 20MB)
+        <div class="space-y-2">
+            {{-- Input de archivo sin overlay --}}
+            <input 
+                id="image_right" 
+                type="file" 
+                name="image_right" 
+                accept="image/*" 
+                required
+                class="block w-full text-sm text-slate-500
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-lg file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-green-50 file:text-green-700
+                    hover:file:bg-green-100
+                    dark:file:bg-green-900 dark:file:text-green-200
+                    dark:hover:file:bg-green-800
+                    cursor-pointer
+                    rounded border border-slate-300 dark:border-slate-600
+                    p-2"
+            >
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+                JPG, PNG, GIF, WebP • Máx. 20MB
+            </p>
+            {{-- Nombre del archivo seleccionado --}}
+            <div id="filename-right" class="text-xs text-slate-600 dark:text-slate-400 italic hidden">
+                Archivo seleccionado: <span id="filename-right-name"></span>
+            </div>
         </div>
     </div>
 </div>
 
-{{-- Vista previa de imágenes --}}
-<div class="mt-6 border-t border-slate-200 dark:border-slate-700 pt-6">
-    <h4 class="text-sm font-medium mb-4 text-slate-700 dark:text-slate-300">Vista previa del carrusel</h4>
-    <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
-        <div class="grid grid-cols-2 gap-4">
-            <div class="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                <div id="preview-left" class="w-full h-full flex items-center justify-center">
-                    <i class="fas fa-image text-slate-400 dark:text-slate-500 text-2xl"></i>
-                </div>
+{{-- Vista previa del carrusel --}}
+<div class="mt-6 space-y-3">
+    <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300">Vista previa</h4>
+    <div class="grid grid-cols-2 gap-4 bg-slate-100 dark:bg-slate-800 p-4 rounded-lg">
+        {{-- Preview izquierda --}}
+        <div class="aspect-video bg-slate-300 dark:bg-slate-700 rounded overflow-hidden flex items-center justify-center">
+            <div id="preview-left" class="text-slate-500 dark:text-slate-400 text-center">
+                <i class="fas fa-image text-3xl mb-2"></i>
+                <p class="text-xs">Selecciona una imagen</p>
             </div>
-            <div class="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                <div id="preview-right" class="w-full h-full flex items-center justify-center">
-                    <i class="fas fa-image text-slate-400 dark:text-slate-500 text-2xl"></i>
-                </div>
+        </div>
+        {{-- Preview derecha --}}
+        <div class="aspect-video bg-slate-300 dark:bg-slate-700 rounded overflow-hidden flex items-center justify-center">
+            <div id="preview-right" class="text-slate-500 dark:text-slate-400 text-center">
+                <i class="fas fa-image text-3xl mb-2"></i>
+                <p class="text-xs">Selecciona una imagen</p>
             </div>
         </div>
     </div>
@@ -72,7 +117,7 @@
                 <div>
                     <h3 class="font-semibold text-slate-900 dark:text-white">Carrusel de imágenes</h3>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                        Administra las imágenes del carrusel que se mostrarán en la página principal. Usa el botón "Crear carrusel" para añadir nuevos elementos o las acciones por fila para ver, editar o eliminar carruseles existentes.
+                        Administra las imágenes del carrusel que se mostrarán en la página principal.
                     </p>
                 </div>
             </div>
@@ -84,7 +129,7 @@
         <div class="card-body p-0">
             <div class="table-wrap">
                 <table id="slider-table" class="display w-full">
-                    <!-- La tabla se generará automáticamente -->
+                    {{-- La tabla se generará automáticamente --}}
                 </table>
             </div>
         </div>
@@ -93,56 +138,127 @@
 
 @push('scripts')
     {!! $dataTable->scripts() !!}
-    
+
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Vista previa de imágenes al seleccionar archivos
-        const imageLeftInput = document.getElementById('image_left');
-        const imageRightInput = document.getElementById('image_right');
-        const previewLeft = document.getElementById('preview-left');
-        const previewRight = document.getElementById('preview-right');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Inicializando vista previa de imágenes');
 
-        imageLeftInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewLeft.innerHTML = `<img src="${e.target.result}" alt="Vista previa" class="w-full h-full object-cover rounded-lg">`;
-                }
-                reader.readAsDataURL(file);
-            }
-        });
+            const imageLeftInput = document.getElementById('image_left');
+            const imageRightInput = document.getElementById('image_right');
+            const previewLeft = document.getElementById('preview-left');
+            const previewRight = document.getElementById('preview-right');
+            const filenameLeftDiv = document.getElementById('filename-left');
+            const filenameLeftName = document.getElementById('filename-left-name');
+            const filenameRightDiv = document.getElementById('filename-right');
+            const filenameRightName = document.getElementById('filename-right-name');
 
-        imageRightInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewRight.innerHTML = `<img src="${e.target.result}" alt="Vista previa" class="w-full h-full object-cover rounded-lg">`;
+            // Función para validar archivo
+            function validateFile(file, inputName) {
+                if (!file) return { valid: false, message: 'Sin archivo' };
+
+                // Validar tipo de archivo
+                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                    return { 
+                        valid: false, 
+                        message: 'Formato no válido. Usa: JPG, PNG, GIF, WebP' 
+                    };
                 }
-                reader.readAsDataURL(file);
+
+                // Validar tamaño (20MB)
+                const maxSize = 20 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    return { 
+                        valid: false, 
+                        message: 'Archivo muy grande. Máximo 20MB' 
+                    };
+                }
+
+                return { valid: true, message: 'OK' };
             }
-        });
-        
-        // Aplicar estilos a los controles de DataTables después de que se cargue
-        setTimeout(function() {
-            const lengthSelect = document.querySelector('#slider-table_length select');
-            const filterInput = document.querySelector('#slider-table_filter input');
-            
-            if (lengthSelect) {
-                lengthSelect.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-sm';
-            }
-            
-            if (filterInput) {
-                filterInput.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm';
-                filterInput.placeholder = 'Buscar...';
-                
-                // Asegurar que la búsqueda funcione correctamente
-                filterInput.addEventListener('keyup', function() {
-                    $('#slider-table').DataTable().search(this.value).draw();
+
+            // Evento para imagen izquierda
+            if (imageLeftInput) {
+                imageLeftInput.addEventListener('change', function(e) {
+                    const file = this.files[0];
+
+                    if (!file) {
+                        previewLeft.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
+                        filenameLeftDiv.classList.add('hidden');
+                        return;
+                    }
+
+                    // Validar archivo
+                    const validation = validateFile(file, 'image_left');
+                    if (!validation.valid) {
+                        alert('Imagen izquierda: ' + validation.message);
+                        this.value = '';
+                        previewLeft.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
+                        filenameLeftDiv.classList.add('hidden');
+                        return;
+                    }
+
+                    // Mostrar nombre del archivo
+                    filenameLeftName.textContent = file.name;
+                    filenameLeftDiv.classList.remove('hidden');
+
+                    // Mostrar vista previa
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewLeft.innerHTML = `<img src="${event.target.result}" alt="Preview" class="w-full h-full object-cover">`;
+                    };
+                    reader.readAsDataURL(file);
                 });
             }
-        }, 100);
-    });
+
+            // Evento para imagen derecha
+            if (imageRightInput) {
+                imageRightInput.addEventListener('change', function(e) {
+                    const file = this.files[0];
+
+                    if (!file) {
+                        previewRight.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
+                        filenameRightDiv.classList.add('hidden');
+                        return;
+                    }
+
+                    // Validar archivo
+                    const validation = validateFile(file, 'image_right');
+                    if (!validation.valid) {
+                        alert('Imagen derecha: ' + validation.message);
+                        this.value = '';
+                        previewRight.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
+                        filenameRightDiv.classList.add('hidden');
+                        return;
+                    }
+
+                    // Mostrar nombre del archivo
+                    filenameRightName.textContent = file.name;
+                    filenameRightDiv.classList.remove('hidden');
+
+                    // Mostrar vista previa
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        previewRight.innerHTML = `<img src="${event.target.result}" alt="Preview" class="w-full h-full object-cover">`;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Aplicar estilos DataTables (después de un pequeño delay)
+            setTimeout(function() {
+                const lengthSelect = document.querySelector('#slider-table_length select');
+                const filterInput = document.querySelector('#slider-table_filter input');
+
+                if (lengthSelect) {
+                    lengthSelect.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-sm';
+                }
+
+                if (filterInput) {
+                    filterInput.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm';
+                    filterInput.placeholder = 'Buscar...';
+                }
+            }, 500);
+        });
     </script>
 @endpush

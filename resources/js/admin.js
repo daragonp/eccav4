@@ -1,55 +1,46 @@
-﻿// Importa el nuevo archivo de mejoras para modales
-import './modal-enhancements.js';
-
-// --- El resto de tu código existente en admin.js ---
+﻿/* ================================================
+   ADMIN.JS - Dashboard JavaScript
+   ================================================ */
 
 // Script para prevenir parpadeo del tema y configurar icono inicial
 (function() {
-    // Obtener el tema guardado o la preferencia del sistema
-    const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+  const savedTheme = localStorage.getItem('theme');
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
 
-    // Aplicar el tema inmediatamente
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-    }
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
 
-    // Guardar el tema si no estaba guardado
-    if (!savedTheme) {
-        localStorage.setItem('theme', theme);
-    }
-    
-    // Establecer el estado inicial del icono
-    const themeIcon = document.getElementById('themeIcon');
-    if (themeIcon) {
-        if (theme === 'dark') {
-            themeIcon.className = 'fas fa-sun';
-        } else {
-            themeIcon.className = 'fas fa-moon';
-        }
-    }
+  if (!savedTheme) {
+    localStorage.setItem('theme', theme);
+  }
+
+  const themeIcon = document.getElementById('themeIcon');
+  if (themeIcon) {
+    themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+  }
 })();
 
 // JS por delegación para Sidebar, Menú usuario, modales y alertas
 document.addEventListener('click', (e) => {
   const t = e.target;
 
-  // --- Sidebar ---
+  /* --- Sidebar --- */
   if (t.closest('#toggleSidebar')) {
     toggleSidebar();
   }
 
-  // --- User menu ---
+  /* --- User menu --- */
   if (t.closest('#userMenuBtn')) {
     e.preventDefault();
     e.stopPropagation();
     toggleUserMenu();
   }
 
-  // --- Tailwind modal open ---
+  /* --- Tailwind modal open --- */
   const openBtn = t.closest('[data-modal-open]');
   if (openBtn) {
     e.preventDefault();
@@ -63,13 +54,17 @@ document.addEventListener('click', (e) => {
       document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
       document.getElementById('backdrop')?.classList.add('open');
       modal.classList.add('open');
+      
+      // NO RESETEAR aquí - dejar que el usuario vea sus selecciones
+      console.log('Modal abierto:', id);
     }
   }
 
-  // --- Logout button ---
+  /* --- Logout button --- */
   if (t.closest('#logoutBtn')) {
     e.preventDefault();
     e.stopPropagation();
+
     const modal = document.getElementById('logoutModal');
     if (modal) {
       document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
@@ -78,18 +73,46 @@ document.addEventListener('click', (e) => {
     }
   }
 
-  // --- Tailwind modal close ---
+  /* --- Tailwind modal close --- */
   if (t.id === 'backdrop' || t.closest('[data-modal-close]')) {
     document.getElementById('backdrop')?.classList.remove('open');
-    document.querySelectorAll('.tw-modal').forEach(m => m.classList.remove('open'));
+    document.querySelectorAll('.tw-modal').forEach(m => {
+      m.classList.remove('open');
+      
+      // Resetear solo cuando se CIERRA el modal
+      const form = m.querySelector('form');
+      if (form) {
+        form.reset();
+        
+        // Limpiar previsualizaciones
+        const previewLeft = document.getElementById('preview-left');
+        const previewRight = document.getElementById('preview-right');
+        const filenameLeftDiv = document.getElementById('filename-left');
+        const filenameRightDiv = document.getElementById('filename-right');
+        
+        if (previewLeft) {
+          previewLeft.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
+        }
+        if (previewRight) {
+          previewRight.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
+        }
+        if (filenameLeftDiv) {
+          filenameLeftDiv.classList.add('hidden');
+        }
+        if (filenameRightDiv) {
+          filenameRightDiv.classList.add('hidden');
+        }
+      }
+    });
     document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
   }
 
-  // === Bootstrap-like (sin Bootstrap JS) ===
+  /* Bootstrap-like (sin Bootstrap JS) */
   const bsOpenBtn = t.closest('[data-bs-toggle="modal"]');
   if (bsOpenBtn) {
     e.preventDefault();
     e.stopPropagation();
+
     const targetSel = bsOpenBtn.getAttribute('data-bs-target');
     if (targetSel) {
       document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
@@ -98,29 +121,26 @@ document.addEventListener('click', (e) => {
     }
   }
 
-  if (
-    t.closest('[data-bs-dismiss="modal"]') ||
-    t.closest('[data-dismiss="modal"]') ||
-    t.closest('.modal .close') ||
-    t.closest('.modal .btn-close')
-  ) {
+  if (t.closest('[data-bs-dismiss="modal"]') || t.closest('[data-dismiss="modal"]') || 
+      t.closest('.modal .close') || t.closest('.modal .btn-close')) {
     document.getElementById('backdrop')?.classList.remove('open');
     document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
   }
 
-  // --- Cerrar alertas ---
+  /* --- Cerrar alertas --- */
   if (t.closest('[data-close]')) {
     const alert = t.closest('.alert');
-    if (alert) alert.remove();
+    if (alert) {
+      alert.remove();
+    }
   }
 });
 
-// === Dark / Light mode (VERSIÓN MEJORADA) ===
-(function themeInit(){
+/* Dark / Light mode */
+function themeInit() {
   const root = document.documentElement;
   const themePreference = window.matchMedia('(prefers-color-scheme: dark)');
-  
-  // Función para aplicar el tema
+
   function applyTheme(theme) {
     if (theme === 'dark') {
       root.classList.add('dark');
@@ -129,141 +149,81 @@ document.addEventListener('click', (e) => {
     }
     updateThemeIcon();
   }
-  
-  // Función para actualizar el icono del tema
+
   function updateThemeIcon() {
     const themeIcon = document.getElementById('themeIcon');
     if (!themeIcon) return;
-    
+
     const isDark = root.classList.contains('dark');
-    if (isDark) {
-      themeIcon.className = 'fas fa-sun';
-    } else {
-      themeIcon.className = 'fas fa-moon';
-    }
+    themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
   }
-  
-  // Detectar preferencia del sistema si no hay tema guardado
+
   const saved = localStorage.getItem('theme');
   if (saved) {
     applyTheme(saved);
-  } else if (themePreference.matches) {
-    applyTheme('dark');
   } else {
-    applyTheme('light');
+    applyTheme(themePreference.matches ? 'dark' : 'light');
   }
-  
-  // Escuchar cambios en la preferencia del sistema
-  themePreference.addEventListener('change', (e) => {
+
+  themePreference.addEventListener('change', e => {
     if (!localStorage.getItem('theme')) {
       applyTheme(e.matches ? 'dark' : 'light');
     }
-  });
-  
-  // Manejar clic en el botón de tema
+  }, { passive: true });
+
   const btn = document.getElementById('themeToggle');
   if (btn) {
     btn.addEventListener('click', () => {
       const isDark = root.classList.contains('dark');
       applyTheme(isDark ? 'light' : 'dark');
       localStorage.setItem('theme', isDark ? 'light' : 'dark');
-    }, { passive: true });
+    });
   }
-})();
+}
 
-// === Inicialización de DataTables (CORREGIDO) ===
+/* Inicialización de DataTables */
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar todas las tablas generadas por Laravel DataTables
   const tables = document.querySelectorAll('table[id$="-table"]');
+  
   tables.forEach(table => {
     const tableId = table.id;
     
-    // Verificar si ya está inicializada
     if ($.fn.DataTable.isDataTable(table)) {
-      // Si ya está inicializada, solo recargar los datos
       $(table).DataTable().ajax.reload();
     } else {
-      // Inicializar con configuración básica
       $(table).DataTable({
         responsive: true,
         language: {
-          url: asset('js/datatables-es.json')
+          url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
         },
         processing: true,
         serverSide: true,
         autoWidth: false,
         pageLength: 10,
-        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+             'rt' +
+             'ip',
         initComplete: function() {
-          // Aplicar estilos a los controles de DataTables
-          $("#" + tableId + "_length select, #" + tableId + "_filter input").addClass("form-control");
+          const lengthSelect = $(`#${tableId}_length select`);
+          const filterInput = $(`#${tableId}_filter input`);
+          
+          if (lengthSelect.length) {
+            lengthSelect.addClass('form-control');
+          }
+          if (filterInput.length) {
+            filterInput.addClass('form-control');
+          }
         },
         error: function(xhr, error, code) {
           console.error('Error en DataTable:', error, code);
           console.error('Respuesta del servidor:', xhr.responseText);
-          
-          // Mostrar un mensaje de error más detallado
-          const errorMsg = xhr.responseJSON?.message || 'Error al cargar los datos';
-          showAlert('Error: ' + errorMsg, 'danger');
         }
       });
     }
   });
 });
 
-// === Manejo de formularios AJAX ===
-document.addEventListener('submit', function(e) {
-  const form = e.target;
-  
-  // Verificar si el formulario tiene el atributo data-ajax
-  if (form.hasAttribute('data-ajax')) {
-    e.preventDefault();
-    
-    const url = form.getAttribute('action');
-    const method = form.getAttribute('method') || 'POST';
-    const formData = new FormData(form);
-    
-    fetch(url, {
-      method: method,
-      body: formData,
-      headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        // Mostrar mensaje de éxito
-        showAlert(data.message || 'Operación realizada correctamente', 'success');
-        
-        // Cerrar modal si está abierto
-        const modal = form.closest('.tw-modal');
-        if (modal) {
-          modal.classList.remove('open');
-          document.getElementById('backdrop')?.classList.remove('open');
-        }
-        
-        // Recargar la tabla si existe
-        const tableId = form.getAttribute('data-table');
-        if (tableId) {
-          const table = document.getElementById(tableId);
-          if (table && $.fn.DataTable.isDataTable(table)) {
-            $(table).DataTable().ajax.reload();
-          }
-        }
-      } else {
-        // Mostrar mensaje de error
-        showAlert(data.message || 'Ha ocurrido un error', 'danger');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      showAlert('Ha ocurrido un error en la solicitud', 'danger');
-    });
-  }
-});
-
-// === Función para mostrar alertas ===
+/* Función para mostrar alertas */
 function showAlert(message, type = 'info') {
   const alertContainer = document.querySelector('.p-4.lg\\:p-6.space-y-4');
   if (!alertContainer) return;
@@ -271,14 +231,12 @@ function showAlert(message, type = 'info') {
   const alert = document.createElement('div');
   alert.className = `alert alert-${type}`;
   alert.innerHTML = `
-    <button class="close-btn" data-close aria-label="Cerrar">✕</button>
+    <button class="close-btn" data-close aria-label="Cerrar"></button>
     ${message}
   `;
   
-  // Insertar al principio del contenedor
   alertContainer.insertBefore(alert, alertContainer.firstChild);
   
-  // Auto-cerrar después de 5 segundos
   setTimeout(() => {
     if (alert.parentNode) {
       alert.remove();
@@ -286,14 +244,14 @@ function showAlert(message, type = 'info') {
   }, 5000);
 }
 
-// === Función para confirmar acciones ===
+/* Función para confirmar acciones */
 function confirmAction(message, callback) {
   if (confirm(message)) {
     callback();
   }
 }
 
-// === Manejo de pestañas ===
+/* Manejo de pestañas */
 document.addEventListener('click', function(e) {
   const tabButton = e.target.closest('[data-tab]');
   if (tabButton) {
@@ -301,36 +259,30 @@ document.addEventListener('click', function(e) {
     const tabContent = document.getElementById(tabId);
     
     if (tabContent) {
-      // Desactivar todas las pestañas
-      document.querySelectorAll('[data-tab]').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-      });
+      document.querySelectorAll('[data-tab]').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       
-      // Activar la pestaña seleccionada
       tabButton.classList.add('active');
       tabContent.classList.add('active');
     }
   }
 });
 
-// === Manejo de tooltips ===
+/* Manejo de tooltips */
 document.addEventListener('DOMContentLoaded', function() {
   const tooltipElements = document.querySelectorAll('[data-tooltip]');
+  
   tooltipElements.forEach(element => {
     element.addEventListener('mouseenter', function() {
       const tooltipText = this.getAttribute('data-tooltip');
       const tooltip = document.createElement('div');
       tooltip.className = 'tooltip';
       tooltip.textContent = tooltipText;
-      
       document.body.appendChild(tooltip);
       
       const rect = this.getBoundingClientRect();
-      tooltip.style.left = rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2) + 'px';
-      tooltip.style.top = rect.top - tooltip.offsetHeight - 10 + 'px';
+      tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
+      tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
       
       this.tooltip = tooltip;
     });
@@ -344,20 +296,17 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// === Manejo de notificaciones ===
+/* Manejo de notificaciones */
 function showNotification(message, type = 'info', duration = 5000) {
   const notification = document.createElement('div');
   notification.className = `notification notification-${type}`;
   notification.textContent = message;
-  
   document.body.appendChild(notification);
   
-  // Animación de entrada
   setTimeout(() => {
     notification.classList.add('show');
   }, 10);
   
-  // Auto-cerrar
   setTimeout(() => {
     notification.classList.remove('show');
     setTimeout(() => {
@@ -368,187 +317,98 @@ function showNotification(message, type = 'info', duration = 5000) {
   }, duration);
 }
 
-// === Inicialización cuando el DOM está listo ===
-document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar componentes aquí si es necesario
-  console.log('Dashboard inicializado correctamente');
-});
-
-// Funcionalidad para el menú lateral
-document.addEventListener('DOMContentLoaded', function() {
+/* Funcionalidad para el menú lateral */
+function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const sidebarCollapsed = document.getElementById('sidebar-collapsed');
-  const toggleSidebarBtn = document.getElementById('toggleSidebar');
-  const userMenuBtn = document.getElementById('userMenuBtn');
-  const userMenu = document.getElementById('userMenu');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const logoutModal = document.getElementById('logoutModal');
-  const cancelLogout = document.getElementById('cancelLogout');
   const backdrop = document.getElementById('backdrop');
   
-  let sidebarOpen = false;
-  let collapsedOpen = false;
+  if (!sidebar) return;
   
-  // Función para toggle del sidebar
-  function toggleSidebar() {
-    sidebarOpen = !sidebarOpen;
-    
-    if (window.innerWidth < 768) {
-      // Para pantallas pequeñas: mostrar/ocultar sidebar completo
-      if (sidebarOpen) {
-        sidebar.classList.add('open');
-        backdrop.classList.add('open');
-      } else {
-        sidebar.classList.remove('open');
-        backdrop.classList.remove('open');
-      }
-    } else {
-      // Para pantallas grandes: colapsar/expandir sidebar
-      if (sidebarOpen) {
-        sidebar.classList.remove('collapsed');
-        sidebarCollapsed.classList.add('-translate-x-full');
-        collapsedOpen = false;
-      } else {
-        sidebar.classList.add('collapsed');
-        sidebarCollapsed.classList.remove('-translate-x-full');
-        collapsedOpen = true;
-      }
-    }
-  }
+  const isOpen = sidebar.classList.contains('open');
   
-  // Función para toggle del menú de usuario
-  function toggleUserMenu() {
-    userMenu.classList.toggle('hidden');
-  }
-  
-  // Toggle sidebar
-  toggleSidebarBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleSidebar();
-  });
-  
-  // Toggle user menu
-  userMenuBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleUserMenu();
-  });
-  
-  // Close user menu when clicking outside
-  document.addEventListener('click', function() {
-    userMenu.classList.add('hidden');
-  });
-  
-  // Close sidebar when clicking backdrop (solo en móviles)
-  backdrop.addEventListener('click', function() {
-    if (window.innerWidth < 768 && sidebarOpen) {
-      sidebarOpen = false;
+  if (window.innerWidth < 768) {
+    if (isOpen) {
       sidebar.classList.remove('open');
       backdrop.classList.remove('open');
+    } else {
+      sidebar.classList.add('open');
+      backdrop.classList.add('open');
     }
-    
-    // Cerrar modales si están abiertos
-    document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
-    document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
-    backdrop.classList.remove('open');
-  });
+  }
+}
+
+function toggleUserMenu() {
+  const userMenu = document.getElementById('userMenu');
+  if (userMenu) {
+    userMenu.classList.toggle('hidden');
+  }
+}
+
+/* Inicialización cuando el DOM está listo */
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('Dashboard inicializado correctamente');
+  themeInit();
   
-  // Logout functionality
-  logoutBtn.addEventListener('click', function(e) {
-    e.preventDefault();
-    userMenu.classList.add('hidden');
-    logoutModal.classList.add('open');
-    backdrop.classList.add('open');
+  const backdrop = document.getElementById('backdrop');
+  if (backdrop) {
+    backdrop.addEventListener('click', function() {
+      if (window.innerWidth < 768) {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar && sidebar.classList.contains('open')) {
+          sidebar.classList.remove('open');
+          this.classList.remove('open');
+        }
+      }
+      
+      document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
+      document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
+      this.classList.remove('open');
+    });
+  }
+
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  if (userMenuBtn) {
+    userMenuBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleUserMenu();
+    });
+  }
+
+  document.addEventListener('click', function(e) {
+    const userMenu = document.getElementById('userMenu');
+    if (userMenu && !e.target.closest('#userMenuBtn') && !e.target.closest('#userMenu')) {
+      userMenu.classList.add('hidden');
+    }
   });
-  
-  cancelLogout.addEventListener('click', function() {
-    logoutModal.classList.remove('open');
-    backdrop.classList.remove('open');
-  });
-  
-  // Cerrar sidebar al hacer clic en un enlace (solo en móviles)
-  const sidebarLinks = sidebar.querySelectorAll('a');
+
+  const sidebarLinks = document.querySelectorAll('#sidebar a');
   sidebarLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       if (window.innerWidth < 768) {
-        // Permitir que el enlace se procese antes de cerrar el sidebar
         setTimeout(() => {
-          sidebarOpen = false;
-          sidebar.classList.remove('open');
-          backdrop.classList.remove('open');
-        }, 300); // Pequeño retraso para asegurar que el enlace se procese
+          const sidebar = document.getElementById('sidebar');
+          const backdrop = document.getElementById('backdrop');
+          if (sidebar) sidebar.classList.remove('open');
+          if (backdrop) backdrop.classList.remove('open');
+        }, 300);
       }
     });
   });
-  
-  // Handle responsive sidebar
+
   function handleResponsiveSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+
     if (window.innerWidth < 768) {
-      // Pantallas pequeñas
       sidebar.classList.add('fixed', 'inset-y-0', 'left-0', 'z-40', 'transform', '-translate-x-full');
       sidebar.classList.remove('collapsed');
-      sidebarCollapsed.classList.add('hidden');
-      
-      if (sidebarOpen) {
-        sidebar.classList.add('open');
-      }
     } else {
-      // Pantallas grandes
       sidebar.classList.remove('fixed', 'inset-y-0', 'left-0', 'z-40', 'transform', '-translate-x-full', 'open');
-      sidebarCollapsed.classList.remove('hidden');
-      
-      if (!sidebarOpen) {
-        sidebar.classList.add('collapsed');
-        sidebarCollapsed.classList.remove('-translate-x-full');
-        collapsedOpen = true;
-      } else {
-        sidebar.classList.remove('collapsed');
-        sidebarCollapsed.classList.add('-translate-x-full');
-        collapsedOpen = false;
-      }
     }
   }
-  
-  // Initial check and add resize listener
+
   handleResponsiveSidebar();
   window.addEventListener('resize', handleResponsiveSidebar);
-});
-
-// Solución para errores de DataTables (CORREGIDO)
-document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar todas las tablas con clase 'datatable' o con ID que termina en '-table'
-    const tables = document.querySelectorAll('.datatable, table[id$="-table"]');
-    tables.forEach(table => {
-        if ($.fn.DataTable.isDataTable(table)) {
-            // Si ya está inicializada, solo recargar los datos
-            $(table).DataTable().ajax.reload();
-        } else {
-            // Inicializar con configuración básica
-            $(table).DataTable({
-                responsive: true,
-                language: {
-                    url: asset('js/datatables-es.json')
-                },
-                processing: true,
-                serverSide: true,
-                autoWidth: false,
-                pageLength: 10,
-                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>rtip',
-                initComplete: function() {
-                    // Aplicar estilos a los controles de DataTables
-                    const tableId = table.id;
-                    $("#" + tableId + "_length select, #" + tableId + "_filter input").addClass("form-control");
-                },
-                error: function(xhr, error, code) {
-                    console.error('Error en DataTable:', error, code);
-                    console.error('Respuesta del servidor:', xhr.responseText);
-                    
-                    // Mostrar un mensaje de error más detallado
-                    const errorMsg = xhr.responseJSON?.message || 'Error al cargar los datos';
-                    showAlert('Error: ' + errorMsg, 'danger');
-                }
-            });
-        }
-    });
 });

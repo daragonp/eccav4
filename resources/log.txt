@@ -67,3 +67,14 @@ Versión 4.8.3:
 
 Versión 4.8.4:
     Arreglos menores.
+
+
+#Correciones por hacer:
+
+
+SECCIÓN BIBLIA:
+
+1. Biblia organizada según las ediciones impresas.
+2. Botón regresar.
+3. Contador en el buscador (cuántas veces está una palabra en la biblia, en un cuadrito estadístico).
+4. Favoritos y marcar con un color una porción de un capítulo o versículo o todo.
