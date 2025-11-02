@@ -136,7 +136,7 @@
                             class="nav-item group {{ request()->is('holiday-schedule') ? 'active' : '' }}">
                             <div class="flex items-center gap-3">
                                 <div class="nav-icon">
-                                    <i class="fas fa-calendar-star"></i>
+                                    <i class="fa-solid fa-calendar-days"></i>
                                 </div>
                                 <span class="nav-text">Días Festivos</span>
                             </div>

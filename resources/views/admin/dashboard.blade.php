@@ -276,28 +276,28 @@
     </div>
     
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <button data-url="{{ url('show-quote') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105">
+        <button data-url="{{ url('show-quote') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nuevo Versículo" role="button">
             <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
                 <i class="fas fa-plus text-green-600 dark:text-green-400"></i>
             </div>
             <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nuevo Versículo</span>
         </button>
         
-        <button data-url="{{ url('show-news') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105">
+        <button data-url="{{ url('show-news') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nueva Noticia" role="button">
             <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
                 <i class="fas fa-plus text-indigo-600 dark:text-indigo-400"></i>
             </div>
             <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nueva Noticia</span>
         </button>
         
-        <button data-url="{{ url('show-slider') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105">
+        <button data-url="{{ url('show-slider') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nuevo Banner" role="button">
             <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
                 <i class="fas fa-plus text-purple-600 dark:text-purple-400"></i>
             </div>
             <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nuevo Banner</span>
         </button>
         
-        <button data-url="{{ url('show-schedule') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105">
+        <button data-url="{{ url('show-schedule') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nueva Programación" role="button">
             <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
                 <i class="fas fa-plus text-emerald-600 dark:text-emerald-400"></i>
             </div>

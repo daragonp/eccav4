@@ -9,7 +9,7 @@
         <div class="card-body p-4">
             <div class="flex items-start gap-3">
                 <div class="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                    <i class="fas fa-calendar-star text-purple-600 dark:text-purple-400"></i>
+                    <i class="fa-solid fa-calendar-days text-purple-600 dark:text-purple-400"></i>
                 </div>
                 <div>
                     <h3 class="font-semibold text-slate-900 dark:text-white">Programación Especial para Días Festivos</h3>

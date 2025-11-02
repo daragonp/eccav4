@@ -904,10 +904,6 @@ hr,
   }
 }
 
-/* Texto "Emisora" al lado del ícono: lo escondemos en móvil */
-.station-text {
-  /* visible en desktop por defecto */
-}
 @media (max-width: 768px) {
   .station-text { display: none; }
 }
