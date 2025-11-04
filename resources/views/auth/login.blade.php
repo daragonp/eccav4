@@ -1,431 +1,481 @@
-<!DOCTYPE html>
-<html lang="es" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+{{-- Heredamos la plantilla principal --}}
+@extends('layouts.main')
 
-    <!-- Meta tags para el tema -->
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
-    <meta name="color-scheme" content="light dark">
+{{-- Definimos el título --}}
+@section('title', 'Iniciar Sesión')
 
-    <!-- Favicons -->
-    <link rel="icon" href="{{ asset('images/fav/favicon.svg') }}" type="image/svg+xml" />
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/fav/apple-touch-icon.png') }}" />
-    <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
+{{-- Inyectamos CSS personalizado --}}
+@push('head')
+<style>
+  /* Variables específicas para esta página */
+  :root {
+    --login-glow: rgba(138, 164, 70, 0.15);
+    --login-glow-dark: rgba(138, 164, 70, 0.25);
+  }
 
-    <title>Inicio de sesión | Emancipación Cristiana Afro</title>
+  /* Contenedor principal con fondo degradado */
+  .login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    position: relative;
+    overflow: hidden;
+  }
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+  .dark .login-container {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  }
 
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+  /* Efecto de brillo sutil en el fondo */
+  .login-glow {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.5;
+    animation: float 20s ease-in-out infinite;
+  }
 
-    <!-- Font Awesome -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  .glow-1 {
+    background-color: var(--login-glow);
+    top: -100px;
+    left: -100px;
+  }
 
-    <!-- Configuración Tailwind -->
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'poppins': ['Poppins', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            200: '#bbf7d0',
-                            300: '#86efac',
-                            400: '#4ade80',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            800: '#166534',
-                            900: '#14532d',
-                        },
-                        brand: {
-                            green: '#009579',
-                            dark: '#006653',
-                        }
-                    },
-                    animation: {
-                        'float': 'float 3s ease-in-out infinite',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+  .glow-2 {
+    background-color: var(--login-glow);
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -10s;
+  }
 
-    <!-- Forzar tema antes del render para evitar parpadeo blanco -->
-    <script>
-        (function() {
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+  .dark .glow-1,
+  .dark .glow-2 {
+    background-color: var(--login-glow-dark);
+  }
 
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(30px, -30px) scale(1.1); }
+  }
 
-            if (!savedTheme) {
-                localStorage.setItem('theme', theme);
-            }
-        })();
-    </script>
+  /* Tarjeta de login */
+  .login-card {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 450px;
+    padding: 2.5rem;
+    border-radius: 1rem;
+    background-color: white;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(229, 231, 235, 0.5);
+    animation: slideUp 0.5s ease-out;
+  }
 
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            position: relative;
-        }
+  .dark .login-card {
+    background-color: #1e293b;
+    border-color: rgba(51, 65, 85, 0.5);
+  }
 
-        /* FONDO CLARO */
-        .animated-bg {
-            background: linear-gradient(135deg, #0e6826 0%, #0038b8 35%, #effc74 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-        /* FONDO OSCURO */
-        .dark .animated-bg {
-            background: radial-gradient(circle at 20% 20%, rgba(34,197,94,0.2) 0%, transparent 60%),
-                        radial-gradient(circle at 80% 30%, rgba(37,99,235,0.2) 0%, transparent 60%),
-                        radial-gradient(circle at 50% 80%, rgba(251,191,36,0.08) 0%, transparent 60%),
-                        linear-gradient(135deg, #0b1220 0%, #0f172a 60%, #1e293b 100%);
-            background-size: 200% 200%;
-            animation: gradientShift 20s ease infinite;
-        }
+  /* Campos de formulario con iconos */
+  .input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
 
-        @keyframes gradientShift {
-            0%   { background-position: 0% 50%; }
-            50%  { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    pointer-events: none;
+    transition: color 0.2s;
+  }
 
-        /* Tarjeta vidrio */
-        .glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .dark .glass {
-            background: rgba(15,23,42,0.85);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
+  .dark .input-icon {
+    color: #6b7280;
+  }
 
-        .input-focus {
-            transition: all 0.3s ease;
-        }
-        .input-focus:focus {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
+  .form-input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.75rem;
+    background-color: #f9fafb;
+    color: #1f2937;
+    transition: all 0.2s;
+  }
 
-        .btn-hover {
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-hover::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-        .btn-hover:hover::before {
-            left: 100%;
-        }
+  .dark .form-input {
+    background-color: #334155;
+    border-color: #475569;
+    color: #f1f5f9;
+  }
 
-        /* Partículas */
-        .particles {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            z-index: 0;
-            pointer-events: none; /* IMPORTANTE: que nunca bloquee clics */
-        }
-        .particle {
-            position: absolute;
-            display: block;
-            opacity: 0.3;
-            animation: float 8s linear infinite;
-            border-radius: 9999px;
-            background-color: rgba(255,255,255,0.2);
-            pointer-events: none; /* repetir por seguridad */
-        }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--green-light);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(138, 164, 70, 0.1);
+  }
 
-        /* distribuidas */
-        .particle:nth-child(1)  { left: 25%; top: 10%;  width:80px;  height:80px;  animation-delay:0s; }
-        .particle:nth-child(2)  { left: 10%; top: 70%;  width:20px;  height:20px;  animation-delay:2s; animation-duration:12s; }
-        .particle:nth-child(3)  { left: 70%; top: 20%;  width:120px; height:120px; animation-delay:4s; }
-        .particle:nth-child(4)  { left: 40%; top: 80%;  width:60px;  height:60px;  animation-delay:0s; animation-duration:18s; }
-        .particle:nth-child(5)  { left: 65%; top: 60%;  width:20px;  height:20px;  animation-delay:0s; }
-        .particle:nth-child(6)  { left: 75%; top: 75%;  width:110px; height:110px; animation-delay:3s; }
-        .particle:nth-child(7)  { left: 35%; top: 30%;  width:150px; height:150px; animation-delay:7s; }
-        .particle:nth-child(8)  { left: 50%; top: 50%;  width:25px;  height:25px;  animation-delay:15s; animation-duration:45s; }
-        .particle:nth-child(9)  { left: 20%; top: 40%;  width:15px;  height:15px;  animation-delay:2s; animation-duration:35s; }
-        .particle:nth-child(10) { left: 85%; top: 15%;  width:150px; height:150px; animation-delay:0s; animation-duration:11s; }
-    </style>
-</head>
+  .dark .form-input:focus {
+    background-color: #1e293b;
+    box-shadow: 0 0 0 3px rgba(138, 164, 70, 0.2);
+  }
 
-<body class="animated-bg min-h-screen flex items-center justify-center p-4 relative">
+  .form-input:focus + .input-icon {
+    color: var(--green-light);
+  }
 
-    <!-- partículas -->
-    <div class="particles">
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
-        <span class="particle"></span>
+  /* Botón de mostrar contraseña */
+  .password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s;
+  }
+
+  .password-toggle:hover {
+    color: var(--green-light);
+  }
+
+  /* Checkbox personalizado */
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .checkbox-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    accent-color: var(--green-light);
+    cursor: pointer;
+  }
+
+  .checkbox-label {
+    font-size: 0.95rem;
+    color: #4b5563;
+    cursor: pointer;
+  }
+
+  .dark .checkbox-label {
+    color: #d1d5db;
+  }
+
+  /* Botón de envío */
+  .login-button {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background-color: var(--green-dark);
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .login-button:hover {
+    background-color: var(--green-light);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .login-button:active {
+    transform: translateY(0);
+  }
+
+  .login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  /* Enlaces */
+  .link-forgot {
+    display: block;
+    text-align: right;
+    margin-bottom: 1.5rem;
+  }
+
+  .link-forgot a {
+    color: var(--green-dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .dark .link-forgot a {
+    color: var(--green-light);
+  }
+
+  .link-forgot a:hover {
+    text-decoration: underline;
+  }
+
+  /* Mensaje de registro */
+  .register-message {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .dark .register-message {
+    border-top-color: #374151;
+  }
+
+  .register-message p {
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+
+  .dark .register-message p {
+    color: #9ca3af;
+  }
+
+  .register-message a {
+    color: var(--green-dark);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .dark .register-message a {
+    color: var(--green-light);
+  }
+
+  .register-message a:hover {
+    text-decoration: underline;
+  }
+
+  /* Alertas de error */
+  .alert-error {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.75rem;
+    background-color: rgba(239, 68, 68, 0.1);
+    border-left: 4px solid #ef4444;
+    color: #b91c1c;
+    font-size: 0.9rem;
+  }
+
+  .dark .alert-error {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+  }
+
+  /* Indicador de carga */
+  .spinner {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Responsividad */
+  @media (max-width: 640px) {
+    .login-card {
+      margin: 1rem;
+      padding: 2rem 1.5rem;
+    }
+  }
+</style>
+@endpush
+
+{{-- Contenido principal --}}
+@section('content')
+<div class="login-container">
+  <!-- Efectos de brillo en el fondo -->
+  <div class="login-glow glow-1"></div>
+  <div class="login-glow glow-2"></div>
+
+  <!-- Tarjeta de login -->
+  <div class="login-card">
+    <!-- Logo y título -->
+    <div class="text-center mb-8">
+      <a href="{{ url('/') }}" class="inline-block mb-6 transition-transform hover:scale-105">
+        <img src="{{ asset('images/logo/logo.png') }}" alt="ECCA_LOGO" class="h-20 w-auto mx-auto">
+      </a>
+      <h1 class="text-3xl font-bold text-brand-dark dark:text-brand-light mb-2">
+        Iniciar Sesión
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400">
+        Bienvenido de nuevo
+      </p>
     </div>
 
-    <!-- contenedor login -->
-    <div class="w-full max-w-md z-10">
-        <div class="glass rounded-2xl shadow-2xl p-8 transform transition-all duration-500 hover:scale-[1.01]">
+    <!-- Formulario de Login -->
+    <form method="POST" action="{{ route('login') }}" id="loginForm">
+      @csrf
 
-            <header class="text-center mb-8">
-                <a href="{{ url('/') }}"
-                   class="inline-block transform transition-all duration-300 hover:scale-110">
-                    <img
-                        src="{{ asset('images/logo/logo.png') }}"
-                        alt="Emancipación Cristiana Afro"
-                        class="h-20 w-auto mx-auto mb-4 drop-shadow-lg">
-                </a>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-                    Bienvenido de nuevo
-                </h1>
-                <p class="text-gray-600 dark:text-gray-400">
-                    Inicia sesión para acceder a tu cuenta
-                </p>
-            </header>
-
-            <form method="POST" action="{{ route('login') }}" class="space-y-6">
-                @csrf
-
-                @if ($errors->any())
-                    <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-md">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <i class="fas fa-exclamation-circle text-red-500"></i>
-                            </div>
-                            <div class="ml-3">
-                                <p class="text-sm text-red-700 dark:text-red-400">
-                                    Por favor, corrige los siguientes errores:
-                                </p>
-                                <ul class="mt-2 list-disc list-inside text-sm text-red-700 dark:text-red-400">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                <div>
-                    <label for="email"
-                           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Correo electrónico
-                    </label>
-
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-envelope text-gray-400"></i>
-                        </div>
-
-                        <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value="{{ old('email') }}"
-                            required
-                            autofocus
-                            class="input-focus w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                            placeholder="tu@email.com">
-                    </div>
-                </div>
-
-                <div>
-                    <label for="password"
-                           class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Contraseña
-                    </label>
-
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-lock text-gray-400"></i>
-                        </div>
-
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            required
-                            autocomplete="current-password"
-                            class="input-focus w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                            placeholder="••••••••">
-
-                        <button
-                            type="button"
-                            id="togglePassword"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none">
-                            <i id="passwordIcon" class="fas fa-eye-slash"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between flex-wrap gap-y-3">
-                    @if (Route::has('password.request'))
-                        <a href="{{ route('password.request') }}"
-                           class="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors">
-                            ¿Olvidaste tu contraseña?
-                        </a>
-                    @endif
-
-                    <div class="flex items-center">
-                        <input
-                            id="remember"
-                            name="remember"
-                            type="checkbox"
-                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800">
-                        <label for="remember"
-                               class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                            Recordarme
-                        </label>
-                    </div>
-                </div>
-
-                <div>
-                    <button
-                        type="submit"
-                        class="btn-hover w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-300">
-                        <i class="fas fa-sign-in-alt mr-2"></i>
-                        Iniciar sesión
-                    </button>
-                </div>
-            </form>
-
-            <div class="mt-8 text-center">
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                    © {{ date('Y') }} Emancipación Cristiana Afro. Todos los derechos reservados.
-                </p>
+      <!-- Alerta de errores -->
+      @if ($errors->any())
+        <div class="alert-error">
+          <div class="flex items-start">
+            <svg class="w-5 h-5 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+            <div>
+              <p class="font-medium">Error de inicio de sesión</p>
+              <p class="mt-1">{{ $errors->first('email') ?: $errors->first('password') ?: 'Credenciales incorrectas' }}</p>
             </div>
+          </div>
         </div>
-    </div>
+      @endif
 
-    <!-- Botón tema -->
-    <div class="fixed bottom-4 right-4 z-20">
-        <button
-            id="themeToggle"
-            class="p-3 rounded-full bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110 focus:outline-none">
-            <i
-                id="themeIcon"
-                class="fas text-gray-700 dark:text-yellow-300 fa-moon">
-            </i>
+      <!-- Campo: Email -->
+      <div class="input-group">
+        <input 
+          id="email" 
+          name="email" 
+          type="email" 
+          value="{{ old('email') }}" 
+          required 
+          autofocus
+          autocomplete="email"
+          class="form-input"
+          placeholder="Correo electrónico">
+        <svg class="input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+      </div>
+
+      <!-- Campo: Contraseña -->
+      <div class="input-group">
+        <input 
+          id="password" 
+          name="password" 
+          type="password" 
+          required
+          autocomplete="current-password"
+          class="form-input"
+          placeholder="Contraseña">
+        <svg class="input-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+        <button type="button" id="togglePassword" class="password-toggle">
+          <svg id="eyeOpen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+          </svg>
+          <svg id="eyeClosed" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>
+          </svg>
         </button>
-    </div>
+      </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // === Toggle ver contraseña ===
-            const togglePassword   = document.getElementById('togglePassword');
-            const passwordInput    = document.getElementById('password');
-            const passwordIcon     = document.getElementById('passwordIcon');
+      <!-- Opciones adicionales -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="checkbox-group">
+          <input 
+            id="remember" 
+            name="remember" 
+            type="checkbox"
+            class="checkbox-input">
+          <label for="remember" class="checkbox-label">Recordarme</label>
+        </div>
 
-            if (togglePassword && passwordInput && passwordIcon) {
-                togglePassword.addEventListener('click', function () {
-                    const isHidden = passwordInput.getAttribute('type') === 'password';
-                    passwordInput.setAttribute('type', isHidden ? 'text' : 'password');
+        <div class="link-forgot">
+          @if (Route::has('password.request'))
+            <a href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a>
+          @endif
+        </div>
+      </div>
 
-                    if (isHidden) {
-                        passwordIcon.classList.remove('fa-eye-slash');
-                        passwordIcon.classList.add('fa-eye');
-                    } else {
-                        passwordIcon.classList.remove('fa-eye');
-                        passwordIcon.classList.add('fa-eye-slash');
-                    }
-                });
-            }
+      <!-- Botón de envío -->
+      <button 
+        type="submit" 
+        id="loginButton"
+        class="login-button">
+        <span id="buttonText">Iniciar Sesión</span>
+        <div id="buttonSpinner" class="spinner hidden"></div>
+      </button>
+    </form>
 
-            // === Toggle tema dark/light ===
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon   = document.getElementById('themeIcon');
-            const html        = document.documentElement;
+    <!-- Enlace a Registro -->
+    @if (Route::has('register'))
+      <div class="register-message">
+        <p>¿No tienes una cuenta? <a href="{{ route('register') }}">Regístrate aquí</a></p>
+      </div>
+    @endif
+  </div>
+</div>
+@endsection
 
-            function syncThemeIcon() {
-                if (!themeIcon) return;
-                const isDark = html.classList.contains('dark');
-                themeIcon.classList.remove('fa-sun', 'fa-moon');
-                if (isDark) {
-                    // si estamos en oscuro, muestro el sol (para volver a claro)
-                    themeIcon.classList.add('fa-sun');
-                } else {
-                    // si estamos en claro, muestro la luna (para ir a oscuro)
-                    themeIcon.classList.add('fa-moon');
-                }
-            }
+{{-- Scripts específicos para esta página --}}
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Funcionalidad para mostrar/ocultar contraseña
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
 
-            // set inicial seguro (ahora que el DOM ya cargó)
-            syncThemeIcon();
+    if (togglePassword) {
+      togglePassword.addEventListener('click', function() {
+        // Cambiar el tipo de input
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Cambiar el icono
+        eyeOpen.classList.toggle('hidden');
+        eyeClosed.classList.toggle('hidden');
+      });
+    }
 
-            if (themeToggle && themeIcon) {
-                themeToggle.addEventListener('click', function () {
-                    const goingDark = !html.classList.contains('dark');
+    // Indicador de carga al enviar el formulario
+    const loginForm = document.getElementById('loginForm');
+    const loginButton = document.getElementById('loginButton');
+    const buttonText = document.getElementById('buttonText');
+    const buttonSpinner = document.getElementById('buttonSpinner');
 
-                    if (goingDark) {
-                        html.classList.add('dark');
-                        localStorage.setItem('theme', 'dark');
-                    } else {
-                        html.classList.remove('dark');
-                        localStorage.setItem('theme', 'light');
-                    }
-
-                    syncThemeIcon();
-                });
-            }
-
-            // Animación de entrada de la tarjeta
-            const card = document.querySelector('.glass');
-            if (card) {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 100);
-            }
-        });
-    </script>
-</body>
-</html>
+    if (loginForm) {
+      loginForm.addEventListener('submit', function() {
+        // Deshabilitar el botón y mostrar el spinner
+        loginButton.disabled = true;
+        buttonText.textContent = 'Iniciando sesión...';
+        buttonSpinner.classList.remove('hidden');
+      });
+    }
+  });
+</script>
+@endpush

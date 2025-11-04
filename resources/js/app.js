@@ -11,12 +11,10 @@ import * as Turbo from '@hotwired/turbo'
 window.Turbo = Turbo
 console.log('🚀 [APP] Turbo inicializado')
 
-
 // ═══════════════════════════════════════════════════════════════════
 // 2. BOOTSTRAP (Configuración base)
 // ═══════════════════════════════════════════════════════════════════
 import './bootstrap'
-
 
 // ═══════════════════════════════════════════════════════════════════
 // 3. ALPINE.JS (Framework reactivo)
@@ -33,7 +31,6 @@ Alpine.plugin(focus)
 
 console.log('✨ [APP] Alpine.js configurado')
 
-
 // ═══════════════════════════════════════════════════════════════════
 // 4. PRIVACIDAD (Importar ANTES de Alpine.start)
 // ═══════════════════════════════════════════════════════════════════
@@ -43,13 +40,11 @@ import('./privacy-notice').then(module => {
   console.error('❌ [APP] Error cargando Privacy Notice:', err)
 })
 
-
 // ═══════════════════════════════════════════════════════════════════
 // 5. INICIAR ALPINE (Una sola vez)
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
 Alpine.start()
 console.log('✅ [APP] Alpine.js iniciado')
-
 
 // ═══════════════════════════════════════════════════════════════════
 // 6. SWEETALERT (Notificaciones bonitas)
@@ -57,7 +52,6 @@ console.log('✅ [APP] Alpine.js iniciado')
 import Swal from 'sweetalert2'
 window.Swal = Swal
 console.log('🎨 [APP] SweetAlert2 disponible')
-
 
 /**
  * ═══════════════════════════════════════════════════════════════════
@@ -125,7 +119,6 @@ document.addEventListener('turbo:load', () => {
   initPrivacyNoticeOnTurboLoad()
 })
 
-
 /**
  * ═══════════════════════════════════════════════════════════════════
  * PRIVACIDAD - Integración con Turbo
@@ -154,7 +147,6 @@ function initPrivacyNoticeOnTurboLoad() {
   }
 }
 
-
 /**
  * ═══════════════════════════════════════════════════════════════════
  * LIGHTBOX
@@ -163,7 +155,7 @@ function initPrivacyNoticeOnTurboLoad() {
 
 // Configurar Lightbox en primer load
 window.addEventListener('load', () => {
-  if (window.lightbox?.option) {
+  if (typeof lightbox !== 'undefined' && lightbox.option) {
     console.log('🖼️ [LIGHTBOX] Configurando opciones')
     lightbox.option({
       fadeDuration: 180,
@@ -171,6 +163,7 @@ window.addEventListener('load', () => {
       positionFromTop: 40,
       wrapAround: true,
       disableScrolling: true,
+      albumLabel: "Imagen %1 de %2"
     })
   }
 })
@@ -186,7 +179,7 @@ document.addEventListener('turbo:click', (e) => {
 
 // Re-configurar Lightbox tras cada navegación Turbo
 document.addEventListener('turbo:load', () => {
-  if (window.lightbox?.option) {
+  if (typeof lightbox !== 'undefined' && lightbox.option) {
     console.log('🖼️ [LIGHTBOX] Re-configurando tras Turbo')
     lightbox.option({
       fadeDuration: 200,
@@ -194,10 +187,10 @@ document.addEventListener('turbo:load', () => {
       wrapAround: true,
       disableScrolling: true,
       positionFromTop: 50,
+      albumLabel: "Imagen %1 de %2"
     })
   }
 })
-
 
 /**
  * ═══════════════════════════════════════════════════════════════════

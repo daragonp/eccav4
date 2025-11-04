@@ -10,13 +10,20 @@
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/fav/apple-touch-icon.png') }}" />
 <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
 
-{{-- Lightbox CSS (sin integrity) --}}
+{{-- Lightbox CSS (versión actualizada) --}}
 <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css"
       crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 {{-- Pre-set dark antes del CSS (evita FOUC) --}}
-<script>/* ... tal cual ... */</script>
+<script>
+  (function() {
+    const theme = localStorage.getItem('theme') || 'light';
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  })();
+</script>
 
 {{-- Vite --}}
 @vite([
@@ -36,8 +43,8 @@
 
 <body class="font-sans antialiased bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100">
   
-  {{-- Componente Alpine de Privacidad --}}
-  <div x-data="privacyNoticeApp()" @load.window="init()" style="display: contents;">
+  {{-- Componente Alpine de Privacidad con inicialización segura --}}
+  <div x-data="privacyNoticeApp()" x-init="init()" style="display: contents;">
     
     {{-- Header/Menu --}}
     @include('layouts.menu')
@@ -66,8 +73,8 @@
 
   </div>
 
-  {{-- Lightbox JS (sin integrity) --}}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js"
+  {{-- Lightbox JS (versión actualizada) --}}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"
           crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   {{-- Fix z-index para Lightbox --}}

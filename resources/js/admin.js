@@ -2,6 +2,7 @@
    ADMIN.JS - Dashboard JavaScript
    ================================================ */
 
+
 // Script para prevenir parpadeo del tema y configurar icono inicial
 (function() {
   const savedTheme = localStorage.getItem('theme');
@@ -24,24 +25,23 @@
   }
 })();
 
-// JS por delegación para Sidebar, Menú usuario, modales y alertas
-document.addEventListener('click', (e) => {
-  const t = e.target;
 
-  /* --- Sidebar --- */
-  if (t.closest('#toggleSidebar')) {
-    toggleSidebar();
-  }
+// ============================================
+// DELEGACIÓN DE EVENTOS
+// ============================================
+document.addEventListener('click', (e) => {
+  const t = e.target.closest ? e.target : null;
 
   /* --- User menu --- */
-  if (t.closest('#userMenuBtn')) {
+  if (t && t.closest('#userMenuBtn')) {
     e.preventDefault();
     e.stopPropagation();
     toggleUserMenu();
+    return;
   }
 
   /* --- Tailwind modal open --- */
-  const openBtn = t.closest('[data-modal-open]');
+  const openBtn = t && t.closest('[data-modal-open]');
   if (openBtn) {
     e.preventDefault();
     e.stopPropagation();
@@ -50,18 +50,15 @@ document.addEventListener('click', (e) => {
     const modal = document.getElementById(id);
 
     if (modal) {
-      document.body.appendChild(modal);
       document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
       document.getElementById('backdrop')?.classList.add('open');
       modal.classList.add('open');
-      
-      // NO RESETEAR aquí - dejar que el usuario vea sus selecciones
       console.log('Modal abierto:', id);
     }
   }
 
   /* --- Logout button --- */
-  if (t.closest('#logoutBtn')) {
+  if (t && t.closest('#logoutBtn')) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -74,22 +71,22 @@ document.addEventListener('click', (e) => {
   }
 
   /* --- Tailwind modal close --- */
-  if (t.id === 'backdrop' || t.closest('[data-modal-close]')) {
+  if ((t && t.id === 'backdrop') || (t && t.closest('[data-modal-close]'))) {
     document.getElementById('backdrop')?.classList.remove('open');
-    document.querySelectorAll('.tw-modal').forEach(m => {
+    document.querySelectorAll('.tw-modal.open').forEach(m => {
       m.classList.remove('open');
-      
-      // Resetear solo cuando se CIERRA el modal
+
+      // Resetear formulario al cerrar
       const form = m.querySelector('form');
       if (form) {
         form.reset();
-        
-        // Limpiar previsualizaciones
-        const previewLeft = document.getElementById('preview-left');
-        const previewRight = document.getElementById('preview-right');
-        const filenameLeftDiv = document.getElementById('filename-left');
-        const filenameRightDiv = document.getElementById('filename-right');
-        
+
+        // Limpiar previsualizaciones si existen
+        const previewLeft = m.querySelector('#preview-left');
+        const previewRight = m.querySelector('#preview-right');
+        const filenameLeftDiv = m.querySelector('#filename-left');
+        const filenameRightDiv = m.querySelector('#filename-right');
+
         if (previewLeft) {
           previewLeft.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
         }
@@ -107,8 +104,8 @@ document.addEventListener('click', (e) => {
     document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
   }
 
-  /* Bootstrap-like (sin Bootstrap JS) */
-  const bsOpenBtn = t.closest('[data-bs-toggle="modal"]');
+  /* Bootstrap-like modal (sin Bootstrap JS) */
+  const bsOpenBtn = t && t.closest('[data-bs-toggle="modal"]');
   if (bsOpenBtn) {
     e.preventDefault();
     e.stopPropagation();
@@ -121,20 +118,21 @@ document.addEventListener('click', (e) => {
     }
   }
 
-  if (t.closest('[data-bs-dismiss="modal"]') || t.closest('[data-dismiss="modal"]') || 
-      t.closest('.modal .close') || t.closest('.modal .btn-close')) {
+  if (t && (t.closest('[data-bs-dismiss="modal"]') || t.closest('[data-dismiss="modal"]') || 
+      t.closest('.modal .close') || t.closest('.modal .btn-close'))) {
     document.getElementById('backdrop')?.classList.remove('open');
     document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
   }
 
   /* --- Cerrar alertas --- */
-  if (t.closest('[data-close]')) {
+  if (t && t.closest('[data-close]')) {
     const alert = t.closest('.alert');
     if (alert) {
       alert.remove();
     }
   }
 });
+
 
 /* Dark / Light mode */
 function themeInit() {
@@ -181,13 +179,14 @@ function themeInit() {
   }
 }
 
+
 /* Inicialización de DataTables */
 document.addEventListener('DOMContentLoaded', function() {
   const tables = document.querySelectorAll('table[id$="-table"]');
-  
+
   tables.forEach(table => {
     const tableId = table.id;
-    
+
     if ($.fn.DataTable.isDataTable(table)) {
       $(table).DataTable().ajax.reload();
     } else {
@@ -206,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initComplete: function() {
           const lengthSelect = $(`#${tableId}_length select`);
           const filterInput = $(`#${tableId}_filter input`);
-          
+
           if (lengthSelect.length) {
             lengthSelect.addClass('form-control');
           }
@@ -223,26 +222,28 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+
 /* Función para mostrar alertas */
 function showAlert(message, type = 'info') {
   const alertContainer = document.querySelector('.p-4.lg\\:p-6.space-y-4');
   if (!alertContainer) return;
-  
+
   const alert = document.createElement('div');
   alert.className = `alert alert-${type}`;
   alert.innerHTML = `
     <button class="close-btn" data-close aria-label="Cerrar"></button>
     ${message}
   `;
-  
+
   alertContainer.insertBefore(alert, alertContainer.firstChild);
-  
+
   setTimeout(() => {
     if (alert.parentNode) {
       alert.remove();
     }
   }, 5000);
 }
+
 
 /* Función para confirmar acciones */
 function confirmAction(message, callback) {
@@ -251,27 +252,29 @@ function confirmAction(message, callback) {
   }
 }
 
+
 /* Manejo de pestañas */
 document.addEventListener('click', function(e) {
   const tabButton = e.target.closest('[data-tab]');
   if (tabButton) {
     const tabId = tabButton.getAttribute('data-tab');
     const tabContent = document.getElementById(tabId);
-    
+
     if (tabContent) {
       document.querySelectorAll('[data-tab]').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-      
+
       tabButton.classList.add('active');
       tabContent.classList.add('active');
     }
   }
 });
 
+
 /* Manejo de tooltips */
 document.addEventListener('DOMContentLoaded', function() {
   const tooltipElements = document.querySelectorAll('[data-tooltip]');
-  
+
   tooltipElements.forEach(element => {
     element.addEventListener('mouseenter', function() {
       const tooltipText = this.getAttribute('data-tooltip');
@@ -279,14 +282,14 @@ document.addEventListener('DOMContentLoaded', function() {
       tooltip.className = 'tooltip';
       tooltip.textContent = tooltipText;
       document.body.appendChild(tooltip);
-      
+
       const rect = this.getBoundingClientRect();
       tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
       tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
-      
+
       this.tooltip = tooltip;
     });
-    
+
     element.addEventListener('mouseleave', function() {
       if (this.tooltip) {
         this.tooltip.remove();
@@ -296,17 +299,18 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+
 /* Manejo de notificaciones */
 function showNotification(message, type = 'info', duration = 5000) {
   const notification = document.createElement('div');
   notification.className = `notification notification-${type}`;
   notification.textContent = message;
   document.body.appendChild(notification);
-  
+
   setTimeout(() => {
     notification.classList.add('show');
   }, 10);
-  
+
   setTimeout(() => {
     notification.classList.remove('show');
     setTimeout(() => {
@@ -317,26 +321,6 @@ function showNotification(message, type = 'info', duration = 5000) {
   }, duration);
 }
 
-/* Funcionalidad para el menú lateral */
-function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const sidebarCollapsed = document.getElementById('sidebar-collapsed');
-  const backdrop = document.getElementById('backdrop');
-  
-  if (!sidebar) return;
-  
-  const isOpen = sidebar.classList.contains('open');
-  
-  if (window.innerWidth < 768) {
-    if (isOpen) {
-      sidebar.classList.remove('open');
-      backdrop.classList.remove('open');
-    } else {
-      sidebar.classList.add('open');
-      backdrop.classList.add('open');
-    }
-  }
-}
 
 function toggleUserMenu() {
   const userMenu = document.getElementById('userMenu');
@@ -345,28 +329,85 @@ function toggleUserMenu() {
   }
 }
 
-/* Inicialización cuando el DOM está listo */
+
+/* ============================================
+   SIDEBAR TOGGLE - DIRECT EVENT LISTENER
+   ============================================ */
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Dashboard inicializado correctamente');
   themeInit();
-  
+
+  // ===== SIDEBAR TOGGLE =====
+  const toggleBtn = document.getElementById('toggleSidebar');
+  const sidebar = document.getElementById('sidebar');
   const backdrop = document.getElementById('backdrop');
+
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      console.log('🔵 Toggle clicked! Window width:', window.innerWidth);
+      console.log('📌 Sidebar before:', sidebar.classList.contains('open') ? 'OPEN' : 'CLOSED');
+      
+      // Solo en mobile
+      if (window.innerWidth < 768) {
+        sidebar.classList.toggle('open');
+        if (backdrop) {
+          backdrop.classList.toggle('open');
+        }
+        console.log('📌 Sidebar after:', sidebar.classList.contains('open') ? 'OPEN' : 'CLOSED');
+      } else {
+        console.log('⚠️ Desktop mode - toggle disabled');
+      }
+    });
+    
+    console.log('✅ Toggle event listener attached');
+  } else {
+    console.error('❌ toggleBtn or sidebar not found');
+  }
+
+  // Cerrar sidebar al hacer click en un enlace
+  const sidebarLinks = document.querySelectorAll('#sidebar a');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      if (window.innerWidth < 768) {
+        setTimeout(() => {
+          sidebar.classList.remove('open');
+          if (backdrop) backdrop.classList.remove('open');
+        }, 300);
+      }
+    });
+  });
+
+  // Cerrar sidebar al hacer click en backdrop
+  if (backdrop) {
+    backdrop.addEventListener('click', function(e) {
+      if (window.innerWidth < 768) {
+        sidebar.classList.remove('open');
+        this.classList.remove('open');
+      }
+    });
+  }
+
+  // ===== OTHER SIDEBAR HANDLERS =====
+  // Backdrop
   if (backdrop) {
     backdrop.addEventListener('click', function() {
       if (window.innerWidth < 768) {
-        const sidebar = document.getElementById('sidebar');
         if (sidebar && sidebar.classList.contains('open')) {
           sidebar.classList.remove('open');
           this.classList.remove('open');
         }
       }
-      
+
       document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
       document.querySelectorAll('.modal.bs-open').forEach(m => m.classList.remove('bs-open'));
       this.classList.remove('open');
     });
   }
 
+  // User menu button
   const userMenuBtn = document.getElementById('userMenuBtn');
   if (userMenuBtn) {
     userMenuBtn.addEventListener('click', function(e) {
@@ -376,6 +417,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // Cerrar user menu al hacer clic fuera
   document.addEventListener('click', function(e) {
     const userMenu = document.getElementById('userMenu');
     if (userMenu && !e.target.closest('#userMenuBtn') && !e.target.closest('#userMenu')) {
@@ -383,29 +425,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  const sidebarLinks = document.querySelectorAll('#sidebar a');
-  sidebarLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-      if (window.innerWidth < 768) {
-        setTimeout(() => {
-          const sidebar = document.getElementById('sidebar');
-          const backdrop = document.getElementById('backdrop');
-          if (sidebar) sidebar.classList.remove('open');
-          if (backdrop) backdrop.classList.remove('open');
-        }, 300);
-      }
-    });
-  });
-
+  // Manejo responsivo del sidebar
   function handleResponsiveSidebar() {
-    const sidebar = document.getElementById('sidebar');
     if (!sidebar) return;
 
     if (window.innerWidth < 768) {
-      sidebar.classList.add('fixed', 'inset-y-0', 'left-0', 'z-40', 'transform', '-translate-x-full');
-      sidebar.classList.remove('collapsed');
+      // Mobile: usar fixed positioning
+      sidebar.style.position = 'fixed';
     } else {
-      sidebar.classList.remove('fixed', 'inset-y-0', 'left-0', 'z-40', 'transform', '-translate-x-full', 'open');
+      // Desktop: resetear a posición relativa
+      sidebar.style.position = 'relative';
+      sidebar.classList.remove('open');
     }
   }
 

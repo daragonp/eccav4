@@ -1,15 +1,11 @@
 {
-  "_module.esm-Cm4okMZt.js": {
-    "file": "assets/module.esm-Cm4okMZt.js",
-    "name": "module.esm"
-  },
   "resources/css/app.css": {
     "file": "assets/app-DApLW3KM.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-7rAePhHD.css",
+    "file": "assets/dashboard-y5U-Gn3m.css",
     "src": "resources/css/dashboard.css",
     "isEntry": true
   },
@@ -19,7 +15,7 @@
     "isEntry": true
   },
   "resources/css/privacy-notice.css": {
-    "file": "assets/privacy-notice-Fgb1_T6p.css",
+    "file": "assets/privacy-notice-BADABhfn.css",
     "src": "resources/css/privacy-notice.css",
     "isEntry": true
   },
@@ -29,24 +25,21 @@
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-DZm11mpJ.css",
+    "file": "assets/tw-1DIF_EA_.css",
     "src": "resources/css/tw.css",
     "isEntry": true
   },
   "resources/js/admin.js": {
-    "file": "assets/admin-EH7HuKzH.js",
+    "file": "assets/admin-Cjg93S-0.js",
     "name": "admin",
     "src": "resources/js/admin.js",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-DtiTXgbV.js",
+    "file": "assets/app-BNdrj7wI.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
-    "imports": [
-      "_module.esm-Cm4okMZt.js"
-    ],
     "dynamicImports": [
       "resources/js/privacy-notice.js"
     ]
@@ -58,13 +51,11 @@
     "isEntry": true
   },
   "resources/js/privacy-notice.js": {
-    "file": "assets/privacy-notice-CADfzZ2w.js",
+    "file": "assets/privacy-notice-BGGrvb-r.js",
     "name": "privacy-notice",
     "src": "resources/js/privacy-notice.js",
-    "isDynamicEntry": true,
-    "imports": [
-      "_module.esm-Cm4okMZt.js"
-    ]
+    "isEntry": true,
+    "isDynamicEntry": true
   },
   "resources/js/radio-player.js": {
     "file": "assets/radio-player-yMntPcSr.js",

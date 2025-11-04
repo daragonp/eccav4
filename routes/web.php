@@ -60,12 +60,13 @@ Route::group(['middleware' => 'auth'], function () {
     // ===================================================================
     // RUTAS PARA DÍAS FESTIVOS Y PROGRAMACIÓN ESPECIAL
     // ===================================================================
+Route::get('/holiday-schedule', [ScheduleOverrideController::class, 'index'])->name('override.index');
+Route::post('/add-override', [ScheduleOverrideController::class, 'store'])->name('override.store');
+Route::post('/update-override/{id}', [ScheduleOverrideController::class, 'update'])->name('override.update');
+Route::post('/duplicate-override/{id}', [ScheduleOverrideController::class, 'duplicate'])->name('override.duplicate');
+Route::get('/toggle-override/{id}', [ScheduleOverrideController::class, 'toggleActive'])->name('override.toggle');
+Route::get('/delete-override/{id}', [ScheduleOverrideController::class, 'destroy'])->name('override.destroy');
 
-    Route::get('/holiday-schedule', [ScheduleOverrideController::class, 'index'])->name('override.index');
-    Route::post('/add-override', [ScheduleOverrideController::class, 'store'])->name('override.store');
-    Route::post('/update-override/{id}', [ScheduleOverrideController::class, 'update'])->name('override.update');
-    Route::get('/toggle-override/{id}', [ScheduleOverrideController::class, 'toggleActive'])->name('override.toggle');
-    Route::get('/delete-override/{id}', [ScheduleOverrideController::class, 'destroy'])->name('override.destroy');
 
     // API para obtener programación considerando overrides
     Route::get('/api/schedule/date/{date}', [ScheduleOverrideController::class, 'getScheduleForDate'])->name('api.date.schedule');

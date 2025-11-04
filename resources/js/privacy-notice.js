@@ -3,8 +3,6 @@
  * Compatible con Turbo y Alpine.js
  */
 
-import Alpine from 'alpinejs'
-
 console.log('📦 [PRIVACY] Cargando módulo...')
 
 const PRIVACY_NOTICE_CONFIG = {
@@ -15,7 +13,7 @@ const PRIVACY_NOTICE_CONFIG = {
 /**
  * Componente Alpine para Privacy Notice
  */
-Alpine.data('privacyNoticeApp', () => ({
+const privacyNoticeApp = () => ({
   privacyNoticeVisible: false,
 
   /**
@@ -162,6 +160,21 @@ Alpine.data('privacyNoticeApp', () => ({
     })
     .catch(error => console.error('❌ [PRIVACY] Error:', error))
   },
-}))
+})
+
+// Registrar el componente cuando Alpine esté disponible
+document.addEventListener('alpine:init', () => {
+  console.log('🔐 [PRIVACY] Registrando componente con Alpine')
+  Alpine.data('privacyNoticeApp', privacyNoticeApp)
+})
+
+// También registrarlo inmediatamente en caso de que Alpine ya esté inicializado
+if (typeof Alpine !== 'undefined') {
+  console.log('🔐 [PRIVACY] Alpine ya está disponible, registrando componente')
+  Alpine.data('privacyNoticeApp', privacyNoticeApp)
+}
 
 console.log('✨ [PRIVACY] Componente registrado con Alpine')
+
+// Exportar para compatibilidad con módulos
+export default privacyNoticeApp

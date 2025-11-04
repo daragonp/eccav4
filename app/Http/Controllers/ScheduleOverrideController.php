@@ -77,7 +77,7 @@ class ScheduleOverrideController extends Controller
             'date' => 'required|date',
             'override_day' => 'required|integer|between:1,7',
             'reason' => 'nullable|string|max:255',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|accepted', // Cambio importante: nullable y accepted
         ]);
 
         try {
@@ -102,7 +102,7 @@ class ScheduleOverrideController extends Controller
                 'date' => $request->date,
                 'override_day' => $request->override_day,
                 'reason' => $request->reason,
-                'is_active' => $request->has('is_active') ? true : false,
+                'is_active' => $request->has('is_active'), // Cambio importante: has() en lugar de ternario
             ]);
 
             return redirect()->back()->with('success', 'Programación especial actualizada correctamente.');
@@ -110,6 +110,51 @@ class ScheduleOverrideController extends Controller
         } catch (Exception $e) {
             return back()
                 ->withErrors(['error' => 'Error al actualizar la programación especial: ' . $e->getMessage()])
+                ->withInput();
+        }
+    }
+
+    /**
+     * Duplicar un override existente
+     */
+    public function duplicate($id, Request $request)
+    {
+        $this->validate($request, [
+            'date' => 'required|date|after_or_equal:today',
+            'override_day' => 'required|integer|between:1,7',
+            'reason' => 'nullable|string|max:255',
+        ], [
+            'date.required' => 'La fecha es obligatoria.',
+            'date.after_or_equal' => 'La fecha debe ser hoy o una fecha futura.',
+            'override_day.required' => 'Debe seleccionar un día de programación.',
+            'override_day.between' => 'El día debe estar entre 1 (Lunes) y 7 (Domingo).',
+        ]);
+
+        try {
+            // Verificar si ya existe un override activo para esa fecha
+            $existing = ScheduleOverride::where('date', $request->date)
+                ->where('is_active', true)
+                ->whereNull('deleted_at')
+                ->first();
+
+            if ($existing) {
+                return back()
+                    ->withErrors(['date' => 'Ya existe una programación especial activa para esta fecha.'])
+                    ->withInput();
+            }
+
+            ScheduleOverride::create([
+                'date' => $request->date,
+                'override_day' => $request->override_day,
+                'reason' => $request->reason,
+                'is_active' => true,
+            ]);
+
+            return redirect()->back()->with('success', 'Programación especial duplicada correctamente.');
+            
+        } catch (Exception $e) {
+            return back()
+                ->withErrors(['error' => 'Error al duplicar la programación especial: ' . $e->getMessage()])
                 ->withInput();
         }
     }

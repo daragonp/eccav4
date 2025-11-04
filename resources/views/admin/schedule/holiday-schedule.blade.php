@@ -79,6 +79,24 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm text-center">
                                     <div class="flex items-center justify-center gap-2">
+                                        {{-- Botón editar --}}
+                                        <button 
+                                            type="button"
+                                            class="btn btn-sm btn-info"
+                                            onclick="openEditModal({{ json_encode($override) }})"
+                                            title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+
+                                        {{-- Botón duplicar --}}
+                                        <button 
+                                            type="button"
+                                            class="btn btn-sm btn-secondary"
+                                            onclick="openDuplicateModal({{ json_encode($override) }})"
+                                            title="Duplicar">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        
                                         {{-- Botón toggle activo/inactivo --}}
                                         <a 
                                             href="{{ url('/toggle-override/' . $override->id) }}" 
@@ -122,7 +140,10 @@
 
 {{-- Modal para agregar nuevo override --}}
 @push('scripts')
-<section id="addOverrideModal" class="tw-modal" aria-modal="true" role="dialog" aria-hidden="true">
+<div id="backdrop" class="backdrop"></div>
+
+{{-- Modal: Agregar --}}
+<div id="addOverrideModal" class="tw-modal">
     <div class="tw-modal-panel">
         <div class="tw-modal-header">
             <h3 class="text-lg font-semibold">Nueva Programación Especial</h3>
@@ -200,5 +221,244 @@
             </div>
         </form>
     </div>
-</section>
+</div>
+
+{{-- Modal: Editar --}}
+<div id="editOverrideModal" class="tw-modal">
+    <div class="tw-modal-panel">
+        <div class="tw-modal-header">
+            <h3 class="text-lg font-semibold">Editar Programación Especial</h3>
+            <button data-modal-close class="btn btn-ghost" aria-label="Cerrar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <form id="editOverrideForm" method="POST">
+            @csrf
+            @method('POST')
+            <div class="tw-modal-body">
+                <div class="space-y-4">
+                    {{-- Fecha --}}
+                    <div>
+                        <label for="edit_date" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                            Fecha del evento especial
+                        </label>
+                        <input 
+                            type="date" 
+                            id="edit_date" 
+                            name="date" 
+                            class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white"
+                            required>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Selecciona la fecha en la que quieres usar programación alternativa
+                        </p>
+                    </div>
+
+                    {{-- Día de programación a usar --}}
+                    <div>
+                        <label for="edit_override_day" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                            Usar programación de
+                        </label>
+                        <select 
+                            id="edit_override_day" 
+                            name="override_day" 
+                            class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white"
+                            required>
+                            <option value="">Seleccionar día...</option>
+                            <option value="1">Lunes</option>
+                            <option value="2">Martes</option>
+                            <option value="3">Miércoles</option>
+                            <option value="4">Jueves</option>
+                            <option value="5">Viernes</option>
+                            <option value="6">Sábado</option>
+                            <option value="7">Domingo</option>
+                        </select>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Ejemplo: Si el 11 de noviembre es martes pero quieres usar la programación de sábado, selecciona "Sábado"
+                        </p>
+                    </div>
+
+                    {{-- Motivo --}}
+                    <div>
+                        <label for="edit_reason" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                            Motivo (opcional)
+                        </label>
+                        <input 
+                            type="text" 
+                            id="edit_reason" 
+                            name="reason" 
+                            placeholder="Ej: Día de la Independencia"
+                            class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white">
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Describe el motivo de la programación especial
+                        </p>
+                    </div>
+
+                    {{-- Estado --}}
+                    <div>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                id="edit_is_active" 
+                                name="is_active" 
+                                value="1"
+                                class="rounded border-slate-300 dark:border-slate-700 text-blue-600 focus:ring-blue-500">
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                Programación activa
+                            </span>
+                        </label>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Solo las programaciones activas se aplicarán en las fechas configuradas
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tw-modal-footer">
+                <button type="button" data-modal-close class="btn">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal: Duplicar --}}
+<div id="duplicateOverrideModal" class="tw-modal">
+    <div class="tw-modal-panel">
+        <div class="tw-modal-header">
+            <h3 class="text-lg font-semibold">Duplicar Programación Especial</h3>
+            <button data-modal-close class="btn btn-ghost" aria-label="Cerrar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        
+        <form id="duplicateOverrideForm" method="POST">
+            @csrf
+            <div class="tw-modal-body">
+                <div class="space-y-4">
+                    {{-- Información original --}}
+                    <div class="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
+                        <p class="text-sm text-blue-800 dark:text-blue-300">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Se creará una copia con los datos de la programación original. Puedes modificar cualquier campo antes de guardar.
+                        </p>
+                    </div>
+
+                    {{-- Fecha --}}
+                    <div>
+                        <label for="duplicate_date" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                            Nueva fecha del evento especial
+                        </label>
+                        <input 
+                            type="date" 
+                            id="duplicate_date" 
+                            name="date" 
+                            class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white"
+                            min="{{ date('Y-m-d') }}"
+                            required>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Selecciona una nueva fecha (debe ser diferente a la original)
+                        </p>
+                    </div>
+
+                    {{-- Día de programación a usar --}}
+                    <div>
+                        <label for="duplicate_override_day" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                            Usar programación de
+                        </label>
+                        <select 
+                            id="duplicate_override_day" 
+                            name="override_day" 
+                            class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white"
+                            required>
+                            <option value="">Seleccionar día...</option>
+                            <option value="1">Lunes</option>
+                            <option value="2">Martes</option>
+                            <option value="3">Miércoles</option>
+                            <option value="4">Jueves</option>
+                            <option value="5">Viernes</option>
+                            <option value="6">Sábado</option>
+                            <option value="7">Domingo</option>
+                        </select>
+                    </div>
+
+                    {{-- Motivo --}}
+                    <div>
+                        <label for="duplicate_reason" class="block text-sm font-medium mb-1 text-slate-700 dark:text-slate-300">
+                            Motivo (opcional)
+                        </label>
+                        <input 
+                            type="text" 
+                            id="duplicate_reason" 
+                            name="reason" 
+                            placeholder="Ej: Día de la Independencia"
+                            class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white">
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                            Describe el motivo de la programación especial
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tw-modal-footer">
+                <button type="button" data-modal-close class="btn">Cancelar</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-copy mr-1"></i>
+                    Duplicar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    /**
+     * Abrir modal de edición con los datos del override
+     */
+    function openEditModal(override) {
+        // Formatear la fecha para el input tipo date (YYYY-MM-DD)
+        const dateObj = new Date(override.date);
+        const formattedDate = dateObj.toISOString().split('T')[0];
+        
+        // Llenar los campos del formulario
+        document.getElementById('edit_date').value = formattedDate;
+        document.getElementById('edit_override_day').value = override.override_day;
+        document.getElementById('edit_reason').value = override.reason || '';
+        document.getElementById('edit_is_active').checked = override.is_active;
+        
+        // Configurar la acción del formulario
+        document.getElementById('editOverrideForm').action = '/update-override/' + override.id;
+        
+        // Abrir el modal usando el sistema de admin.js
+        const modal = document.getElementById('editOverrideModal');
+        const backdrop = document.getElementById('backdrop');
+        
+        document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
+        backdrop.classList.add('open');
+        modal.classList.add('open');
+    }
+
+    /**
+     * Abrir modal de duplicación con los datos del override
+     */
+    function openDuplicateModal(override) {
+        // NO llenar la fecha (el usuario debe elegir una nueva)
+        document.getElementById('duplicate_date').value = '';
+        
+        // Llenar el día de programación y motivo con los valores originales
+        document.getElementById('duplicate_override_day').value = override.override_day;
+        document.getElementById('duplicate_reason').value = override.reason || '';
+        
+        // Configurar la acción del formulario
+        document.getElementById('duplicateOverrideForm').action = '/duplicate-override/' + override.id;
+        
+        // Abrir el modal usando el sistema de admin.js
+        const modal = document.getElementById('duplicateOverrideModal');
+        const backdrop = document.getElementById('backdrop');
+        
+        document.querySelectorAll('.tw-modal.open').forEach(m => m.classList.remove('open'));
+        backdrop.classList.add('open');
+        modal.classList.add('open');
+    }
+</script>
 @endpush
