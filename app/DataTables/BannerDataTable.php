@@ -53,42 +53,54 @@ class BannerDataTable extends DataTable
     }
 
     public function dataTable(QueryBuilder $query): EloquentDataTable
-    {
-        try {
-            return (new EloquentDataTable($query))
-                ->addColumn('banner_info', function ($row) {
-                    return $this->renderBannerInfo($row);
-                })
-                ->addColumn('estado', function ($row) {
-                    return $row->deleted_at 
-                        ? '<span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-trash-alt mr-1"></i> Inactivo</span>'
-                        : '<span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fas fa-check-circle mr-1"></i> Activo</span>';
-                })
-                ->addColumn('action', fn($slide) => $this->renderActionColumn($slide))
-                ->rawColumns(['banner_info', 'estado', 'action']);
-        } catch (\Throwable $e) {
-            logger()->error('Error en BannerDataTable: ' . $e->getMessage());
-            throw $e;
-        }
+{
+    try {
+        return (new EloquentDataTable($query))
+            ->addColumn('banner_info', function ($row) {
+                return $this->renderBannerInfo($row);
+            })
+            ->addColumn('estado', function ($row) {
+                if ($row->active) {
+                    return '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700 shadow-sm">
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        Activo
+                    </span>';
+                } else {
+                    return '<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300 border border-rose-200 dark:border-rose-700 shadow-sm">
+                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        Inactivo
+                    </span>';
+                }
+            })
+            ->addColumn('action', fn($slide) => $this->renderActionColumn($slide))
+            ->rawColumns(['banner_info', 'estado', 'action']);
+    } catch (\Throwable $e) {
+        logger()->error('Error en BannerDataTable: ' . $e->getMessage());
+        throw $e;
     }
+}
 
     /**
      * Get the query source of dataTable.
      */
     public function query(Banner $model): QueryBuilder
-    {
-        // Verifica si el usuario está autenticado
-        if (Auth::check()) {
-            if (Auth::user()->roles->pluck('id')[0] ?? '' === 1) {
-                return $model->newQuery();
-            } else {
-                return $model->newQuery()->whereNull('deleted_at');
-            }
+{
+    // Verifica si el usuario está autenticado
+    if (Auth::check()) {
+        if (Auth::user()->roles->pluck('id')[0] ?? '' === 1) {
+            return $model->newQuery();
+        } else {
+            return $model->newQuery()->where('active', true);
         }
-
-        // Si el usuario no está autenticado o no tiene 'role_id' igual a 1, retorna una consulta que filtre los registros que cumplan con tus criterios específicos.
-        return $model->newQuery()->whereNull('deleted_at')->where('otro_campo', 'valor');
     }
+
+    // Si el usuario no está autenticado o no tiene 'role_id' igual a 1
+    return $model->newQuery()->where('active', true);
+}
 
     /**
      * Optional method if you want to use the html builder.

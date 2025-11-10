@@ -20,7 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     {{-- Carga CSS primero para evitar FOUC + luego JS --}}
-    @vite(['resources/css/dashboard.css', 'resources/js/admin.js'])
+    @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'])
     <script src="https://kit.fontawesome.com/71f1c28685.js" crossorigin="anonymous"></script>
 </head>
 

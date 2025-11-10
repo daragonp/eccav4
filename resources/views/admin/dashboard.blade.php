@@ -1,129 +1,146 @@
 @extends('layouts.panel')
 
-
 @section('title', 'Panel principal')
 @section('pageheading', 'Panel principal')
 
-
 @section('datatable')
-<!-- Tarjetas de estadísticas mejoradas -->
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mb-6">
-    <div class="card-stats-users group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div class="card-body relative">
-            <div class="flex items-start justify-between mb-3">
-                <div class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-users text-blue-600 dark:text-blue-400"></i>
+<!-- Panel de control moderno -->
+<div class="space-y-6">
+    <!-- Resumen de estadísticas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <!-- Tarjeta de Usuarios -->
+        <div class="stat-card relative overflow-hidden bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
+            <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                            <i class="fas fa-users text-lg text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Usuarios</h3>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['users'] ?? 0 }}</span>
+                                <span class="text-sm font-medium text-green-600 dark:text-green-400">
+                                    <i class="fas fa-arrow-up text-xs"></i> 12%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url('show-users') }}" class="p-2 text-slate-400 hover:text-blue-600 dark:text-slate-500 dark:hover:text-blue-400 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
                 </div>
-                <span class="text-xs font-medium px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">
-                    <i class="fas fa-arrow-up text-xs mr-1"></i>12%
-                </span>
-            </div>
-            <div class="text-xs uppercase text-slate-500 dark:text-slate-400 mb-1">Usuarios</div>
-            <div class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">{{ $stats['users'] ?? 0 }}</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400">{{ $stats['users_change'] ?? '12 nuevos este mes' }}</div>
-            <div class="mt-3">
-                <a href="{{ url('show-users') }}" class="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
-                    Gestionar usuarios
-                    <i class="fas fa-arrow-right ml-1 text-xs group-hover:translate-x-1 transition-transform duration-300"></i>
-                </a>
+                <div class="mt-4">
+                    <div class="h-2 bg-blue-50 dark:bg-blue-900/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: 75%"></div>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">{{ $stats['users_change'] ?? '12 nuevos este mes' }}</p>
+                </div>
             </div>
         </div>
-    </div>
     
-    <div class="card-stats-verses group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
-        <div class="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div class="card-body relative">
-            <div class="flex items-start justify-between mb-3">
-                <div class="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-book-bible text-white"></i>
+        <!-- Tarjeta de Versículos -->
+        <div class="stat-card relative overflow-hidden bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
+            <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                            <i class="fas fa-book-bible text-lg text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Versículos</h3>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['verses'] ?? 0 }}</span>
+                                <span class="text-sm font-medium text-green-600 dark:text-green-400">
+                                    <i class="fas fa-arrow-up text-xs"></i> 8%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url('show-quote') }}" class="p-2 text-slate-400 hover:text-green-600 dark:text-slate-500 dark:hover:text-green-400 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
                 </div>
-                <span class="text-xs font-medium px-2 py-1 bg-white/20 text-white rounded-full">
-                    <i class="fas fa-arrow-up text-xs mr-1"></i>8%
-                </span>
-            </div>
-            <div class="text-xs uppercase opacity-80 mb-1">Versículos</div>
-            <div class="text-3xl font-extrabold text-white mb-2">{{ $stats['verses'] ?? 0 }}</div>
-            <div class="text-xs opacity-80">{{ $stats['verses_change'] ?? '8 nuevos este mes' }}</div>
-            <div class="mt-3">
-                <a href="{{ url('show-quote') }}" class="inline-flex items-center text-sm font-medium text-white hover:underline transition-colors">
-                    Ver versículos
-                    <i class="fas fa-arrow-right ml-1 text-xs group-hover:translate-x-1 transition-transform duration-300"></i>
-                </a>
+                <div class="mt-4">
+                    <div class="h-2 bg-green-50 dark:bg-green-900/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full" style="width: 65%"></div>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">{{ $stats['verses_change'] ?? '8 nuevos este mes' }}</p>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="card-stats-schedules group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
-        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div class="card-body relative">
-            <div class="flex items-start justify-between mb-3">
-                <div class="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-clock text-white"></i>
-                </div>
-                <span class="text-xs font-medium px-2 py-1 bg-white/20 text-white rounded-full">
-                    <i class="fas fa-arrow-up text-xs mr-1"></i>5%
-                </span>
-            </div>
-            <div class="text-xs uppercase opacity-80 mb-1">Programación</div>
-            <div class="text-3xl font-extrabold text-white mb-2">{{ $stats['schedules'] ?? 0 }}</div>
-            <div class="text-xs opacity-80">{{ $stats['schedules_change'] ?? '5 nuevos este mes' }}</div>
-            <div class="mt-3">
-                <a href="{{ url('show-schedule') }}" class="inline-flex items-center text-sm font-medium text-white hover:underline transition-colors">
-                    Ver parrilla
-                    <i class="fas fa-arrow-right ml-1 text-xs group-hover:translate-x-1 transition-transform duration-300"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="card-stats-banners group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
-        <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div class="card-body relative">
-            <div class="flex items-start justify-between mb-3">
-                <div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-images text-purple-600 dark:text-purple-400"></i>
-                </div>
-                <span class="text-xs font-medium px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-full">
-                    <i class="fas fa-arrow-down text-xs mr-1"></i>3%
-                </span>
-            </div>
-            <div class="text-xs uppercase text-slate-700 dark:text-slate-300 mb-1">Banners</div>
-            <div class="text-3xl font-extrabold text-slate-900 dark:text-white mb-2">{{ $stats['banners'] ?? 0 }}</div>
-            <div class="text-xs text-slate-600 dark:text-slate-400">{{ $stats['banners_change'] ?? '2 inactivos' }}</div>
-            <div class="mt-3">
-                <a href="{{ url('show-slider') }}" class="inline-flex items-center text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors">
-                    Gestionar
-                    <i class="fas fa-arrow-right ml-1 text-xs group-hover:translate-x-1 transition-transform duration-300"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <div class="card-stats-news group relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        <div class="card-body relative">
-            <div class="flex items-start justify-between mb-3">
-                <div class="p-2 bg-white/20 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-newspaper text-white"></i>
-                </div>
-                <span class="text-xs font-medium px-2 py-1 bg-white/20 text-white rounded-full">
-                    <i class="fas fa-arrow-up text-xs mr-1"></i>15%
-                </span>
-            </div>
-            <div class="text-xs uppercase opacity-80 mb-1">Noticias</div>
-            <div class="text-3xl font-extrabold text-white mb-2">{{ $stats['news'] ?? 0 }}</div>
-            <div class="text-xs opacity-80">{{ $stats['news_change'] ?? '15 nuevas este mes' }}</div>
-            <div class="mt-3">
-                <a href="{{ url('show-news') }}" class="inline-flex items-center text-sm font-medium text-white hover:underline transition-colors">
-                    Ir a noticias
-                    <i class="fas fa-arrow-right ml-1 text-xs group-hover:translate-x-1 transition-transform duration-300"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
 
+        <!-- Tarjeta de Programación -->
+        <div class="stat-card relative overflow-hidden bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
+            <div class="absolute top-0 left-0 w-2 h-full bg-purple-500"></div>
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
+                            <i class="fas fa-clock text-lg text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Programación</h3>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-bold text-slate-900 dark:text-white">354</span>
+                                <span class="text-sm font-medium text-green-600 dark:text-green-400">
+                                    <i class="fas fa-arrow-up text-xs"></i> 5%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url('show-schedule') }}" class="p-2 text-slate-400 hover:text-purple-600 dark:text-slate-500 dark:hover:text-purple-400 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <div class="h-2 bg-purple-50 dark:bg-purple-900/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-purple-500 rounded-full" style="width: 85%"></div>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">5 nuevos este mes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta de Noticias -->
+        <div class="stat-card relative overflow-hidden bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
+            <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+            <div class="p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
+                            <i class="fas fa-newspaper text-lg text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Noticias</h3>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="text-2xl font-bold text-slate-900 dark:text-white">27</span>
+                                <span class="text-sm font-medium text-green-600 dark:text-green-400">
+                                    <i class="fas fa-arrow-up text-xs"></i> 15%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{{ url('show-news') }}" class="p-2 text-slate-400 hover:text-indigo-600 dark:text-slate-500 dark:hover:text-indigo-400 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                <div class="mt-4">
+                    <div class="h-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-indigo-500 rounded-full" style="width: 92%"></div>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500 dark:text-slate-400">15 nuevas este mes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
 
 <!-- Sección de contenido principal -->
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -186,8 +203,8 @@
                                 @endif
                             </td>
                             <td class="py-3">
-                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs">
-                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                <span class="chip-success">
+                                    <i class="fas fa-check-circle"></i>
                                     Activo
                                 </span>
                             </td>
@@ -208,7 +225,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Últimas noticias mejoradas -->
     <div class="card group hover:shadow-lg transition-all duration-300">
@@ -244,10 +260,10 @@
                             @endif
                         </div>
                         <div class="flex flex-col gap-1">
-                            <a href="{{ url('view-news/'.$n->id) }}" class="p-1.5 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors group/edit">
+                            <a href="{{ url('view-news/'.$n->id) }}" class="btn-action btn-action-info" title="Ver noticia">
                                 <i class="fas fa-eye text-xs"></i>
                             </a>
-                            <a href="{{ url('edit-news/'.$n->id) }}" class="p-1.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors group/edit">
+                            <a href="{{ url('edit-news/'.$n->id) }}" class="btn-action btn-action-secondary" title="Editar noticia">
                                 <i class="fas fa-edit text-xs"></i>
                             </a>
                         </div>
@@ -267,83 +283,9 @@
     </div>
 </div>
 
-
-<!-- Sección de acciones rápidas -->
-<div class="mt-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-    <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Acciones rápidas</h3>
-        <span class="text-xs text-slate-500 dark:text-slate-400">Gestiona tu contenido de forma eficiente</span>
-    </div>
-    
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <button data-url="{{ url('show-quote') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nuevo Versículo" role="button">
-            <div class="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                <i class="fas fa-plus text-green-600 dark:text-green-400"></i>
-            </div>
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nuevo Versículo</span>
-        </button>
-        
-        <button data-url="{{ url('show-news') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nueva Noticia" role="button">
-            <div class="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                <i class="fas fa-plus text-indigo-600 dark:text-indigo-400"></i>
-            </div>
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nueva Noticia</span>
-        </button>
-        
-        <button data-url="{{ url('show-slider') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nuevo Banner" role="button">
-            <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                <i class="fas fa-plus text-purple-600 dark:text-purple-400"></i>
-            </div>
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nuevo Banner</span>
-        </button>
-        
-        <button data-url="{{ url('show-schedule') }}" class="quick-action-btn group flex flex-col items-center gap-2 p-4 bg-white dark:bg-slate-800 rounded-lg hover:shadow-md transition-all duration-300 hover:scale-105" aria-label="Nueva Programación" role="button">
-            <div class="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                <i class="fas fa-plus text-emerald-600 dark:text-emerald-400"></i>
-            </div>
-            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">Nueva Programación</span>
-        </button>
-    </div>
 </div>
 
-
-<!-- Resumen de actividad -->
-<div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-slate-600 dark:text-slate-400">Visitas hoy</span>
-            <i class="fas fa-chart-line text-green-500"></i>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['visits_today'] ?? '1,234' }}</div>
-        <div class="text-xs text-green-600 dark:text-green-400 mt-1">
-            <i class="fas fa-arrow-up text-xs"></i> 12% vs ayer
-        </div>
-    </div>
-    
-    <div class="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-slate-600 dark:text-slate-400">Usuarios activos</span>
-            <i class="fas fa-users text-blue-500"></i>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['active_users'] ?? '89' }}</div>
-        <div class="text-xs text-blue-600 dark:text-blue-400 mt-1">
-            <i class="fas fa-arrow-up text-xs"></i> 5% vs semana pasada
-        </div>
-    </div>
-    
-    <div class="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
-        <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-slate-600 dark:text-slate-400">Tasa de conversión</span>
-            <i class="fas fa-percentage text-purple-500"></i>
-        </div>
-        <div class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['conversion_rate'] ?? '3.2%' }}</div>
-        <div class="text-xs text-purple-600 dark:text-purple-400 mt-1">
-            <i class="fas fa-arrow-up text-xs"></i> 0.8% vs mes pasado
-        </div>
-    </div>
-</div>
 @endsection
-
 
 @push('scripts')
 <script>

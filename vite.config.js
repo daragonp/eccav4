@@ -33,18 +33,16 @@ export default defineConfig({
         // PÚBLICO
         'resources/css/app.css',
         'resources/css/tw.css',        
-        'resources/css/dashboard.css',
         'resources/css/radio-player.css',
-        'resources/css/privacy-notice.css', // ⬅️ AÑADIDO
+        'resources/css/privacy-notice.css',
         
         'resources/js/app.js',
         'resources/js/radio-player.js',
         'resources/js/privacy-notice.js',
 
         // ADMIN
-        'resources/js/admin.js',
-        './resources/css/menu-fix.css', 
-        'resources/js/datatables-es.json',
+        'resources/js/dashboard.js',
+        'resources/css/dashboard.css',
 
       ],
       refresh: true,

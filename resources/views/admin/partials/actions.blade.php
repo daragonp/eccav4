@@ -5,38 +5,33 @@
   $editPartial= $editPartial?? null;
   $sectionType = $sectionType ?? 'news';
   $sectionTitle = $sectionTitle ?? 'Elemento';
-  $isDeleted = isset($tableM) && $tableM->deleted_at ? true : false;
+  // Cambiar de deleted_at a active
+  $isActive = isset($tableM) && is_null($tableM->deleted_at);
 @endphp
 
-<div class="flex items-center justify-center gap-2">
+<div class="flex items-center justify-center gap-1.5">
 
   {{-- Ver --}}
-  <a href="{{ $view ?? '#' }}" class="btn btn-ghost text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300" title="Ver">
-    <i class="fa-solid fa-eye"></i>
+  <a href="{{ $view ?? '#' }}" 
+     class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-all duration-200 group" 
+     title="Ver detalles">
+    <i class="fa-solid fa-eye text-sm group-hover:scale-110 transition-transform"></i> 
   </a>
-<!-- 
-  {{-- Editar (abre modal por fila) --}}
-  <button class="btn btn-ghost text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300" title="Editar" data-modal-open="{{ $modalId }}">
-    <i class="fa-solid fa-pen-to-square"></i>
-  </button> -->
-
+<p>|</p>
   {{-- Activar / Desactivar --}}
-  @if ($isDeleted)
-    <a href="{{ $activate ?? '#' }}" class="btn btn-ghost text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" title="Activar">
-      <i class="fa-solid fa-toggle-off"></i>
+  @if (!$isActive)
+    <a href="{{ $activate ?? '#' }}" 
+       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-all duration-200 group" 
+       title="Activar versículo">
+      <i class="fa-solid fa-toggle-off text-sm group-hover:scale-110 transition-transform"></i>
     </a>
   @else
-    <a href="{{ $softdelete ?? '#' }}" class="btn btn-ghost text-orange-600 hover:text-orange-800 dark:text-orange-400 dark:hover:text-orange-300" title="Desactivar">
-      <i class="fa-solid fa-toggle-on"></i>
+    <a href="{{ $softdelete ?? '#' }}" 
+       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all duration-200 group" 
+       title="Desactivar versículo">
+      <i class="fa-solid fa-toggle-on text-sm group-hover:scale-110 transition-transform"></i>
     </a>
   @endif
-
-  {{-- Eliminar definitivo --}}
-  <form action="{{ $realdelete ?? '#' }}" method="GET" onsubmit="return confirm('¿Eliminar definitivamente?');" class="inline">
-    <button type="submit" class="btn btn-ghost text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Eliminar">
-      <i class="fa-solid fa-trash"></i>
-    </button>
-  </form>
 </div>
 
 {{-- ===== Modal de edición por fila (Universal) ===== --}}

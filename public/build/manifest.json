@@ -1,42 +1,31 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-DApLW3KM.css",
+    "file": "assets/app-PzKwjMkq.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-y5U-Gn3m.css",
+    "file": "assets/dashboard-j1DiQxLb.css",
     "src": "resources/css/dashboard.css",
     "isEntry": true
   },
-  "resources/css/menu-fix.css": {
-    "file": "assets/menu-fix-DLE64Pzr.css",
-    "src": "resources/css/menu-fix.css",
-    "isEntry": true
-  },
   "resources/css/privacy-notice.css": {
-    "file": "assets/privacy-notice-BADABhfn.css",
+    "file": "assets/privacy-notice-FKTZEUP6.css",
     "src": "resources/css/privacy-notice.css",
     "isEntry": true
   },
   "resources/css/radio-player.css": {
-    "file": "assets/radio-player-DWesfXGC.css",
+    "file": "assets/radio-player-Cxs-hUkl.css",
     "src": "resources/css/radio-player.css",
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-1DIF_EA_.css",
+    "file": "assets/tw-Dz3pXLDn.css",
     "src": "resources/css/tw.css",
     "isEntry": true
   },
-  "resources/js/admin.js": {
-    "file": "assets/admin-Cjg93S-0.js",
-    "name": "admin",
-    "src": "resources/js/admin.js",
-    "isEntry": true
-  },
   "resources/js/app.js": {
-    "file": "assets/app-BNdrj7wI.js",
+    "file": "assets/app-D_LE40Nl.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -44,10 +33,10 @@
       "resources/js/privacy-notice.js"
     ]
   },
-  "resources/js/datatables-es.json": {
-    "file": "assets/datatables-es-l0sNRNKZ.js",
-    "name": "datatables-es",
-    "src": "resources/js/datatables-es.json",
+  "resources/js/dashboard.js": {
+    "file": "assets/dashboard-CZCqp_7y.js",
+    "name": "dashboard",
+    "src": "resources/js/dashboard.js",
     "isEntry": true
   },
   "resources/js/privacy-notice.js": {
@@ -58,7 +47,7 @@
     "isDynamicEntry": true
   },
   "resources/js/radio-player.js": {
-    "file": "assets/radio-player-yMntPcSr.js",
+    "file": "assets/radio-player-CV_pL-aW.js",
     "name": "radio-player",
     "src": "resources/js/radio-player.js",
     "isEntry": true
