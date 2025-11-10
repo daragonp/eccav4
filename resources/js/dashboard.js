@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
         requestIdleCallback(() => {
             initTheme();
             setupEventListeners();
-            setupStatCards();
             setupLogoutHandler();
         });
     } else {
@@ -13,11 +12,11 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             initTheme();
             setupEventListeners();
-            setupStatCards();
             setupLogoutHandler();
         }, 1);
     }
 });
+
 
 // Inicializar tema
 function initTheme() {
@@ -35,6 +34,7 @@ function initTheme() {
     });
 }
 
+
 // Aplicar tema
 function applyTheme(theme) {
     if (theme === 'dark') {
@@ -50,6 +50,7 @@ function applyTheme(theme) {
     
     localStorage.setItem('theme', theme);
 }
+
 
 // Funciones para manejar modales
 function openModal(modalId) {
@@ -74,6 +75,7 @@ function openModal(modalId) {
     }
 }
 
+
 function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     const backdrop = document.getElementById('backdrop');
@@ -97,6 +99,7 @@ function closeModal(modalId) {
     }
 }
 
+
 // Configurar event listeners
 function setupEventListeners() {
     // Toggle sidebar
@@ -111,6 +114,7 @@ function setupEventListeners() {
         });
     }
 
+
     // Toggle theme
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
@@ -119,6 +123,7 @@ function setupEventListeners() {
             applyTheme(isDark ? 'light' : 'dark');
         });
     }
+
 
     // User menu toggle
     const userMenuBtn = document.getElementById('userMenuBtn');
@@ -130,6 +135,7 @@ function setupEventListeners() {
             userMenu.classList.toggle('hidden');
         });
 
+
         // Cerrar al hacer clic fuera
         document.addEventListener('click', function(e) {
             if (!userMenu.contains(e.target) && !userMenuBtn.contains(e.target)) {
@@ -137,6 +143,7 @@ function setupEventListeners() {
             }
         });
     }
+
 
     // Event listeners para modales
     document.addEventListener('click', function(e) {
@@ -149,6 +156,7 @@ function setupEventListeners() {
             return;
         }
 
+
         // Cerrar modal con botón de cierre
         const modalClose = e.target.closest('[data-modal-close]');
         if (modalClose) {
@@ -160,6 +168,7 @@ function setupEventListeners() {
             return;
         }
 
+
         // Solo cerrar modal si el click es DIRECTAMENTE en el backdrop, no dentro del panel
         if ((e.target.id === 'backdrop' || e.target.classList.contains('tw-modal-backdrop')) && e.target === e.currentTarget) {
             const openModals = document.querySelectorAll('.tw-modal.open');
@@ -169,6 +178,7 @@ function setupEventListeners() {
             return;
         }
     }, true);
+
 
     // Cerrar modal con la tecla ESC
     document.addEventListener('keydown', function(e) {
@@ -180,6 +190,7 @@ function setupEventListeners() {
         }
     });
 
+
     // Quick actions
     const quickActionBtns = document.querySelectorAll('.quick-action-btn');
     quickActionBtns.forEach(btn => {
@@ -189,6 +200,7 @@ function setupEventListeners() {
         });
     });
 }
+
 
 // Cargar recursos externos de forma asíncrona
 function loadScript(src) {
@@ -202,31 +214,76 @@ function loadScript(src) {
     });
 }
 
-// Manejador del logout
+
+// ✅ MANEJADOR DEL LOGOUT - VERSIÓN CORREGIDA
 function setupLogoutHandler() {
     const logoutButton = document.getElementById('logout-button');
     const logoutModal = document.getElementById('logoutModal');
     const cancelButton = document.getElementById('cancelLogout');
-    const modalContent = logoutModal?.querySelector('.transform');
+    const confirmButton = document.getElementById('confirmLogout');
+    const logoutModalClose = document.getElementById('logoutModalClose');
+    const logoutForm = document.getElementById('logoutForm');
+    const modalContent = logoutModal?.querySelector('.tw-modal-panel');
 
-    if (!logoutButton || !logoutModal || !cancelButton || !modalContent) return;
+    // Validación
+    if (!logoutButton || !logoutModal || !modalContent) {
+        console.warn('⚠️ Elementos de logout no encontrados');
+        return;
+    }
 
     function showModal() {
+        console.log('📂 Abriendo modal...');
         logoutModal.classList.remove('hidden');
+        logoutModal.setAttribute('aria-hidden', 'false');
         requestAnimationFrame(() => {
+            modalContent.classList.remove('scale-95', 'opacity-0');
             modalContent.classList.add('scale-100', 'opacity-100');
         });
     }
 
     function hideModal() {
+        console.log('📁 Cerrando modal...');
         modalContent.classList.remove('scale-100', 'opacity-100');
+        modalContent.classList.add('scale-95', 'opacity-0');
         setTimeout(() => {
             logoutModal.classList.add('hidden');
+            logoutModal.setAttribute('aria-hidden', 'true');
         }, 200);
     }
 
-    logoutButton.addEventListener('click', showModal);
-    cancelButton.addEventListener('click', hideModal);
+    // Abrir modal
+    logoutButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showModal();
+    });
+
+    // Cerrar modal - Cancelar
+    if (cancelButton) {
+        cancelButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideModal();
+        });
+    }
+
+    // Cerrar modal - X
+    if (logoutModalClose) {
+        logoutModalClose.addEventListener('click', (e) => {
+            e.preventDefault();
+            hideModal();
+        });
+    }
+
+    // ✅ ENVIAR FORMULARIO - Si hay botón de confirmación en el modal
+    if (confirmButton) {
+        confirmButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('✅ Enviando formulario de logout...');
+            if (logoutForm) {
+                logoutForm.submit();
+            }
+        });
+    }
     
     // Cerrar modal al hacer click fuera
     logoutModal.addEventListener('click', (e) => {
@@ -241,7 +298,10 @@ function setupLogoutHandler() {
             hideModal();
         }
     });
+
+    console.log('✅ setupLogoutHandler inicializado correctamente');
 }
+
 
 // Cargar scripts necesarios después de que la página esté lista
 window.addEventListener('load', function() {
@@ -255,7 +315,7 @@ window.addEventListener('load', function() {
                 responsive: true,
                 defer: true,
                 language: {
-                    url: asset('js/datatables-es.json')
+                    url: '/js/datatables-es.json'
                 }
             });
         }

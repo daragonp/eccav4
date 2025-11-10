@@ -14,12 +14,10 @@
     <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
     <title>@yield('title', 'Panel') — Emancipación Cristiana Afro</title>
 
-    {{-- Google Fonts (evita @import en CSS que rompía PostCSS) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    {{-- Carga CSS primero para evitar FOUC + luego JS --}}
     @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'])
     <script src="https://kit.fontawesome.com/71f1c28685.js" crossorigin="anonymous"></script>
 </head>
@@ -31,7 +29,7 @@
             {{-- Logo y Perfil --}}
             <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold shadow-lg">
+                    <div class="w-10 h-10 rounded-lg bg-linear-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold shadow-lg">
                         ECA
                     </div>
                     <div>
@@ -45,7 +43,7 @@
             <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div class="flex items-center gap-3">
                     <div class="relative">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
+                        <div class="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
                             {{ substr(auth()->user()->name, 0, 1) }}
                         </div>
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
@@ -168,7 +166,7 @@
             <div class="flex flex-col h-full">
                 {{-- Logo --}}
                 <div class="p-4 border-b border-slate-200 dark:border-slate-700">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold text-xs shadow-lg">
+                    <div class="w-8 h-8 rounded-lg bg-linear-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold text-xs shadow-lg">
                         ECA
                     </div>
                 </div>
@@ -238,7 +236,7 @@
                 {{-- Usuario --}}
                 <div class="p-4 border-t border-slate-200 dark:border-slate-700">
                     <div class="relative">
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
+                        <div class="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
                             {{ substr(auth()->user()->name, 0, 1) }}
                         </div>
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
@@ -259,12 +257,6 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    {{-- Enlace al dashboard de la emisora con texto --}}
-                    <a href="https://a12.asurahosting.com/station/199/" target="_blank" class="station-icon" title="Dashboard de la emisora">
-                        <i class="fas fa-broadcast-tower"></i>
-                        <span class="station-text">Emisora</span>
-                    </a>
-
                     {{-- Toggle dark/light --}}
                     <button id="themeToggle" class="btn btn-ghost" aria-label="Cambiar tema">
                         <i id="themeIcon"></i>
@@ -274,7 +266,7 @@
                     <div class="relative">
                         <button id="userMenuBtn" class="btn btn-ghost flex items-center gap-2" aria-haspopup="true" aria-expanded="false">
                             <div class="relative">
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
+                                <div class="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
                                     {{ substr(auth()->user()->name, 0, 1) }}
                                 </div>
                                 <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-white dark:border-slate-900"></div>
@@ -287,7 +279,7 @@
                                 {{-- Cabecera del menú --}}
                                 <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
+                                        <div class="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
                                             {{ substr(auth()->user()->name, 0, 1) }}
                                         </div>
                                         <div>
@@ -351,7 +343,7 @@
 
                                 {{-- Pie del menú --}}
                                 <div class="p-4 border-t border-slate-200 dark:border-slate-700">
-                                    <button id="logoutBtn" class="menu-item w-full text-left" role="menuitem">
+                                    <button id="logout-button" class="menu-item w-full text-left" role="menuitem">
                                         <div class="flex items-center gap-3">
                                             <div class="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
                                                 <i class="fas fa-sign-out-alt text-red-600 dark:text-red-400"></i>
@@ -398,7 +390,7 @@
                 <!-- Tarjeta mejorada con mejor tipografía y diseño -->
                 <div class="card">
                     @hasSection('cardTitle')
-                    <div class="card-header bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+                    <div class="card-header bg-linear-to-r from-blue-500 to-indigo-600 text-white">
                         <h2 class="text-xl font-semibold">@yield('cardTitle')</h2>
                     </div>
                     @endif
@@ -424,7 +416,6 @@
             </div>
         </main>
     </div>
-
     {{-- Backdrop global siempre disponible --}}
     <div id="backdrop" class="tw-modal-backdrop" aria-hidden="true"></div>
 
@@ -453,27 +444,27 @@
 
     @stack('scripts')
 
-    <!-- Modal Logout (oculto por defecto) -->
-    <section id="logoutModal" class="tw-modal" role="dialog" aria-modal="true" aria-labelledby="logoutModalLabel" aria-hidden="true">
-        <div class="tw-modal-panel">
+    <!-- ✅ Modal Logout Corregido -->
+    <section id="logoutModal" class="tw-modal hidden" role="dialog" aria-modal="true" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="tw-modal-panel transform scale-95 opacity-0 transition-all duration-200">
             <header class="tw-modal-header">
                 <h3 id="logoutModalLabel" class="text-lg font-semibold">Confirmar cierre de sesión</h3>
                 <button id="logoutModalClose" class="btn btn-ghost" aria-label="Cerrar modal">
-                    <i class="fa-solid fa-xmark"></i>
+                    <i class="fa-solid fa-x"></i>
                 </button>
             </header>
             <div class="tw-modal-body">
                 ¿Está seguro que desea cerrar sesión?
             </div>
             <footer class="tw-modal-footer">
-                <button id="cancelLogout" type="button" class="btn btn-secondary" data-modal-close>Cancelar</button>
-                <form action="{{ url('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">Cerrar sesión</button>
-                </form>
+                <button id="cancelLogout" type="button" class="btn btn-secondary">Cancelar</button>
+                <button id="confirmLogout" type="button" class="btn btn-primary">Cerrar sesión</button>
             </footer>
         </div>
     </section>
+    <!-- ✅ Formulario oculto para el logout -->
+    <form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 </body>
-
 </html>
