@@ -215,91 +215,125 @@ function loadScript(src) {
 }
 
 
-// ✅ MANEJADOR DEL LOGOUT - VERSIÓN CORREGIDA
+// ✅ MANEJADOR DEL LOGOUT - VERSIÓN CORREGIDA CON DELEGACIÓN DE EVENTOS
 function setupLogoutHandler() {
-    const logoutButton = document.getElementById('logout-button');
-    const logoutModal = document.getElementById('logoutModal');
-    const cancelButton = document.getElementById('cancelLogout');
-    const confirmButton = document.getElementById('confirmLogout');
-    const logoutModalClose = document.getElementById('logoutModalClose');
-    const logoutForm = document.getElementById('logoutForm');
-    const modalContent = logoutModal?.querySelector('.tw-modal-panel');
-
-    // Validación
-    if (!logoutButton || !logoutModal || !modalContent) {
-        console.warn('⚠️ Elementos de logout no encontrados');
-        return;
-    }
-
-    function showModal() {
-        console.log('📂 Abriendo modal...');
-        logoutModal.classList.remove('hidden');
-        logoutModal.setAttribute('aria-hidden', 'false');
-        requestAnimationFrame(() => {
-            modalContent.classList.remove('scale-95', 'opacity-0');
-            modalContent.classList.add('scale-100', 'opacity-100');
-        });
-    }
-
-    function hideModal() {
-        console.log('📁 Cerrando modal...');
-        modalContent.classList.remove('scale-100', 'opacity-100');
-        modalContent.classList.add('scale-95', 'opacity-0');
-        setTimeout(() => {
-            logoutModal.classList.add('hidden');
-            logoutModal.setAttribute('aria-hidden', 'true');
-        }, 200);
-    }
-
-    // Abrir modal
-    logoutButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        showModal();
+    // Usar delegación de eventos en documento para mayor compatibilidad
+    document.addEventListener('click', (e) => {
+        const logoutBtn = e.target.closest('#logout-button');
+        if (logoutBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            showLogoutModal();
+        }
     });
 
-    // Cerrar modal - Cancelar
-    if (cancelButton) {
-        cancelButton.addEventListener('click', (e) => {
+    // Delegación para botón de cancelar
+    document.addEventListener('click', (e) => {
+        const cancelBtn = e.target.closest('#cancelLogout');
+        if (cancelBtn) {
             e.preventDefault();
-            hideModal();
-        });
-    }
+            hideLogoutModal();
+        }
+    });
 
-    // Cerrar modal - X
-    if (logoutModalClose) {
-        logoutModalClose.addEventListener('click', (e) => {
+    // Delegación para botón de cerrar (X)
+    document.addEventListener('click', (e) => {
+        const closeBtn = e.target.closest('#logoutModalClose');
+        if (closeBtn) {
             e.preventDefault();
-            hideModal();
-        });
-    }
+            hideLogoutModal();
+        }
+    });
 
-    // ✅ ENVIAR FORMULARIO - Si hay botón de confirmación en el modal
-    if (confirmButton) {
-        confirmButton.addEventListener('click', (e) => {
+    // Delegación para confirmar logout
+    document.addEventListener('click', (e) => {
+        const confirmBtn = e.target.closest('#confirmLogout');
+        if (confirmBtn) {
             e.preventDefault();
-            console.log('✅ Enviando formulario de logout...');
+            const logoutForm = document.getElementById('logoutForm');
             if (logoutForm) {
+                console.log('✅ Enviando formulario de logout...');
                 logoutForm.submit();
             }
-        });
-    }
-    
-    // Cerrar modal al hacer click fuera
-    logoutModal.addEventListener('click', (e) => {
-        if (e.target === logoutModal) {
-            hideModal();
+        }
+    });
+
+    // Cerrar modal al hacer click en el backdrop
+    document.addEventListener('click', (e) => {
+        const logoutModal = document.getElementById('logoutModal');
+        if (e.target === logoutModal && logoutModal && !logoutModal.classList.contains('hidden')) {
+            hideLogoutModal();
         }
     });
 
     // Cerrar modal con ESC
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !logoutModal.classList.contains('hidden')) {
-            hideModal();
+        if (e.key === 'Escape') {
+            const logoutModal = document.getElementById('logoutModal');
+            if (logoutModal && !logoutModal.classList.contains('hidden')) {
+                hideLogoutModal();
+            }
         }
     });
 
     console.log('✅ setupLogoutHandler inicializado correctamente');
+}
+
+// Funciones auxiliares para mostrar/ocultar modal
+function showLogoutModal() {
+    const logoutModal = document.getElementById('logoutModal');
+    const modalContent = logoutModal?.querySelector('.tw-modal-panel');
+    const backdrop = document.getElementById('backdrop');
+
+    if (!logoutModal || !modalContent) {
+        console.warn('⚠️ Modal de logout no encontrado');
+        return;
+    }
+
+    console.log('📂 Abriendo modal de logout...');
+    
+    // Remover la clase hidden y agregar open
+    logoutModal.classList.remove('hidden');
+    logoutModal.classList.add('open');
+    logoutModal.setAttribute('aria-hidden', 'false');
+    
+    // Mostrar backdrop si existe
+    if (backdrop) {
+        backdrop.classList.remove('hidden');
+        backdrop.classList.add('open');
+    }
+    
+    // Agregar clase al modal-panel para la animación
+    modalContent.classList.remove('scale-95', 'opacity-0');
+    modalContent.classList.add('scale-100', 'opacity-100');
+}
+
+function hideLogoutModal() {
+    const logoutModal = document.getElementById('logoutModal');
+    const modalContent = logoutModal?.querySelector('.tw-modal-panel');
+    const backdrop = document.getElementById('backdrop');
+
+    if (!logoutModal || !modalContent) {
+        return;
+    }
+
+    console.log('📁 Cerrando modal de logout...');
+    
+    // Remover animación
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    modalContent.classList.add('scale-95', 'opacity-0');
+    
+    setTimeout(() => {
+        logoutModal.classList.remove('open');
+        logoutModal.classList.add('hidden');
+        logoutModal.setAttribute('aria-hidden', 'true');
+        
+        // Ocultar backdrop
+        if (backdrop) {
+            backdrop.classList.remove('open');
+            backdrop.classList.add('hidden');
+        }
+    }, 200);
 }
 
 
