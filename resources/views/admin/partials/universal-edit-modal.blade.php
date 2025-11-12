@@ -1,49 +1,35 @@
 {{-- Modal Universal de Edición --}}
-<section id="{{ $modalId }}" class="tw-modal" aria-modal="true" role="dialog" aria-hidden="true">
-    <div class="tw-modal-panel max-w-5xl max-h-[90vh] flex flex-col">
-        <div class="tw-modal-header">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Editar {{ $sectionTitle ?? 'Elemento' }}</h3>
-                <button data-modal-close class="btn btn-ghost text-slate-500 hover:text-slate-700 dark:text-slate-400" aria-label="Cerrar">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+<div id="{{ $modalId }}" class="fixed inset-0 z-50 transition-opacity duration-300"
+    style="background-color: rgba(0, 0, 0, 0.5); opacity: 0; visibility: hidden; display: none; top: 0; left: 0; right: 0; bottom: 0;"
+    data-modal-container data-section="{{ $sectionType ?? '' }}">
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300"
+         style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 80rem; max-height: 95vh; opacity: 1; z-index: 50;"
+         data-modal-content
+         onclick="event.stopPropagation()">
+        
+        {{-- Modal Header --}}
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-linear-to-r from-amber-400 to-yellow-500">
+            <div>
+                <h3 class="text-xl font-bold text-slate-900">Editar {{ $sectionTitle ?? 'Elemento' }}</h3>
+                <p class="text-sm text-slate-800 mt-1">Actualiza la información del {{ strtolower($sectionTitle ?? 'elemento') }}</p>
             </div>
+            <button type="button" 
+                    class="inline-flex items-center justify-center w-10 h-10 text-slate-900 hover:text-slate-700 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                    aria-label="Cerrar modal"
+                    onclick="closeEditModal('{{ $modalId }}')">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
         </div>
 
+        {{-- Modal Body --}}
         <form action="{{ $formAction }}" method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col overflow-hidden">
             @csrf
-            <div class="tw-modal-body overflow-y-auto">
-                {{-- Cabecera del formulario con indicador de sección --}}
+            <div class="overflow-y-auto flex-1 px-6 py-4">
+                {{-- Indicador de sección (solo si existe) --}}
                 @if($sectionType)
-                <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
-                            @switch($sectionType)
-                            @case('news')
-                            <i class="fas fa-newspaper"></i>
-                            @break
-                            @case('verse')
-                            <i class="fas fa-book-bible"></i>
-                            @break
-                            @case('schedule')
-                            <i class="fas fa-clock"></i>
-                            @break
-                            @case('slider')
-                            <i class="fas fa-images"></i>
-                            @break
-                            @case('role')
-                            <i class="fas fa-user-shield"></i>
-                            @break
-                            @case('user')
-                            <i class="fas fa-user-circle"></i>
-                            @break
-                            @endswitch
-                        </div>
-                        <div>
-                            <h4 class="text-base font-semibold text-slate-900 dark:text-white">Editar {{ $sectionTitle }}</h4>
-                            <p class="text-sm text-slate-500 dark:text-slate-400">Modifica la información del {{ strtolower($sectionTitle) }}</p>
-                        </div>
-                    </div>
+                <div class="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tipo de Contenido</p>
+                    <p class="text-sm text-slate-700 dark:text-slate-300 mt-1">{{ $sectionTitle }}</p>
                 </div>
                 @endif
                 {{-- Campos específicos para User --}}
@@ -117,6 +103,18 @@
                             <div class="relative">
                                 <input id="image" type="file" name="image" accept="image/*" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
                                 <label class="absolute inset-0 w-full h-full cursor-pointer" for="image"></label>
+                            </div>
+                            {{-- Contenedor de vista previa para la sección Verse (igual que el slider) --}}
+                            <div class="mt-3">
+                                <div class="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                                    <div id="preview-verse" class="w-full h-full flex items-center justify-center">
+                                        @if($tableM->image)
+                                        <img src="{{ asset('images/bible/' . $tableM->image) }}" alt="Imagen" class="w-full h-full object-cover rounded-lg">
+                                        @else
+                                        <i class="fas fa-image text-slate-400 dark:text-slate-500 text-2xl"></i>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                             @if($tableM->image)
                             <div class="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
@@ -319,20 +317,7 @@
                             <label for="date" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha</label>
                             <input id="date" type="date" name="date" value="{{ $tableM->date ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                         </div>
-                        <div>
-                            <label for="title" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Título</label>
-                            <input id="title" type="text" name="title" value="{{ $tableM->title ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="verse" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Versículo</label>
-                            <input id="verse" type="text" name="verse" value="{{ $tableM->verse ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        </div>
-                        <div class="md:col-span-2">
-                            <label for="abstract" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Resumen</label>
-                            <textarea id="abstract" name="abstract" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ $tableM->abstract ?? '' }}</textarea>
-                        </div>
                     </div>
-
                     {{-- Sección de archivos --}}
                     <div class="space-y-6">
                         {{-- Imagen --}}
@@ -594,83 +579,188 @@
                 </div>
                 @endif
             </div>
-            <div class="tw-modal-footer">
-                <button type="button" data-modal-close class="btn btn-secondary">Cancelar</button>
-                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
+            {{-- Modal Footer --}}
+            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                <button type="button"
+                        class="px-5 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                        onclick="closeEditModal('{{ $modalId }}')">
+                    <i class="fa-solid fa-times mr-2"></i>Cancelar
+                </button>
+                <button type="submit"
+                        class="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-900 bg-linear-to-r from-amber-400 to-yellow-500 hover:from-amber-500 hover:to-yellow-600 dark:from-amber-500 dark:to-yellow-600 dark:hover:from-amber-600 dark:hover:to-yellow-700 transition-all shadow-md hover:shadow-lg">
+                    <i class="fa-solid fa-check mr-2"></i>Guardar Cambios
+                </button>
             </div>
         </form>
     </div>
-</section>
+</div>
 
 {{-- Modal para vista previa de imagen --}}
-<section id="imagePreviewModal" class="tw-modal" aria-modal="true" role="dialog" aria-hidden="true">
-    <div class="tw-modal-panel max-w-5xl">
-        <div class="tw-modal-header">
-            <h3 class="text-lg font-semibold">Vista previa de imagen</h3>
-            <button data-modal-close class="btn btn-ghost" aria-label="Cerrar">
-                <i class="fa-solid fa-xmark"></i>
+<div id="imagePreviewModal" class="fixed inset-0 z-50 transition-opacity duration-300"
+     style="background-color: rgba(0, 0, 0, 0.7); opacity: 0; visibility: hidden; display: none; top: 0; left: 0; right: 0; bottom: 0;"
+     data-modal-container
+     onclick="if(event.target === this) closeImagePreview()">
+    <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl overflow-hidden flex flex-col"
+         style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 95%; max-width: 56rem; max-height: 70vh; z-index: 50;"
+         data-modal-content
+         onclick="event.stopPropagation()">
+        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-linear-to-r from-amber-400 to-yellow-500">
+            <h3 class="text-lg font-semibold text-slate-900">Vista Previa de Imagen</h3>
+            <button type="button"
+                    class="inline-flex items-center justify-center w-10 h-10 text-slate-900 hover:text-slate-700 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+                    onclick="closeImagePreview()">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
-        <div class="tw-modal-body p-0">
-            <img id="previewImage" src="" alt="Vista previa" class="w-full h-auto">
+        <div class="p-6 flex items-center justify-center bg-slate-50 dark:bg-slate-900" style="max-height: 70vh;">
+            <img id="previewImage" src="" alt="Vista previa" class="max-w-full max-h-full object-contain rounded-lg">
         </div>
     </div>
-</section>
+</div>
 
 <script>
-    function previewImage(url) {
-        var img = document.getElementById('previewImage');
-        var modal = document.getElementById('imagePreviewModal');
-        if (img && modal) {
-            img.src = url;
-            modal.classList.add('open');
-        }
+// Gestión del modal de edición
+window.openEditModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+        // Forzar reflow para que se aplique el display antes de cambiar opacity
+        void modal.offsetWidth;
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        document.body.style.overflow = 'hidden';
     }
+};
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Delegación para botones con data-preview-url
-        document.body.addEventListener('click', function(e) {
-            var btn = e.target.closest('[data-preview-url]');
-            if (btn) {
-                var url = btn.getAttribute('data-preview-url');
-                if (url) previewImage(url);
+window.closeEditModal = function(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+};
+
+// Gestión del modal de vista previa
+window.showImagePreview = function(imageUrl) {
+    const modal = document.getElementById('imagePreviewModal');
+    const img = document.getElementById('previewImage');
+    if (modal && img) {
+        img.src = imageUrl;
+        modal.style.display = 'block';
+        void modal.offsetWidth;
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+window.closeImagePreview = function() {
+    const modal = document.getElementById('imagePreviewModal');
+    if (modal) {
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+};
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+    // Cerrar modal con Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const editModal = document.querySelector('[data-modal-container]:not(.hidden)');
+            if (editModal && editModal.id === '{{ $modalId }}') {
+                closeEditModal('{{ $modalId }}');
             }
-        });
-
-        // Vista previa de imágenes al seleccionar archivos del slider
-        var imageLeftInput = document.getElementById('image_left');
-        var imageRightInput = document.getElementById('image_right');
-
-        if (imageLeftInput) {
-            imageLeftInput.addEventListener('change', function(ev) {
-                var file = ev.target.files[0];
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(ev2) {
-                        var previewLeft = document.getElementById('preview-left');
-                        if (previewLeft) {
-                            previewLeft.innerHTML = '<img src="' + ev2.target.result + '" alt="Vista previa" class="w-full h-full object-cover rounded-lg">';
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-
-        if (imageRightInput) {
-            imageRightInput.addEventListener('change', function(ev) {
-                var file = ev.target.files[0];
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(ev2) {
-                        var previewRight = document.getElementById('preview-right');
-                        if (previewRight) {
-                            previewRight.innerHTML = '<img src="' + ev2.target.result + '" alt="Vista previa" class="w-full h-full object-cover rounded-lg">';
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
+            const previewModal = document.getElementById('imagePreviewModal');
+            if (previewModal && !previewModal.classList.contains('hidden')) {
+                closeImagePreview();
+            }
         }
     });
+
+    // Cerrar modal al hacer click en el fondo
+    document.getElementById('{{ $modalId }}').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeEditModal('{{ $modalId }}');
+        }
+    });
+
+    // Delegación para botones de vista previa
+    document.body.addEventListener('click', function(e) {
+        const previewBtn = e.target.closest('[data-preview-url]');
+        if (previewBtn) {
+            e.preventDefault();
+            const url = previewBtn.getAttribute('data-preview-url');
+            if (url) showImagePreview(url);
+        }
+    });
+
+    // Vista previa en tiempo real para inputs de tipo file dentro de ESTE modal
+    // Se agregan miniaturas locales (.local-image-preview) junto al input y al hacer clic abren la vista previa grande
+    (function() {
+    const modalEl = document.getElementById('{{ $modalId }}');
+    if (!modalEl) return;
+    // Leer tipo de sección desde el atributo data-section (evita insertar Blade en JS)
+    const __SECTION_TYPE = modalEl.getAttribute('data-section') || '';
+
+        const fileInputs = modalEl.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(function(input) {
+            input.addEventListener('change', function(e) {
+                const file = e.target.files && e.target.files[0];
+                // buscar contenedor de preview local existente dentro del mismo bloque
+                let previewContainer = input.closest('.relative') || input.parentElement;
+                if (!previewContainer) previewContainer = input.parentElement;
+
+                let localPreview = previewContainer.querySelector('.local-image-preview');
+                if (!file) {
+                    if (localPreview) localPreview.remove();
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const src = evt.target.result;
+                    // Si estamos en la sección Verse, actualizar el contenedor #preview-verse como hace el slider
+                    if (typeof __SECTION_TYPE !== 'undefined' && __SECTION_TYPE === 'verse' && input.id === 'image') {
+                        const previewVerse = document.getElementById('preview-verse');
+                        if (previewVerse) {
+                            previewVerse.innerHTML = `<img src="${src}" alt="Imagen" class="w-full h-full object-cover rounded-lg">`;
+                            const imgV = previewVerse.querySelector('img');
+                            if (imgV) imgV.addEventListener('click', function() { if (window.showImagePreview) window.showImagePreview(src); });
+                        }
+                        return;
+                    }
+
+                    if (!localPreview) {
+                        localPreview = document.createElement('div');
+                        localPreview.className = 'local-image-preview mt-3';
+                        // estilo responsivo y click to open
+                        localPreview.innerHTML = `<img src="${src}" alt="Vista previa" class="max-w-full max-h-40 object-cover rounded-lg cursor-pointer">`;
+                        previewContainer.appendChild(localPreview);
+                    } else {
+                        localPreview.innerHTML = `<img src="${src}" alt="Vista previa" class="max-w-full max-h-40 object-cover rounded-lg cursor-pointer">`;
+                    }
+
+                    const img = localPreview.querySelector('img');
+                    if (img) {
+                        img.addEventListener('click', function() {
+                            // abrir vista previa grande (usar la modal existente)
+                            if (window.showImagePreview) window.showImagePreview(src);
+                        });
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+    })();
+});
 </script>

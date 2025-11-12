@@ -52,7 +52,7 @@ function applyTheme(theme) {
 }
 
 
-// Funciones para manejar modales
+// Funciones para manejar modales (compatibles con ambos sistemas)
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     const backdrop = document.getElementById('backdrop');
@@ -61,17 +61,25 @@ function openModal(modalId) {
         // Prevenir scroll en el body
         document.body.style.overflow = 'hidden';
         
-        // Mostrar backdrop
-        if (backdrop) {
-            backdrop.classList.remove('hidden');
-            backdrop.classList.add('open');
+        // Sistema antiguo con clases
+        if (modal.classList.contains('tw-modal')) {
+            if (backdrop) {
+                backdrop.classList.remove('hidden');
+                backdrop.classList.add('open');
+            }
+            setTimeout(() => {
+                modal.classList.remove('hidden');
+                modal.classList.add('open');
+            }, 10);
+        } 
+        // Sistema nuevo con inline styles (data-modal-container)
+        else if (modal.hasAttribute('data-modal-container')) {
+            modal.style.display = 'block';
+            // Forzar reflow
+            void modal.offsetWidth;
+            modal.style.opacity = '1';
+            modal.style.visibility = 'visible';
         }
-        
-        // Mostrar modal con un pequeño retraso para asegurar que la transición se aplique
-        setTimeout(() => {
-            modal.classList.remove('hidden');
-            modal.classList.add('open');
-        }, 10);
     }
 }
 
@@ -81,21 +89,27 @@ function closeModal(modalId) {
     const backdrop = document.getElementById('backdrop');
     
     if (modal) {
-        // Ocultar modal
-        modal.classList.remove('open');
-        
-        // Ocultar backdrop con un pequeño retraso para permitir la transición
-        setTimeout(() => {
-            modal.classList.add('hidden');
-            
-            if (backdrop) {
-                backdrop.classList.remove('open');
-                backdrop.classList.add('hidden');
-            }
-            
-            // Restaurar scroll en el body
-            document.body.style.overflow = '';
-        }, 300);
+        // Sistema antiguo con clases
+        if (modal.classList.contains('tw-modal')) {
+            modal.classList.remove('open');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                if (backdrop) {
+                    backdrop.classList.remove('open');
+                    backdrop.classList.add('hidden');
+                }
+                document.body.style.overflow = '';
+            }, 300);
+        }
+        // Sistema nuevo con inline styles
+        else if (modal.hasAttribute('data-modal-container')) {
+            modal.style.opacity = '0';
+            modal.style.visibility = 'hidden';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        }
     }
 }
 
@@ -156,7 +170,6 @@ function setupEventListeners() {
             return;
         }
 
-
         // Cerrar modal con botón de cierre
         const modalClose = e.target.closest('[data-modal-close]');
         if (modalClose) {
@@ -168,16 +181,18 @@ function setupEventListeners() {
             return;
         }
 
-
-        // Solo cerrar modal si el click es DIRECTAMENTE en el backdrop, no dentro del panel
-        if ((e.target.id === 'backdrop' || e.target.classList.contains('tw-modal-backdrop')) && e.target === e.currentTarget) {
-            const openModals = document.querySelectorAll('.tw-modal.open');
-            openModals.forEach(modal => {
-                closeModal(modal.id);
-            });
+        // Cerrar modal al hacer click fuera (en el backdrop)
+        if (e.target.classList.contains('tw-modal')) {
+            // Verificar que el click NO sea en el modal-panel
+            if (!e.target.querySelector('.tw-modal-panel').contains(e.target)) {
+                const modal = e.target;
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeModal(modal.id);
+                }
+            }
             return;
         }
-    }, true);
+    });
 
 
     // Cerrar modal con la tecla ESC
