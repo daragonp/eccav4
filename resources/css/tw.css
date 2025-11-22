@@ -81,7 +81,6 @@
    Dark Mode ajustes suaves para público
    ======================= */
 .dark body { background-color: #0f172a; color: #f3f4f6; }
-.dark .links { background-color: transparent; }
 .dark .daily-word-section { background-color: transparent; }
 .dark .title { color: var(--green-light); }
 .dark .hero-image { background-color: transparent; }
@@ -265,4 +264,108 @@
   .pagination {
     display: none !important;
   }
+}
+
+/* =======================
+   Sección de enlaces sociales (Versión optimizada)
+   ======================= */
+
+/* Contenedor principal que ocupa todo el ancho de la pantalla */
+.links.full-bleed {
+  background-color: transparent;
+  padding: 2.5rem 0;
+  overflow: visible;
+}
+
+/* Grid interno para distribuir los íconos de forma elegante */
+.links-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  box-sizing: border-box;
+}
+
+/* Estilos para cada tarjeta */
+.links .card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  flex: none;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  background-color: var(--green-dark);
+  border-radius: 1.25rem;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.links .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+  background-color: #344a27;
+}
+
+/* Estilos para el ícono */
+.links .icon-img {
+  width: 70%;
+  height: auto;
+  max-height: 60%;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.links .card:hover .icon-img {
+  transform: scale(1.1);
+}
+
+/* Estilos para el texto */
+.links .card p {
+  margin: 0;
+  font-weight: 600;
+  color: var(--white);
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* Ajustes para Dark Mode */
+.dark .links .card {
+  background-color: #1e293b;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.dark .links .card:hover {
+  background-color: #334155;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
+}
+
+/* Diseño Responsivo */
+@media (max-width: 1024px) {
+  .links-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    padding: 0 1.5rem;
+  }
+  .links .card p { font-size: 0.9rem; }
+}
+
+@media (max-width: 640px) {
+  .links-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding: 0 1rem;
+  }
+  .links .card { padding: 1.25rem; }
+  .links .icon-img { max-height: 55%; }
+  .links .card p { font-size: 0.85rem; }
 }

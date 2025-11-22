@@ -1,29 +1,41 @@
-<section class="links">
-  <div class="card">
-    <a href="https://tunein.com/embed/player/s292735/" target="_blank" rel="noopener" class="block" aria-label="Radio ECCA en TuneIn (se abre en nueva pestaña)">
+{{-- resources/views/social.blade.php --}}
+
+<section class="links full-bleed" aria-labelledby="social-links-title">
+  <h2 id="social-links-title" class="sr-only">Enlaces sociales y recursos</h2>
+  
+  {{-- Contenedor Grid para distribuir los íconos --}}
+  <div class="links-grid">
+    
+    <a href="https://tunein.com/embed/player/s292735/" target="_blank" rel="noopener" class="card" aria-label="Radio ECCA en TuneIn (se abre en nueva pestaña)">
       <img src="{{ asset('images/brands/radio.png') }}" alt="Radio" class="icon-img">
       <p>Radio ECCA</p>
     </a>
-  </div>
 
-  <div class="card">
-    <a href="#" target="_blank" rel="noopener" class="block" aria-label="Apoyo (se abre en nueva pestaña)">
+    <a href="#" target="_blank" rel="noopener" class="card" aria-label="Apoyo (se abre en nueva pestaña)">
       <img src="{{ asset('images/brands/support.png') }}" alt="Apoyo" class="icon-img">
       <p>Apoyo</p>
     </a>
-  </div>
 
-  <div class="card">
-    <a href="https://www.youtube.com/@tezbrillante" target="_blank" rel="noopener" class="block" aria-label="Canal de YouTube @tezbrillante (se abre en nueva pestaña)">
+    <a href="https://www.youtube.com/@tezbrillante" target="_blank" rel="noopener" class="card" aria-label="Canal de YouTube @tezbrillante (se abre en nueva pestaña)">
       <img src="{{ asset('images/brands/youtube.png') }}" alt="YouTube" class="icon-img">
       <p>@tezbrillante</p>
     </a>
-  </div>
 
-  <div class="card">
-    <a href="https://www.instagram.com/tez_brillante/" target="_blank" rel="noopener" class="block" aria-label="Instagram @tez_brillante (se abre en nueva pestaña)">
+    <a href="https://www.instagram.com/tez_brillante/" target="_blank" rel="noopener" class="card" aria-label="Instagram @tez_brillante (se abre en nueva pestaña)">
       <img src="{{ asset('images/brands/instagram.png') }}" alt="Instagram" class="icon-img">
       <p>@tez_brillante</p>
     </a>
+
+    <a href="#" target="_blank" rel="noopener" class="card" aria-label="Audios del culto dominical (se abre en nueva pestaña)">
+      <img src="{{ asset('images/brands/worship.png') }}" alt="Culto dominical" class="icon-img">
+      <p>Culto dominical</p>
+    </a>
+
+    {{-- Enlace a la página de la Biblia --}}
+    <a href="{{ url('biblia') }}" class="card" aria-label="Consulta la biblia en línea">
+      <img src="{{ asset('images/brands/bible.png') }}" alt="Biblia" class="icon-img">
+      <p>La Biblia</p>
+    </a>
+
   </div>
 </section>

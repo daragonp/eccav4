@@ -3,18 +3,19 @@
 @section('title', 'Tez brillante')
 
 @section('content')
-  <section aria-labelledby="home-quote">
+  <section aria-labelledby="home-quote" class="mb-8">
     <h2 id="home-quote" class="sr-only">Palabra del día</h2>
-    @include('quote', ['narrow' => true]) {{-- 95% --}}
+    @include('quote', ['narrow' => true])
   </section>
 
-  <section aria-labelledby="home-links" class="mt-8">
-    <h2 id="home-links" class="sr-only">Enlaces principales</h2>
-    @include('social') {{-- sin cambios --}}
+  <!-- Sección social sin contenedor para que ocupe todo el ancho -->
+  <section aria-labelledby="home-social" class="mb-8 px-none">
+    <h2 id="home-social" class="sr-only">Enlaces sociales y recursos</h2>
+    @include('social')
   </section>
 
-  <section aria-labelledby="home-carousel" class="mt-4">
+  <section aria-labelledby="home-carousel" class="mb-8">
     <h2 id="home-carousel" class="sr-only">Banners</h2>
-    @include('carrusel', ['narrow' => true]) {{-- 95% --}}
+    @include('carrusel', ['narrow' => true])
   </section>
 @endsection
