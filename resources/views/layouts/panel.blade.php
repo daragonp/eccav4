@@ -64,12 +64,12 @@
             <nav class="flex-1 overflow-y-auto px-2 pb-4">
                 <div class="space-y-1">
                     {{-- Panel principal --}}
-                    <a href="{{ url('dashboard') }}" class="nav-item group {{ request()->is('dashboard') ? 'active' : '' }}">
+                    <a href="{{ url('/') }}" class="nav-item group">
                         <div class="flex items-center gap-3">
                             <div class="nav-icon">
-                                <i class="fas fa-tachometer-alt"></i>
+                                <i class="fas fa-door-open me-2"></i>
                             </div>
-                            <span class="nav-text">Panel principal</span>
+                            <span class="nav-text">Inicio</span>
                         </div>
                     </a>
 

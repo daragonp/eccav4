@@ -227,6 +227,7 @@ Route::prefix('biblia')->name('biblia.')->group(function () {
     // Primero las rutas específicas (para que no las capture {libro})
     Route::get('/api/buscar', [BibleController::class, 'apiSearch'])->name('api.search');
     Route::get('/api/libros', [BibleController::class, 'apiBooks'])->name('api.books');
+    Route::get('/api/libros/organizados', [BibleController::class, 'apiBooksOrganized'])->name('api.books.organized');
     Route::get('/api/inicio', [BibleController::class, 'apiStart'])->name('api.start');
 
     // Luego las dinámicas, con restricciones

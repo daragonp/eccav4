@@ -76,8 +76,8 @@
         <a href="/" class="list-group-item list-group-item-action bg-light d-flex align-items-center">
             <i class="fas fa-home me-2" style="width: 20px;"></i>Inicio
         </a>
-        <a href="{{ url('dashboard') }}" class="list-group-item list-group-item-action bg-light d-flex align-items-center">
-            <i class="fas fa-tachometer-alt me-2" style="width: 20px;"></i>Panel Principal
+        <a href="{{ url('welcome') }}" class="list-group-item list-group-item-action bg-light d-flex align-items-center">
+            <i class="fas fa-door-open me-2" style="width: 20px;"></i>Inicio
         </a>
 
         <!-- Sección: Administración -->

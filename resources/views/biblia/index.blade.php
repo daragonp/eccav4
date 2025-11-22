@@ -6,6 +6,15 @@
   <style>
     [x-cloak]{display:none!important}
     
+    /* Variables CSS personalizadas */
+    :root {
+      --green-dark: #2d5016;
+      --green-light: #8aa446;
+      --verse-font-size: 16px;
+      --bg-color: #ffffff;
+      --text-color: #111827;
+    }
+    
     /* Estilos mejorados para el visor de versículos */
     .verse-overlay {
       position: fixed; inset: 0; z-index: 60;
@@ -25,7 +34,7 @@
       max-width: 60rem; width: 100%;
       border-radius: 1.5rem;
       background: white; color: #111827;
-      padding: 2rem 4.5rem; /* espacio para flechas */
+      padding: 2rem 4.5rem;
       box-shadow: 0 20px 40px rgba(0,0,0,.3);
       animation: slideUp 0.3s ease-out;
       position: relative;
@@ -167,6 +176,121 @@
     .verse-content {
       display: inline;
     }
+    /* Estilos para la lista de versículos */
+.verse-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.verse-item {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.verse-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--green-light);
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+
+.verse-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+}
+
+.verse-item:hover::before {
+  transform: scaleY(1);
+}
+
+.dark .verse-item {
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.verse-number {
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-right: 0.5rem;
+  min-width: 2ch;
+  display: inline-block;
+}
+
+.dark .verse-number {
+  color: var(--green-light);
+}
+
+.verse-content {
+  display: inline;
+  /* Aplicar variables CSS */
+  font-family: var(--verse-font-family, inherit);
+  line-height: var(--verse-line-height, 1.6);
+}
+
+/* Estilos para el modo de lectura */
+.reading-mode {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.reading-mode .verse-item {
+  padding: 1.5rem;
+}
+
+/* Estilos para el visor de versículos */
+.verse-text{ 
+  /* Aplicar variables CSS */
+  font-size: var(--verse-font-size, 1.25rem); 
+  font-family: var(--verse-font-family, inherit);
+  line-height: var(--verse-line-height, 1.8);
+  text-align: justify;
+  margin: 1.5rem 0;
+}
+
+/* Estilos para el modo de lectura inmersiva */
+.immersive-content {
+  max-width: 42rem;
+  margin: 0 auto;
+  /* Aplicar variables CSS */
+  font-size: var(--verse-font-size, 1.25rem);
+  font-family: var(--verse-font-family, inherit);
+  line-height: var(--verse-line-height, 1.8);
+}
+
+.immersive-verse {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.immersive-verse:hover {
+  background: rgba(138, 164, 70, 0.1);
+}
+
+.dark .immersive-verse:hover {
+  background: rgba(138, 164, 70, 0.2);
+}
+
+.immersive-verse-number {
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-right: 0.5rem;
+}
+
+.dark .immersive-verse-number {
+  color: var(--green-light);
+}
     
     /* Estilos para la paginación */
     .pagination {
@@ -311,9 +435,31 @@
     /* Estilos para el selector de libros mejorado */
     .book-selector {
       display: grid;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    
+    .testament-section {
+      margin-bottom: 1.5rem;
+    }
+    
+    .testament-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--green-light);
+    }
+    
+    .dark .testament-title {
+      color: var(--green-light);
+    }
+    
+    .books-grid {
+      display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 0.75rem;
-      margin-top: 1rem;
     }
     
     .book-option {
@@ -671,6 +817,192 @@
     .dark .verse-copyright {
       color: #6b7280;
     }
+    
+    /* Estilos para estadísticas de búsqueda */
+    .search-stats {
+      background: #f9fafb;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    
+    .dark .search-stats {
+      background: #1f2937;
+    }
+    
+    .stats-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-bottom: 0.75rem;
+    }
+    
+    .dark .stats-title {
+      color: var(--green-light);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      background: white;
+    }
+    
+    .dark .stat-item {
+      background: #374151;
+    }
+    
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+    
+    .dark .stat-value {
+      color: var(--green-light);
+    }
+    
+    .stat-label {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    
+    .dark .stat-label {
+      color: #9ca3af;
+    }
+    
+    /* Estilos para resultados de búsqueda paginados */
+    .search-results {
+      margin-top: 1.5rem;
+    }
+    
+    .result-item {
+      padding: 1rem;
+      border-radius: 0.75rem;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+    }
+    
+    .result-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    }
+    
+    .dark .result-item {
+      background: #1f2937;
+      color: #e5e7eb;
+    }
+    
+    .result-reference {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--green-dark);
+      margin-bottom: 0.5rem;
+    }
+    
+    .dark .result-reference {
+      color: var(--green-light);
+    }
+    
+    .result-text {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 0.5rem;
+    }
+    
+    .result-context {
+      font-size: 0.875rem;
+      color: #6b7280;
+      font-style: italic;
+    }
+    
+    .dark .result-context {
+      color: #9ca3af;
+    }
+    
+    .result-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+    
+    /* Estilos para notificaciones */
+    .notification {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      background: var(--green-dark);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    
+    .notification.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .notification.error {
+      background: #ef4444;
+    }
+    
+    /* Estilos responsive */
+    @media (max-width: 768px) {
+      .verse-card {
+        padding: 1.5rem 3.5rem;
+      }
+      
+      .nav-arrow {
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+      
+      .nav-left {
+        left: 0.5rem;
+      }
+      
+      .nav-right {
+        right: 0.5rem;
+      }
+      
+      .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+      
+      .chapter-selector {
+        gap: 0.25rem;
+      }
+      
+      .chapter-option {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 0.875rem;
+      }
+      
+      .settings-panel {
+        width: 90%;
+        right: 5%;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
   </style>
 @endpush
 
@@ -714,12 +1046,20 @@
       <h2 class="text-xl font-semibold text-brand-dark dark:text-brand-light">Selecciona un libro</h2>
       <button class="chip" @click="showBookSelector = false">Cerrar</button>
     </div>
+    
     <div class="book-selector">
-      <template x-for="b in libros" :key="b.slug">
-        <div class="book-option" 
-             :class="{ 'selected': libro === b.slug }"
-             @click="selectBook(b.slug)"
-             x-text="b.name"></div>
+      <template x-for="testament in testamentBooks" :key="testament.name">
+        <div class="testament-section">
+          <h3 class="testament-title" x-text="testament.name"></h3>
+          <div class="books-grid">
+            <template x-for="book in testament.books" :key="book.slug">
+              <div class="book-option" 
+                   :class="{ 'selected': libro === book.slug }"
+                   @click="selectBook(book.slug)"
+                   x-text="book.name"></div>
+            </template>
+          </div>
+        </div>
       </template>
     </div>
     
@@ -903,20 +1243,49 @@
     </div>
   </template>
 
-  {{-- Resultados de búsqueda --}}
+    {{-- Resultados de búsqueda --}}
   <template x-if="q && !cargandoBusqueda && !errorBusqueda">
     <div class="panel mt-6" x-show="resultado.q && Array.isArray(resultado.results)">
       <h3 class="text-lg font-semibold mb-2">Resultados de búsqueda</h3>
+      
+      <!-- Estadísticas de búsqueda -->
+      <div class="search-stats" x-show="resultado.stats">
+        <h4 class="stats-title">Estadísticas de búsqueda</h4>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" x-text="resultado.stats.total_results || 0"></div>
+            <div class="stat-label">Resultados totales</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" x-text="resultado.stats.books_count || 0"></div>
+            <div class="stat-label">Libros encontrados</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" x-text="resultado.stats.old_testament || 0"></div>
+            <div class="stat-label">Antiguo Testamento</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" x-text="resultado.stats.new_testament || 0"></div>
+            <div class="stat-label">Nuevo Testamento</div>
+          </div>
+        </div>
+      </div>
+      
       <template x-if="resultado.results.length === 0">
         <p class="text-sm text-gray-500 dark:text-gray-400">No se encontraron resultados para "<span x-text="resultado.q"></span>".</p>
       </template>
-      <ul class="space-y-3" x-show="resultado.results.length">
-        <template x-for="r in resultado.results" :key="r.ref + '-' + r.verse">
-          <li class="border-b border-black/10 dark:border-white/10 pb-3">
-            <div class="text-sm text-gray-500 dark:text-gray-400" x-text="r.ref"></div>
-            <div class="my-2" x-html="r.highlighted"></div>
-            <div class="text-xs mt-1 text-gray-500 dark:text-gray-400" x-text="r.snippet"></div>
-            <div class="mt-2 flex gap-2">
+      
+      <!-- Resultados paginados -->
+      <div class="search-results" x-show="resultado.results.length">
+        <template x-for="(r, index) in resultado.results" :key="r.ref + '-' + r.verse">
+          <div class="result-item">
+            <div class="result-reference">
+              <span x-text="r.ref"></span>
+              <span class="ml-2 text-xs text-gray-500">Resultado #<span x-text="(resultado.pagination.current_page - 1) * resultado.pagination.per_page + index + 1"></span></span>
+            </div>
+            <div class="result-text" x-html="r.highlighted"></div>
+            <div class="result-context" x-text="r.snippet"></div>
+            <div class="result-actions">
               <a class="content-link" :href="`#v-${r.verse}`"
                  @click.prevent="abrir(r, true)"
                  x-show="libro===r.book && +cap===r.chapter">
@@ -925,9 +1294,30 @@
               <button class="chip" @click="abrir(r, true)">Abrir</button>
               <button class="chip" @click="copiar(r.ref + ' ' + r.text)">Copiar</button>
             </div>
-          </li>
+          </div>
         </template>
-      </ul>
+        
+        <!-- Paginación de resultados -->
+        <div class="pagination" x-show="resultado.pagination.total_pages > 1">
+          <button @click="goToSearchPage(resultado.pagination.prev_page)" :disabled="!resultado.pagination.has_prev">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <template x-for="page in searchPaginationPages" :key="page">
+            <button @click="goToSearchPage(page)" 
+                    :class="{ 'current-page': page === resultado.pagination.current_page }"
+                    x-text="page"></button>
+          </template>
+          
+          <button @click="goToSearchPage(resultado.pagination.next_page)" :disabled="!resultado.pagination.has_next">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
       
       {{-- Copyright en resultados de búsqueda --}}
       <div class="copyright-notice mt-4">
@@ -1046,15 +1436,6 @@
       </select>
     </div>
     
-    <div class="settings-option">
-      <label class="settings-label">Tema</label>
-      <select x-model="theme" @change="updateTheme" class="settings-control">
-        <option value="light">Claro</option>
-        <option value="dark">Oscuro</option>
-        <option value="sepia">Sepia</option>
-      </select>
-    </div>
-    
     {{-- Copyright en panel de configuración --}}
     <div class="copyright-notice mt-4">
       <span class="bible-version">Biblia Reina-Valera 1960</span> - 
@@ -1076,11 +1457,13 @@
 <script>
 function biblia() {
   return {
-    libros: [],      // [{slug, name, chapters}]
-    caps: [],        // ["1","2",...]
-    libro: '',       // slug actual
-    cap: '',         // capítulo actual (string)
-    versiculos: [],  // [{n, t}]
+    // Datos de libros organizados por testamento
+    testamentBooks: [],  // [{name: "Antiguo Testamento", books: [...]}]
+    libros: [],         // [{slug, name, chapters, testament, order}]
+    caps: [],           // ["1","2",...]
+    libro: '',          // slug actual
+    cap: '',            // capítulo actual (string)
+    versiculos: [],     // [{n, t}]
     tituloCap: '',
     q: '',
     resultado: { q:'', total:0, results:[] },
@@ -1099,11 +1482,10 @@ function biblia() {
     fontSize: 16,
     fontFamily: 'font-sans',
     lineHeight: 'leading-relaxed',
-    theme: 'light',
     showSettings: false,
     immersiveMode: false,
     
-    // Paginación
+    // Paginación de capítulos
     pagination: {
       current_page: 1,
       total_pages: 1,
@@ -1127,10 +1509,41 @@ function biblia() {
       return this.versiculos;
     },
     
-    // Páginas de paginación a mostrar
+    // Páginas de paginación a mostrar (capítulos)
     get paginationPages() {
       const current = this.pagination.current_page;
       const total = this.pagination.total_pages;
+      const delta = 2; // Número de páginas a mostrar antes y después de la actual
+      
+      let range = [];
+      let rangeWithDots = [];
+      let l;
+
+      for (let i = 1; i <= total; i++) {
+        if (i == 1 || i == total || (i >= current - delta && i <= current + delta)) {
+          range.push(i);
+        }
+      }
+
+      range.forEach((i) => {
+        if (l) {
+          if (i - l === 2) {
+            rangeWithDots.push(l + 1);
+          } else if (i - l !== 1) {
+            rangeWithDots.push('...');
+          }
+        }
+        rangeWithDots.push(i);
+        l = i;
+      });
+
+      return rangeWithDots;
+    },
+    
+    // Páginas de paginación a mostrar (resultados de búsqueda)
+    get searchPaginationPages() {
+      const current = this.resultado.pagination.current_page;
+      const total = this.resultado.pagination.total_pages;
       const delta = 2; // Número de páginas a mostrar antes y después de la actual
       
       let range = [];
@@ -1180,11 +1593,12 @@ function biblia() {
     },
 
     async init() {
-      await this.cargarLibros();
-      await this.cargarInicio();
-      this.parseHash();
-      this.loadSettings();
-    },
+  await this.cargarLibros();
+  await this.cargarInicio();
+  this.parseHash();
+  this.loadSettings();
+  this.applySettings(); // Asegúrate de llamar a esto para aplicar la configuración inicial
+},
     
     // Cargar los versículos iniciales
     async cargarInicio() {
@@ -1207,7 +1621,6 @@ function biblia() {
           this.fontSize = parsed.fontSize || 16;
           this.fontFamily = parsed.fontFamily || 'font-sans';
           this.lineHeight = parsed.lineHeight || 'leading-relaxed';
-          this.theme = parsed.theme || 'light';
           this.readingMode = parsed.readingMode || false;
           this.usePagination = parsed.usePagination || false;
           
@@ -1224,66 +1637,50 @@ function biblia() {
         fontSize: this.fontSize,
         fontFamily: this.fontFamily,
         lineHeight: this.lineHeight,
-        theme: this.theme,
         readingMode: this.readingMode,
         usePagination: this.usePagination,
       };
       localStorage.setItem('biblia-settings', JSON.stringify(settings));
     },
     
-    // Aplicar configuración
-    applySettings() {
-      this.updateFontSize();
-      this.updateFontFamily();
-      this.updateLineHeight();
-      this.updateTheme();
-    },
+    // ----- Funciones de configuración corregidas -----
     
-    // Actualizar tamaño de fuente
-    updateFontSize() {
-      document.documentElement.style.setProperty('--verse-font-size', `${this.fontSize}px`);
-      this.saveSettings();
-    },
-    
-    // Actualizar tipo de fuente
-    updateFontFamily() {
-      const verseElements = document.querySelectorAll('.verse-content, .verse-text, .immersive-content');
-      verseElements.forEach(el => {
-        el.className = el.className.replace(/font-\w+/g, '');
-        el.classList.add(this.fontFamily);
-      });
-      this.saveSettings();
-    },
-    
-    // Actualizar espaciado de línea
-    updateLineHeight() {
-      const verseElements = document.querySelectorAll('.verse-content, .verse-text, .immersive-content');
-      verseElements.forEach(el => {
-        el.className = el.className.replace(/leading-\w+/g, '');
-        el.classList.add(this.lineHeight);
-      });
-      this.saveSettings();
-    },
-    
-    // Actualizar tema
-    updateTheme() {
-      if (this.theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      
-      if (this.theme === 'sepia') {
-        document.documentElement.style.setProperty('--bg-color', '#f7f3e9');
-        document.documentElement.style.setProperty('--text-color', '#5c4b37');
-      } else {
-        document.documentElement.style.removeProperty('--bg-color');
-        document.documentElement.style.removeProperty('--text-color');
-      }
-      
-      this.saveSettings();
-    },
-    
+// Actualizar tamaño de fuente
+updateFontSize() {
+  document.documentElement.style.setProperty('--verse-font-size', `${this.fontSize}px`);
+  this.saveSettings();
+},
+
+// Actualizar tipo de fuente
+updateFontFamily() {
+  // Mapear los valores de Tailwind a familias de fuentes reales
+  const fontMap = {
+    'font-sans': 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+    'font-serif': 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+    'font-mono': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
+  };
+  document.documentElement.style.setProperty('--verse-font-family', fontMap[this.fontFamily] || fontMap['font-sans']);
+  this.saveSettings();
+},
+
+// Actualizar espaciado de línea
+updateLineHeight() {
+  // Mapear los valores de Tailwind a valores de line-height reales
+  const lineHeightMap = {
+    'leading-snug': '1.25',
+    'leading-normal': '1.5',
+    'leading-relaxed': '1.75'
+  };
+  document.documentElement.style.setProperty('--verse-line-height', lineHeightMap[this.lineHeight] || lineHeightMap['leading-normal']);
+  this.saveSettings();
+},
+
+// Aplicar configuración
+applySettings() {
+  this.updateFontSize();
+  this.updateFontFamily();
+  this.updateLineHeight();
+},
     // Toggle modo de lectura
     toggleReadingMode() {
       this.readingMode = !this.readingMode;
@@ -1360,9 +1757,33 @@ function biblia() {
 
     // ----- Carga de datos -----
     async cargarLibros() {
-      const res = await fetch('{{ route("biblia.api.books") }}');
-      this.libros = await res.json();
+      try {
+        // Cargar libros organizados por testamento
+        const res = await fetch('{{ route("biblia.api.books.organized") }}');
+        const data = await res.json();
+        
+        // Organizar para el selector de libros
+        this.testamentBooks = [
+          {
+            name: data.old_testament.name,
+            books: data.old_testament.books
+          },
+          {
+            name: data.new_testament.name,
+            books: data.new_testament.books
+          }
+        ];
+        
+        // Mantener lista plana para selectores
+        this.libros = [
+          ...data.old_testament.books,
+          ...data.new_testament.books
+        ];
+      } catch (err) {
+        console.error('Error al cargar libros', err);
+      }
     },
+    
     async cargarCapitulos() {
       this.cap = '';
       this.caps = [];
@@ -1372,6 +1793,7 @@ function biblia() {
       const res = await fetch(`{{ url('/biblia/api') }}/${this.libro}`);
       this.caps = await res.json();
     },
+    
     async cargarCapitulo() {
       this.versiculos = [];
       this.exitFocus();
@@ -1404,14 +1826,20 @@ function biblia() {
       this.pagination = data.pagination ?? this.pagination;
     },
     
-    // Ir a una página específica
+    // Ir a una página específica (capítulos)
     goToPage(page) {
       if (page === '...' || page === this.pagination.current_page) return;
       this.loadPaginatedChapter(page);
     },
+    
+    // Ir a una página específica (resultados de búsqueda)
+    goToSearchPage(page) {
+      if (page === '...' || page === this.resultado.pagination.current_page) return;
+      this.buscar(page);
+    },
 
     // ----- Buscador (con manejo de errores) -----
-    async buscar() {
+    async buscar(page = 1) {
       try {
         const q = this.q.trim();
         if (!q || q.length < 2) { 
@@ -1419,16 +1847,34 @@ function biblia() {
           this.cargandoBusqueda=false; 
           return; 
         }
-        const url = `{{ route('biblia.api.search') }}?q=${encodeURIComponent(q)}`;
+        
+        let url = `{{ route('biblia.api.search') }}?q=${encodeURIComponent(q)}`;
+        if (page > 1) {
+          url += `&page=${page}`;
+        }
+        
         const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        
         // Validar estructura
         this.resultado = {
           q: data.q ?? q,
           total: Array.isArray(data.results) ? data.results.length : (data.total ?? 0),
-          results: Array.isArray(data.results) ? data.results : []
+          results: Array.isArray(data.results) ? data.results : [],
+          stats: data.stats ?? null,
+          pagination: data.pagination ?? {
+            current_page: 1,
+            total_pages: 1,
+            total_results: 0,
+            per_page: 10,
+            has_prev: false,
+            has_next: false,
+            prev_page: null,
+            next_page: null,
+          }
         };
+        
         this.errorBusqueda = '';
       } catch (err) {
         console.error('Buscar error', err);

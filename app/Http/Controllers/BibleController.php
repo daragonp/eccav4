@@ -36,6 +36,71 @@ class BibleController extends Controller
             return $clean;
         });
     }
+    
+    /** Información de los libros organizados por testamento */
+    protected function booksInfo(): array
+    {
+        return Cache::rememberForever('biblia_books_info', function () {
+            // Lista de libros del Antiguo Testamento en orden bíblico
+            $oldTestament = [
+                'genesis', 'exodo', 'levitico', 'numeros', 'deuteronomio', 'josue', 'jueces', 'rut',
+                '1-samuel', '2-samuel', '1-reyes', '2-reyes', '1-cronicas', '2-cronicas', 'esdras',
+                'nehemias', 'ester', 'job', 'salmos', 'proverbios', 'eclesiastes', 'cantares',
+                'isaias', 'jeremias', 'lamentaciones', 'ezequiel', 'daniel', 'oseas', 'joel',
+                'amos', 'abdias', 'jonas', 'miqueas', 'nahum', 'habacuc', 'sofonias', 'hageo',
+                'zacarias', 'malaquias'
+            ];
+            
+            // Lista de libros del Nuevo Testamento en orden bíblico
+            $newTestament = [
+                'mateo', 'marcos', 'lucas', 'juan', 'hechos', 'romanos', '1-corintios', '2-corintios',
+                'galatas', 'efesios', 'filipenses', 'colosenses', '1-tesalonicenses', '2-tesalonicenses',
+                '1-timoteo', '2-timoteo', 'tito', 'filemon', 'hebreos', 'santiago', '1-pedro',
+                '2-pedro', '1-juan', '2-juan', '3-juan', 'judas', 'apocalipsis'
+            ];
+            
+            $data = $this->bible();
+            $booksInfo = [];
+            
+            // Procesar Antiguo Testamento
+            $booksInfo['old_testament'] = [
+                'name' => 'Antiguo Testamento',
+                'books' => []
+            ];
+            
+            foreach ($oldTestament as $slug) {
+                if (isset($data[$slug])) {
+                    $booksInfo['old_testament']['books'][] = [
+                        'slug' => $slug,
+                        'name' => $this->pretty($slug),
+                        'chapters' => count($data[$slug]),
+                        'testament' => 'old',
+                        'order' => array_search($slug, $oldTestament) + 1
+                    ];
+                }
+            }
+            
+            // Procesar Nuevo Testamento
+            $booksInfo['new_testament'] = [
+                'name' => 'Nuevo Testamento',
+                'books' => []
+            ];
+            
+            foreach ($newTestament as $slug) {
+                if (isset($data[$slug])) {
+                    $booksInfo['new_testament']['books'][] = [
+                        'slug' => $slug,
+                        'name' => $this->pretty($slug),
+                        'chapters' => count($data[$slug]),
+                        'testament' => 'new',
+                        'order' => array_search($slug, $newTestament) + 1
+                    ];
+                }
+            }
+            
+            return $booksInfo;
+        });
+    }
 
     /** Nombre bonito del libro: "1-corintios" -> "1 Corintios" */
     protected function pretty(string $slug): string
@@ -52,24 +117,25 @@ class BibleController extends Controller
         return view('biblia.index');
     }
 
-    /** GET /biblia/api/libros -> [{slug, name, chapters}] */
+    /** GET /biblia/api/libros -> [{slug, name, chapters, testament, order}] */
     public function apiBooks()
     {
-        $data = $this->bible();
-
-        $out = [];
-        foreach ($data as $slug => $caps) {
-            $out[] = [
-                'slug'     => $slug,
-                'name'     => $this->pretty($slug),
-                'chapters' => count($caps),
-            ];
-        }
-
-        // Ordena por AT/NT por defecto (opcional): aquí solo alfabético
-        usort($out, fn($a, $b) => strnatcmp($a['name'], $b['name']));
-
-        return response()->json($out);
+        $booksInfo = $this->booksInfo();
+        
+        // Combinar todos los libros en una lista plana
+        $allBooks = array_merge(
+            $booksInfo['old_testament']['books'],
+            $booksInfo['new_testament']['books']
+        );
+        
+        return response()->json($allBooks);
+    }
+    
+    /** GET /biblia/api/libros/organizados -> {old_testament: {name, books}, new_testament: {name, books}} */
+    public function apiBooksOrganized()
+    {
+        $booksInfo = $this->booksInfo();
+        return response()->json($booksInfo);
     }
 
     /** GET /biblia/api/{libro} -> lista de capítulos disponibles: ["1","2",...] */
@@ -146,12 +212,12 @@ class BibleController extends Controller
     {
         $data = $this->bible();
         
-        // Génesis 1:1-10 por defecto
-        $libro = 'genesis';
-        $cap = '1';
+        // Juan 3:16 por defecto
+        $libro = 'juan';
+        $cap = '3';
         
         if (!isset($data[$libro]) || !isset($data[$libro][$cap])) {
-            // Si Génesis no está disponible, tomar el primer libro y capítulo disponibles
+            // Si Juan no está disponible, tomar el primer libro y capítulo disponibles
             reset($data);
             $libro = key($data);
             $cap = key($data[$libro]);
@@ -174,18 +240,50 @@ class BibleController extends Controller
         ]);
     }
 
-    /** GET /biblia/api/buscar?q=palabra -> matches con fragmento */
+    /** GET /biblia/api/buscar?q=palabra -> matches con fragmento, estadísticas y paginación */
     public function apiSearch(Request $req)
     {
         $q = trim((string)$req->query('q', ''));
+        $page = (int)$req->query('page', 1);
+        $perPage = 10; // Resultados por página
+        
         if ($q === '' || mb_strlen($q) < 2) {
-            return response()->json(['q' => $q, 'total' => 0, 'results' => []]);
+            return response()->json([
+                'q' => $q, 
+                'total' => 0, 
+                'results' => [],
+                'stats' => null,
+                'pagination' => [
+                    'current_page' => 1,
+                    'total_pages' => 0,
+                    'total_results' => 0,
+                    'per_page' => $perPage,
+                    'has_prev' => false,
+                    'has_next' => false,
+                    'prev_page' => null,
+                    'next_page' => null,
+                ]
+            ]);
         }
 
         $data = $this->bible();
         $needle = mb_strtolower($q);
+        
+        // Lista de libros del Antiguo y Nuevo Testamento
+        $booksInfo = $this->booksInfo();
+        $oldTestamentBooks = array_column($booksInfo['old_testament']['books'], 'slug');
+        $newTestamentBooks = array_column($booksInfo['new_testament']['books'], 'slug');
 
-        $results = [];
+        $allResults = [];
+        $stats = [
+            'total_results' => 0,
+            'books_count' => 0,
+            'old_testament' => 0,
+            'new_testament' => 0
+        ];
+        
+        $foundBooks = [];
+        
         foreach ($data as $libro => $caps) {
             foreach ($caps as $cap => $vers) {
                 foreach ($vers as $n => $t) {
@@ -200,7 +298,10 @@ class BibleController extends Controller
                         // Resaltar el texto encontrado
                         $highlighted = str_ireplace($q, "<mark>{$q}</mark>", $t);
                         
-                        $results[] = [
+                        // Determinar si es AT o NT
+                        $testament = in_array($libro, $oldTestamentBooks) ? 'old' : 'new';
+                        
+                        $allResults[] = [
                             'book'    => $libro,
                             'chapter' => (int)$cap,
                             'verse'   => (int)$n,
@@ -208,18 +309,86 @@ class BibleController extends Controller
                             'text'    => $t,
                             'highlighted' => $highlighted,
                             'snippet' => ($start > 0 ? '…' : '') . $frag . (mb_strlen($t) > $start + $len ? '…' : ''),
+                            'testament' => $testament
                         ];
-                        // Limita por rendimiento (p.ej. 200)
-                        if (count($results) >= 200) break 3;
+                        
+                        // Actualizar estadísticas
+                        $stats['total_results']++;
+                        
+                        if (!in_array($libro, $foundBooks)) {
+                            $foundBooks[] = $libro;
+                            $stats['books_count']++;
+                            
+                            if ($testament === 'old') {
+                                $stats['old_testament']++;
+                            } else {
+                                $stats['new_testament']++;
+                            }
+                        }
                     }
                 }
             }
         }
-
+        
+        // Ordenar resultados por relevancia (primero los que coinciden exactamente)
+        usort($allResults, function($a, $b) use ($needle) {
+            $aText = mb_strtolower($a['text']);
+            $bText = mb_strtolower($b['text']);
+            
+            // Coincidencia exacta
+            $aExact = mb_strpos($aText, $needle) !== false;
+            $bExact = mb_strpos($bText, $needle) !== false;
+            
+            if ($aExact && !$bExact) return -1;
+            if (!$aExact && $bExact) return 1;
+            
+            // Orden bíblico
+            $booksInfo = $this->booksInfo();
+            $allBooks = array_merge(
+                $booksInfo['old_testament']['books'],
+                $booksInfo['new_testament']['books']
+            );
+            
+            $aBookIndex = array_search($a['book'], array_column($allBooks, 'slug'));
+            $bBookIndex = array_search($b['book'], array_column($allBooks, 'slug'));
+            
+            if ($aBookIndex != $bBookIndex) {
+                return $aBookIndex - $bBookIndex;
+            }
+            
+            // Si es el mismo libro, ordenar por capítulo y versículo
+            if ($a['chapter'] != $b['chapter']) {
+                return $a['chapter'] - $b['chapter'];
+            }
+            
+            return $a['verse'] - $b['verse'];
+        });
+        
+        // Paginar resultados
+        $totalResults = count($allResults);
+        $totalPages = ceil($totalResults / $perPage);
+        
+        // Asegurar que la página solicitada sea válida
+        $page = max(1, min($page, $totalPages));
+        $offset = ($page - 1) * $perPage;
+        
+        $results = array_slice($allResults, $offset, $perPage);
+        
         return response()->json([
             'q'       => $q,
-            'total'   => count($results),
+            'total'   => $totalResults,
             'results' => $results,
+            'stats'   => $stats,
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_results' => $totalResults,
+                'per_page' => $perPage,
+                'has_prev' => $page > 1,
+                'has_next' => $page < $totalPages,
+                'prev_page' => $page > 1 ? $page - 1 : null,
+                'next_page' => $page < $totalPages ? $page + 1 : null,
+            ]
         ]);
     }
 
@@ -259,7 +428,12 @@ class BibleController extends Controller
         ] : null;
         
         // Navegación entre libros
-        $books = array_keys($data);
+        $booksInfo = $this->booksInfo();
+        $allBooks = array_merge(
+            $booksInfo['old_testament']['books'],
+            $booksInfo['new_testament']['books']
+        );
+        $books = array_column($allBooks, 'slug');
         $currentBookIndex = array_search($libro, $books);
         
         $hasPrevBook = $currentBookIndex > 0;
