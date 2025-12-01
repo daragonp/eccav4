@@ -13,6 +13,8 @@
       --verse-font-size: 16px;
       --bg-color: #ffffff;
       --text-color: #111827;
+      --verse-font-family: inherit;
+      --verse-line-height: 1.6;
     }
     
     /* Estilos mejorados para el visor de versículos */
@@ -103,8 +105,9 @@
     }
     
     .verse-text{ 
-      font-size:1.25rem; 
-      line-height:1.8; 
+      font-size: var(--verse-font-size, 1.25rem); 
+      font-family: var(--verse-font-family, inherit);
+      line-height: var(--verse-line-height, 1.8);
       text-align: justify;
       margin: 1.5rem 0;
     }
@@ -175,122 +178,55 @@
     
     .verse-content {
       display: inline;
+      /* Aplicar variables CSS */
+      font-family: var(--verse-font-family, inherit);
+      line-height: var(--verse-line-height, 1.6);
     }
-    /* Estilos para la lista de versículos */
-.verse-list {
-  display: grid;
-  gap: 1rem;
-}
-
-.verse-item {
-  padding: 1rem;
-  border-radius: 0.75rem;
-  background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,.05);
-  transition: all 0.2s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.verse-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--green-light);
-  transform: scaleY(0);
-  transition: transform 0.2s ease;
-}
-
-.verse-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,.1);
-}
-
-.verse-item:hover::before {
-  transform: scaleY(1);
-}
-
-.dark .verse-item {
-  background: #1f2937;
-  color: #e5e7eb;
-}
-
-.verse-number {
-  font-weight: 700;
-  color: var(--green-dark);
-  margin-right: 0.5rem;
-  min-width: 2ch;
-  display: inline-block;
-}
-
-.dark .verse-number {
-  color: var(--green-light);
-}
-
-.verse-content {
-  display: inline;
-  /* Aplicar variables CSS */
-  font-family: var(--verse-font-family, inherit);
-  line-height: var(--verse-line-height, 1.6);
-}
-
-/* Estilos para el modo de lectura */
-.reading-mode {
-  max-width: 42rem;
-  margin: 0 auto;
-}
-
-.reading-mode .verse-item {
-  padding: 1.5rem;
-}
-
-/* Estilos para el visor de versículos */
-.verse-text{ 
-  /* Aplicar variables CSS */
-  font-size: var(--verse-font-size, 1.25rem); 
-  font-family: var(--verse-font-family, inherit);
-  line-height: var(--verse-line-height, 1.8);
-  text-align: justify;
-  margin: 1.5rem 0;
-}
-
-/* Estilos para el modo de lectura inmersiva */
-.immersive-content {
-  max-width: 42rem;
-  margin: 0 auto;
-  /* Aplicar variables CSS */
-  font-size: var(--verse-font-size, 1.25rem);
-  font-family: var(--verse-font-family, inherit);
-  line-height: var(--verse-line-height, 1.8);
-}
-
-.immersive-verse {
-  margin-bottom: 1.5rem;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-}
-
-.immersive-verse:hover {
-  background: rgba(138, 164, 70, 0.1);
-}
-
-.dark .immersive-verse:hover {
-  background: rgba(138, 164, 70, 0.2);
-}
-
-.immersive-verse-number {
-  font-weight: 700;
-  color: var(--green-dark);
-  margin-right: 0.5rem;
-}
-
-.dark .immersive-verse-number {
-  color: var(--green-light);
-}
+    
+    /* Estilos para el modo de lectura */
+    .reading-mode {
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+    
+    .reading-mode .verse-item {
+      padding: 1.5rem;
+    }
+    
+    /* Estilos para el modo de lectura inmersiva */
+    .immersive-content {
+      max-width: 42rem;
+      margin: 0 auto;
+      /* Aplicar variables CSS */
+      font-size: var(--verse-font-size, 1.25rem);
+      font-family: var(--verse-font-family, inherit);
+      line-height: var(--verse-line-height, 1.8);
+    }
+    
+    .immersive-verse {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    
+    .immersive-verse:hover {
+      background: rgba(138, 164, 70, 0.1);
+    }
+    
+    .dark .immersive-verse:hover {
+      background: rgba(138, 164, 70, 0.2);
+    }
+    
+    .immersive-verse-number {
+      font-weight: 700;
+      color: var(--green-dark);
+      margin-right: 0.5rem;
+    }
+    
+    .dark .immersive-verse-number {
+      color: var(--green-light);
+    }
     
     /* Estilos para la paginación */
     .pagination {
@@ -704,38 +640,6 @@
       background: #dc2626;
     }
     
-    .immersive-content {
-      max-width: 42rem;
-      margin: 0 auto;
-      font-size: 1.25rem;
-      line-height: 1.8;
-    }
-    
-    .immersive-verse {
-      margin-bottom: 1.5rem;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      transition: all 0.2s ease;
-    }
-    
-    .immersive-verse:hover {
-      background: rgba(138, 164, 70, 0.1);
-    }
-    
-    .dark .immersive-verse:hover {
-      background: rgba(138, 164, 70, 0.2);
-    }
-    
-    .immersive-verse-number {
-      font-weight: 700;
-      color: var(--green-dark);
-      margin-right: 0.5rem;
-    }
-    
-    .dark .immersive-verse-number {
-      color: var(--green-light);
-    }
-    
     /* Estilos para el copyright */
     .copyright-notice {
       font-size: 0.75rem;
@@ -961,6 +865,110 @@
       background: #ef4444;
     }
     
+    /* Estilos para el visor de versículo individual */
+    .single-verse-viewer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 70;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      padding: 1rem;
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    .single-verse-card {
+      max-width: 60rem;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 1.5rem;
+      background: white;
+      color: #111827;
+      box-shadow: 0 20px 40px rgba(0,0,0,.3);
+      animation: slideUp 0.3s ease-out;
+      position: relative;
+    }
+    
+    .dark .single-verse-card {
+      background: #111827;
+      color: #e5e7eb;
+    }
+    
+    .single-verse-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .dark .single-verse-header {
+      border-bottom-color: #374151;
+    }
+    
+    .single-verse-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+    
+    .dark .single-verse-title {
+      color: var(--green-light);
+    }
+    
+    .single-verse-close {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #ef4444;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .single-verse-close:hover {
+      transform: scale(1.1);
+      background: #dc2626;
+    }
+    
+    .single-verse-content {
+      padding: 2rem;
+      font-size: 1.5rem;
+      line-height: 1.8;
+      text-align: justify;
+    }
+    
+    .single-verse-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-top: 1px solid #e5e7eb;
+    }
+    
+    .dark .single-verse-footer {
+      border-top-color: #374151;
+    }
+    
+    .single-verse-navigation {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .single-verse-actions {
+      display: flex;
+      gap: 1rem;
+    }
+    
     /* Estilos responsive */
     @media (max-width: 768px) {
       .verse-card {
@@ -1002,6 +1010,20 @@
       .stats-grid {
         grid-template-columns: repeat(2, 1fr);
       }
+      
+      .single-verse-card {
+        max-width: 95%;
+      }
+      
+      .single-verse-header,
+      .single-verse-content,
+      .single-verse-footer {
+        padding: 1rem;
+      }
+      
+      .single-verse-content {
+        font-size: 1.25rem;
+      }
     }
   </style>
 @endpush
@@ -1017,7 +1039,7 @@
   <div class="hr-brand"></div>
 
   {{-- Panel de bienvenida --}}
-  <template x-if="!libro && !q">
+  <template x-if="!libro && !q && !singleVerseMode">
     <div class="welcome-panel">
       <h2 class="welcome-title">Bienvenido a la Biblia Online</h2>
       <p class="welcome-text">Explora la Palabra de Dios con nuestra herramienta de lectura bíblica. Puedes buscar por libro, capítulo o versículo, o simplemente navegar por los diferentes libros de la Biblia.</p>
@@ -1095,7 +1117,7 @@
   </div>
 
   {{-- Controles principales --}}
-  <div class="panel space-y-4" x-show="!showBookSelector && !showChapterSelector">
+  <div class="panel space-y-4" x-show="!showBookSelector && !showChapterSelector && !singleVerseMode">
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
       <div>
         <label class="block text-sm font-medium mb-1">Libro</label>
@@ -1173,7 +1195,7 @@
   </div>
 
   {{-- Lector de capítulo --}}
-  <template x-if="versiculos.length && !q">
+  <template x-if="versiculos.length && !q && !singleVerseMode">
     <div class="panel mt-6">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-xl font-semibold text-brand-dark dark:text-brand-light" x-text="tituloCap"></h2>
@@ -1202,6 +1224,12 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                 </svg>
                 Enfocar
+              </button>
+              <button class="chip text-xs" @click="showSingleVerse(libro, cap, v.n)">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Ver solo
               </button>
               <button class="chip text-xs" @click="copiar(`${tituloCap}:${v.n} ${v.t}`)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1244,7 +1272,7 @@
   </template>
 
     {{-- Resultados de búsqueda --}}
-  <template x-if="q && !cargandoBusqueda && !errorBusqueda">
+  <template x-if="q && !cargandoBusqueda && !errorBusqueda && !singleVerseMode">
     <div class="panel mt-6" x-show="resultado.q && Array.isArray(resultado.results)">
       <h3 class="text-lg font-semibold mb-2">Resultados de búsqueda</h3>
       
@@ -1291,6 +1319,7 @@
                  x-show="libro===r.book && +cap===r.chapter">
                  Enfocar este versículo
               </a>
+              <button class="chip" @click="showSingleVerse(r.book, r.chapter, r.verse)">Ver solo</button>
               <button class="chip" @click="abrir(r, true)">Abrir</button>
               <button class="chip" @click="copiar(r.ref + ' ' + r.text)">Copiar</button>
             </div>
@@ -1328,7 +1357,7 @@
   </template>
 
   {{-- VISOR CENTRADO DE VERSÍCULO --}}
-  <template x-if="focusMode">
+  <template x-if="focusMode && !singleVerseMode">
     <div class="verse-overlay" @click.self="exitFocus()">
       <div class="verse-card relative">
         <button class="nav-arrow nav-left" @click="prevVerse()" :disabled="!hasPrevAll()"
@@ -1374,7 +1403,7 @@
   </template>
 
   {{-- MODO INMERSIVO --}}
-  <template x-if="immersiveMode">
+  <template x-if="immersiveMode && !singleVerseMode">
     <div class="immersive-mode">
       <div class="immersive-header">
         <h2 class="immersive-title" x-text="tituloCap"></h2>
@@ -1402,8 +1431,60 @@
     </div>
   </template>
 
+  {{-- VISOR DE VERSÍCULO INDIVIDUAL --}}
+  <template x-if="singleVerseMode">
+    <div class="single-verse-viewer" @click.self="exitSingleVerseMode()">
+      <div class="single-verse-card">
+        <div class="single-verse-header">
+          <h2 class="single-verse-title" x-text="currentSingleVerse?.pretty"></h2>
+          <button class="single-verse-close" @click="exitSingleVerseMode()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div class="single-verse-content" x-html="currentSingleVerse?.text"></div>
+        
+        <div class="single-verse-footer">
+          <div class="single-verse-navigation">
+            <button class="btn-brand" @click="navigateSingleVerse('prev')" 
+                    :disabled="!currentSingleVerse?.navigation?.prev_verse && !currentSingleVerse?.navigation?.prev_chapter && !currentSingleVerse?.navigation?.prev_book">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              Anterior
+            </button>
+            <button class="btn-brand" @click="navigateSingleVerse('next')"
+                    :disabled="!currentSingleVerse?.navigation?.next_verse && !currentSingleVerse?.navigation?.next_chapter && !currentSingleVerse?.navigation?.next_book">
+              Siguiente
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          
+          <div class="single-verse-actions">
+            <button class="chip" @click="copiar(`${currentSingleVerse?.pretty} ${currentSingleVerse?.text}`)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              Copiar
+            </button>
+          </div>
+        </div>
+        
+        {{-- Copyright en visor de versículo individual --}}
+        <div class="verse-copyright">
+          <span class="bible-version">Biblia Reina-Valera 1960</span> - 
+          Copyright © 1960 by American Bible Society
+        </div>
+      </div>
+    </div>
+  </template>
+
   {{-- BOTÓN FLOTANTE DE LECTURA --}}
-  <div class="floating-reading-button" x-show="libro && cap" @click="toggleImmersiveMode">
+  <div class="floating-reading-button" x-show="libro && cap && !singleVerseMode" @click="toggleImmersiveMode">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
     </svg>
@@ -1473,6 +1554,11 @@ function biblia() {
     // Estado del visor
     focusMode: false,
     focusIndex: -1, // índice dentro de versiculos
+    
+    // Estado del visor de versículo individual
+    singleVerseMode: false,
+    currentSingleVerse: null,
+    loadingSingleVerse: false,
     
     // Estado de la UI
     showBookSelector: false,
@@ -1593,12 +1679,12 @@ function biblia() {
     },
 
     async init() {
-  await this.cargarLibros();
-  await this.cargarInicio();
-  this.parseHash();
-  this.loadSettings();
-  this.applySettings(); // Asegúrate de llamar a esto para aplicar la configuración inicial
-},
+      await this.cargarLibros();
+      await this.cargarInicio();
+      this.parseHash();
+      this.loadSettings();
+      this.applySettings(); // Asegúrate de llamar a esto para aplicar la configuración inicial
+    },
     
     // Cargar los versículos iniciales
     async cargarInicio() {
@@ -1733,10 +1819,14 @@ applySettings() {
       if (book) {
         this.libro = book.slug;
         this.cargarCapitulos().then(() => {
-          this.cap = cap;
-          this.cargarCapitulo().then(() => { 
-            if (ver) this.enterFocusByNumber(+ver) 
-          });
+          if (ver) {
+            // Si hay un versículo específico, mostrarlo en modo individual
+            this.showSingleVerse(this.libro, cap, ver);
+          } else {
+            // Si no hay versículo, cargar el capítulo completo
+            this.cap = cap;
+            this.cargarCapitulo();
+          }
         });
       }
     },
@@ -2024,6 +2114,95 @@ applySettings() {
         return true;
       }
       return false;
+    },
+
+    // ====== Funciones para el visor de versículo individual ======
+    
+    /**
+     * Muestra un solo versículo en una vista aislada.
+     * @param {string} libro - El slug del libro (ej: 'juan')
+     * @param {string|number} cap - El número del capítulo
+     * @param {string|number} vers - El número del versículo
+     */
+    async showSingleVerse(libro, cap, vers) {
+      this.loadingSingleVerse = true;
+      this.singleVerseMode = true; // Mostrar el contenedor inmediatamente
+
+      try {
+        const response = await fetch(`/biblia/api/${libro}/${cap}/${vers}`);
+        if (!response.ok) {
+          throw new Error('Versículo no encontrado');
+        }
+        const data = await response.json();
+        this.currentSingleVerse = data;
+        
+        // Actualizar el hash de la URL para que se pueda compartir
+        const bookName = this.libros.find(b => b.slug === libro)?.name || libro;
+        history.replaceState({}, '', `#${encodeURIComponent(bookName.replaceAll(' ', '-'))}-${cap}:${vers}`);
+
+      } catch (error) {
+        console.error('Error al cargar versículo:', error);
+        this.showNotification('No se pudo cargar el versículo', 'error');
+        this.exitSingleVerseMode(); // Salir del modo si hay un error
+      } finally {
+        this.loadingSingleVerse = false;
+      }
+    },
+
+    /**
+     * Cierra la vista de versículo individual.
+     */
+    exitSingleVerseMode() {
+      this.singleVerseMode = false;
+      this.currentSingleVerse = null;
+      // Revertir el hash al capítulo, o limpiarlo si no hay capítulo cargado
+      if (this.libro && this.cap) {
+        const bookName = this.libros.find(b => b.slug === this.libro)?.name || this.libro;
+        history.replaceState({}, '', `#${encodeURIComponent(bookName.replaceAll(' ', '-'))}-${this.cap}`);
+      } else {
+        history.replaceState({}, '', window.location.pathname); // Limpiar hash
+      }
+    },
+
+    /**
+     * Navega al versículo anterior o siguiente.
+     * @param {string} direction - 'prev' o 'next'
+     */
+    navigateSingleVerse(direction) {
+      if (!this.currentSingleVerse || !this.currentSingleVerse.navigation) return;
+
+      const nav = this.currentSingleVerse.navigation;
+      let nextLibro = this.currentSingleVerse.book;
+      let nextCap = this.currentSingleVerse.chapter;
+      let nextVers = null;
+
+      if (direction === 'prev') {
+        if (nav.prev_verse) {
+          nextVers = nav.prev_verse.verse;
+        } else if (nav.prev_chapter) {
+          nextCap = nav.prev_chapter.chapter;
+          nextVers = nav.prev_chapter.last_verse;
+        } else if (nav.prev_book) {
+          nextLibro = nav.prev_book.book;
+          nextCap = nav.prev_book.last_chapter;
+          nextVers = nav.prev_book.last_verse;
+        }
+      } else { // direction === 'next'
+        if (nav.next_verse) {
+          nextVers = nav.next_verse.verse;
+        } else if (nav.next_chapter) {
+          nextCap = nav.next_chapter.chapter;
+          nextVers = nav.next_chapter.first_verse;
+        } else if (nav.next_book) {
+          nextLibro = nav.next_book.book;
+          nextCap = nav.next_book.first_chapter;
+          nextVers = nav.next_book.first_verse;
+        }
+      }
+
+      if (nextVers !== null) {
+        this.showSingleVerse(nextLibro, nextCap, nextVers);
+      }
     },
 
     // ----- Utilidades -----

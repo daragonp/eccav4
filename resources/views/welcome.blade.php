@@ -14,6 +14,22 @@
     @include('social')
   </section>
 
+  <section aria-labelledby="home-ad" class="mb-8 page-container">
+    <h2 id="home-ad" class="sr-only">Publicidad</h2>
+    <div class="flex justify-center">
+      {{-- Pega aquí el código de tu bloque de anuncios --}}
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-format="fluid"
+           data-ad-layout-key="-fb+5w+4e-db+86"
+           data-ad-client="ca-pub-2633231257763494"
+           data-ad-slot="1234567890"></ins>
+      <script>
+           (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  </section>
+
   <section aria-labelledby="home-carousel" class="mb-8">
     <h2 id="home-carousel" class="sr-only">Banners</h2>
     @include('carrusel', ['narrow' => true])

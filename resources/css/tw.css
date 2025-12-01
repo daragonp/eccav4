@@ -179,8 +179,9 @@
    ======================= */
 @layer components {
   .page-container {
-    @apply mx-auto max-w-5xl px-4 sm:px-6 lg:px-8;
-  }
+  @apply mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 1280px; /* Ajusta este valor según necesites */
+}
 
   .page-hero {
     @apply pt-6 sm:pt-10;

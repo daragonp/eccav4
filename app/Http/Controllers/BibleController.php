@@ -208,38 +208,40 @@ class BibleController extends Controller
     }
 
     /** GET /biblia/api/inicio -> { book, chapter, verses:[{n, t}], pretty } */
-    public function apiStart()
-    {
-        $data = $this->bible();
-        
-        // Juan 3:16 por defecto
-        $libro = 'juan';
-        $cap = '3';
-        
-        if (!isset($data[$libro]) || !isset($data[$libro][$cap])) {
-            // Si Juan no está disponible, tomar el primer libro y capítulo disponibles
-            reset($data);
-            $libro = key($data);
-            $cap = key($data[$libro]);
-        }
-        
-        $versOk = [];
-        $count = 0;
-        foreach ($data[$libro][$cap] as $n => $t) {
-            if ($count >= 10) break;
-            $versOk[] = ['n' => (int)$n, 't' => $t];
-            $count++;
-        }
-
-        return response()->json([
-            'book'   => $libro,
-            'chapter'=> (int)$cap,
-            'pretty' => $this->pretty($libro) . ' ' . $cap,
-            'verses' => $versOk,
-            'is_start' => true,
-        ]);
+    /** GET /biblia/api/inicio -> { book, chapter, verses:[{n, t}], pretty } */
+public function apiStart()
+{
+    $data = $this->bible();
+    
+    // Obtener un libro y capítulo aleatorio
+    $books = array_keys($data);
+    $randomBook = $books[array_rand($books)];
+    $chapters = array_keys($data[$randomBook]);
+    $randomChapter = $chapters[array_rand($chapters)];
+    
+    // Verificar que exista el libro y capítulo seleccionado
+    if (!isset($data[$randomBook]) || !isset($data[$randomBook][$randomChapter])) {
+        // Si hay un problema, usar Juan 3:16 como fallback
+        $randomBook = 'juan';
+        $randomChapter = '3';
+    }
+    
+    $versOk = [];
+    $count = 0;
+    foreach ($data[$randomBook][$randomChapter] as $n => $t) {
+        if ($count >= 10) break;
+        $versOk[] = ['n' => (int)$n, 't' => $t];
+        $count++;
     }
 
+    return response()->json([
+        'book'   => $randomBook,
+        'chapter'=> (int)$randomChapter,
+        'pretty' => $this->pretty($randomBook) . ' ' . $randomChapter,
+        'verses' => $versOk,
+        'is_start' => true,
+    ]);
+}
     /** GET /biblia/api/buscar?q=palabra -> matches con fragmento, estadísticas y paginación */
     public function apiSearch(Request $req)
     {

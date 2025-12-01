@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2633231257763494"
+     crossorigin="anonymous"></script>
+
 {{-- Favicons / manifest --}}
 <link rel="icon" href="{{ asset('images/fav/favicon.svg') }}" type="image/svg+xml" />
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/fav/apple-touch-icon.png') }}" />
