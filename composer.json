@@ -20,7 +20,11 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        }, "exclude-from-classmap": [
+            "vendor/laravel/framework/src/Illuminate/Session/CacheSessionHandler.php",
+            "node_modules",
+            "storage"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
@@ -44,7 +48,9 @@
     },
     "extra": {
         "laravel": {
-            "dont-discover": []
+            "dont-discover": [
+                "node_modules/*"
+            ]
         }
     },
     "config": {

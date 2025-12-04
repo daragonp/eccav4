@@ -64,6 +64,8 @@
                 </div>
 
                 <a href="{{ url('worship-home') }}" class="text-gray-800 dark:text-gray-100 hover:text-brand-light">Palabras de vida</a>
+                <a href="{{ url('cultos') }}" class="text-gray-800 dark:text-gray-100 hover:text-brand-light">Cultos</a>
+
                 <a href="{{ url('/biblia') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
                     Biblia
                 </a>
@@ -95,6 +97,7 @@
             </details>
 
             <a href="{{ url('worship-home') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Palabras de vida</a>
+            <a href="{{ url('cultos') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Cultos</a>
            <a href="{{ url('/biblia') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
                 Biblia
             </a>

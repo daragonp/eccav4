@@ -1,69 +1,63 @@
-@php
-    $showAddButton = true;
-@endphp
-@php
-    $showModal = true;
-@endphp
+@php $showAddButton = true; @endphp
+
 @extends('layouts.panel')
 
-@section('title', 'Meditad en la Palabra de vida')
+@section('title', 'Culto Dominical')
+@section('pageheading', 'Culto Dominical')
 
-@section('pageheading', 'Meditad en la Palabra de vida')
+@section('addbutton', 'Agregar')
+@section('formaction', url('addworship'))
 
-@section('urlbtn', 'new-worship')
-@section('addbutton', 'Nueva palabra de vida')
-@section('mainheading', 'Información general de las meditaciones publicadas')
-@section('formaction', 'addworship')
-{{-- CAMPOS PARA EL MODAL PARA AGREGAR UN REGISTRO --}}
+{{-- CAMPOS DEL MODAL PARA AGREGAR UN REGISTRO --}}
 @section('modalFields')
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group mb-2">
-                <label>Título</label>
-                <input type="text" name="title" class="form-control" placeholder="Título o tema principal"
-                    required>
-            </div>
-            <div class="form-group mb-2">
-                <label>Descripción</label>
-                <textarea name="abstract" id="" class="form-control" cols="30" rows="3" required></textarea>
-            </div>
-            <div class="form-group mb-2">
-                <label>Fecha de emisión</label>
-                <input type="date" name="broadcast" class="form-control" required>
-            </div>
-            <div class="form-group mb-2">
-                <label>Palabra</label>
-                <input type="text" name="badge" class="form-control" placeholder="Con una palabra describa esta publicación, por ejemplo: Profecía" required>
-            </div>
-            <div class="form-group mb-2">
-                <label>Autor</label>
-                <input type="text" name="autor" class="form-control" required>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group mb-2">
-                <label>Documento PDF</label>
-                <input type="file" name="pdfdoc" accept='.pdf' class="form-control">
-            </div>
-            <div class="form-group mb-2">
-                <label>Audio</label>
-                <input type="file" name="audio" accept="audio/*" class="form-control">
-            </div>
-            <div class="form-group mb-2">
-                <label>Video</label>
-                <input type="file" name="video" accept="video/*" class="form-control">
-            </div>
-            <div class="form-group mb-2">
-                <label>Imagen de contexto</label>
-                <input type="file" name="image" accept="image/*" class="form-control">
-            </div>
-        </div>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label for="broadcast" class="block text-sm mb-1">Fecha de emisión</label>
+      <input id="broadcast" type="date" name="broadcast" required
+             class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2">
     </div>
-@stop
-
+    <div>
+      <label for="title" class="block text-sm mb-1">Título (opcional)</label>
+      <input id="title" type="text" name="title"
+             class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2"
+             placeholder="Si no se proporciona, se generará automáticamente">
+    </div>
+    <div class="md:col-span-2">
+      <label for="abstract" class="block text-sm mb-1">Resumen</label>
+      <textarea id="abstract" name="abstract" rows="4"
+                class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2"
+                placeholder="Escribe un resumen del culto. Si no lo proporcionas, se generará automáticamente con IA."></textarea>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        <i class="fas fa-info-circle mr-1"></i> 
+        Puedes escribir un resumen manualmente o dejarlo vacío para que la IA lo genere automáticamente
+      </p>
+    </div>
+    <div class="md:col-span-2">
+      <label for="image" class="block text-sm mb-1">Imagen</label>
+      <input id="image" type="file" name="image" accept="image/*"
+             class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2">
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        <i class="fas fa-info-circle mr-1"></i> 
+        Puedes subir una imagen manualmente o dejarlo vacío para que la IA genere una automáticamente
+      </p>
+    </div>
+    <div class="md:col-span-2">
+      <label for="audio" class="block text-sm mb-1">Audio</label>
+      <input id="audio" type="file" name="audio" accept="audio/*" required
+             class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2">
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+        <i class="fas fa-microphone mr-1"></i> 
+        El audio se procesará con IA para generar contenido automático si no se proporciona resumen o imagen
+      </p>
+    </div>
+  </div>
+@endsection
 @section('datatable')
-    {!! $dataTable->table() !!}
-@stop
-@section('datatablscr')
-    {!! $dataTable->scripts(attributes: ['type' => 'module']) !!}
-@stop
+  <div class="table-wrap">
+    {!! $dataTable->table(['class' => 'w-full']) !!}
+  </div>
+@endsection
+
+@push('scripts')
+  {!! $dataTable->scripts() !!}
+@endpush

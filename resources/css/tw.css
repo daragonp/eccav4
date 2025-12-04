@@ -493,7 +493,235 @@
   background-color: #334155;
   box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
 }
+/* Estilos para truncar texto */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Estilos para reproductores de audio/video */
+audio, video {
+  outline: none;
+}
+
+/* Estilos para enlaces de paginación */
+.pagination .page-link {
+  color: var(--green-dark);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--green-dark);
+  border-color: var(--green-dark);
+}
+
+/* Estilos para el badge "NUEVO" */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+/* Estilos para el diseño de blog */
+.prose {
+    color: inherit;
+    max-width: none;
+}
+
+.prose h1, .prose h2, .prose h3 {
+    color: inherit;
+}
+
+.prose p {
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+}
+
+/* Estilos para tarjetas de blog */
+.blog-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blog-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Estilos para badges animados */
+@keyframes ping {
+    75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+.animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Estilos para paginación personalizada */
+.pagination {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pagination .page-item {
+    display: flex;
+}
+
+.pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    background-color: white;
+    color: #374151;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.pagination .page-link:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--green-dark);
+    border-color: var(--green-dark);
+    color: white;
+}
+
+.dark .pagination .page-link {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #e5e7eb;
+}
+
+.dark .pagination .page-link:hover {
+    background-color: #374151;
+    border-color: #4b5563;
+}
+
+/* Estilos para navegación entre artículos */
+.nav-article {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-article:hover {
+    transform: translateX(4px);
+}
+
+.nav-article.prev:hover {
+    transform: translateX(-4px);
+}
+
+/* Efectos de hover mejorados */
+.hover-lift {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-8px);
+}
+
+/* Gradientes personalizados */
+.bg-gradient-brand {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-light) 100%);
+}
+
+.bg-gradient-brand-reverse {
+    background: linear-gradient(135deg, var(--green-light) 0%, var(--green-dark) 100%);
+}
+
+/* Sombras personalizadas */
+.shadow-brand {
+    box-shadow: 0 10px 25px -5px rgba(42, 61, 31, 0.1), 0 10px 10px -5px rgba(42, 61, 31, 0.04);
+}
+
+.shadow-brand-lg {
+    box-shadow: 0 20px 25px -5px rgba(42, 61, 31, 0.1), 0 10px 10px -5px rgba(42, 61, 31, 0.04);
+}
+
+/* Estilos para scroll horizontal personalizado */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Estilos para el carrusel compacto */
+.carousel-compact {
+    scroll-snap-type: x mandatory;
+}
+
+.carousel-compact > * {
+    scroll-snap-align: start;
+}
+
+/* Efectos hover mejorados para tarjetas compactas */
+.compact-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.compact-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Estilos para el badge NUEVO animado */
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+    
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+    }
+    
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+.animate-pulse-ring {
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Gradientes sutiles para el fondo */
+.bg-subtle-gradient {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+}
+
+.dark .bg-subtle-gradient {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+}
 /* Diseño Responsivo */
 @media (max-width: 1024px) {
   .links-grid {

@@ -27,6 +27,10 @@ class Kernel extends ConsoleKernel
     {
         $this->load(__DIR__.'/Commands');
 
+        $this->commands([
+            \App\Console\Commands\MakeServiceCommand::class,
+        ]);
+
         require base_path('routes/console.php');
     }
 }

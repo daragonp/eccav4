@@ -8,6 +8,12 @@
     @include('quote', ['narrow' => true])
   </section>
 
+  <!-- Últimos cultos -->
+  <section aria-labelledby="home-latest-worships" class="mb-8">
+    <h2 id="home-latest-worships" class="sr-only">Últimos cultos dominicales</h2>
+    @include('components.latest-worships')
+  </section>
+
   <!-- Sección social sin contenedor para que ocupe todo el ancho -->
   <section aria-labelledby="home-social" class="mb-8 px-none">
     <h2 id="home-social" class="sr-only">Enlaces sociales y recursos</h2>

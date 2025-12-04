@@ -32,6 +32,12 @@
       <i class="fa-solid fa-toggle-on text-sm group-hover:scale-110 transition-transform"></i>
     </a>
   @endif
+  {{-- Botón de reprocesar con IA --}}
+@if(isset($reprocess) && $tableM->audio && !$tableM->ai_processed)
+<a href="{{ $reprocess }}" class="btn btn-sm btn-action btn-action-secondary" title="Procesar con IA">
+    <i class="fas fa-robot"></i>
+</a>
+@endif
 </div>
 
 {{-- ===== Modal de edición por fila (Universal) ===== --}}

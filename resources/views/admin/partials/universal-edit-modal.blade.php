@@ -199,6 +199,184 @@
                     </div>
                 </div>
                 @endif
+                {{-- Campos específicos para Worship --}}
+@if($sectionType === 'worship')
+<div class="px-6 py-4 space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <label for="title" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Título</label>
+            <input id="title" type="text" name="title" value="{{ $tableM->title ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+        <div>
+            <label for="autor" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Autor</label>
+            <input id="autor" type="text" name="autor" value="{{ $tableM->autor ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+        <div>
+            <label for="broadcast" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha de emisión</label>
+            <input id="broadcast" type="date" name="broadcast" value="{{ $tableM->broadcast ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+        <div>
+            <label for="badge" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Etiqueta</label>
+            <input id="badge" type="text" name="badge" value="{{ $tableM->badge ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+        <div class="md:col-span-2">
+            <label for="abstract" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Descripción</label>
+            <textarea id="abstract" name="abstract" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>{{ $tableM->abstract ?? '' }}</textarea>
+        </div>
+    </div>
+    
+    {{-- Sección de archivos --}}
+    <div class="space-y-6">
+        {{-- PDF --}}
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 rounded-lg bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
+                    <i class="fas fa-file-pdf text-red-600"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Documento PDF</h4>
+            </div>
+            <div class="space-y-4">
+                <div class="relative">
+                    <input id="pdfdoc" type="file" name="pdfdoc" accept=".pdf" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
+                    <label class="absolute inset-0 w-full h-full cursor-pointer" for="pdfdoc"></label>
+                </div>
+                @if($tableM->pdfdoc)
+                <div class="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $tableM->pdfdoc }}</span>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ asset('documents/worship/' . $tableM->pdfdoc) }}" target="_blank" class="text-green-600 hover:text-green-800 dark:text-green-400">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="text-blue-500 hover:text-blue-700" data-preview-url="{{ asset('documents/worship/' . $tableM->pdfdoc) }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Imagen --}}
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                    <i class="fas fa-image text-blue-600"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Imagen</h4>
+            </div>
+            <div class="space-y-4">
+                <div class="relative">
+                    <input id="image" type="file" name="image" accept="image/*" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
+                    <label class="absolute inset-0 w-full h-full cursor-pointer" for="image"></label>
+                </div>
+                @if($tableM->ai_image)
+                <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <p class="text-sm text-blue-800 dark:text-blue-300">
+                        <i class="fas fa-robot mr-1"></i> Imagen generada por IA: {{ $tableM->ai_image }}
+                    </p>
+                </div>
+                @endif
+                @if($tableM->image)
+                <div class="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $tableM->image }}</span>
+                    <div class="flex items-center space-x-2">
+                        <a href="{{ asset('images/worship/' . $tableM->image) }}" target="_blank" class="text-blue-500 hover:text-blue-700 dark:text-blue-400">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="text-blue-500 hover:text-blue-700" data-preview-url="{{ asset('images/worship/' . $tableM->image) }}">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Audio --}}
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+                    <i class="fas fa-volume-up text-green-600"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Audio</h4>
+            </div>
+            <div class="space-y-4">
+                <div class="relative">
+                    <input id="audio" type="file" name="audio" accept="audio/*" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
+                    <label class="absolute inset-0 w-full h-full cursor-pointer" for="audio"></label>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Al cambiar el audio, se volverá a procesar con IA</p>
+                @if($tableM->audio)
+                <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $tableM->audio }}</span>
+                        <a href="{{ asset('audio/worship/' . $tableM->audio) }}" target="_blank" class="text-green-600 hover:text-green-800 dark:text-green-400">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                    <audio controls class="w-full">
+                        <source src="{{ asset('audio/worship/' . $tableM->audio) }}" type="audio/mpeg">
+                        Tu navegador no soporta este elemento de audio.
+                    </audio>
+                    @if($tableM->ai_processed)
+                    <div class="mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded">
+                        <p class="text-xs text-blue-800 dark:text-blue-300">
+                            <i class="fas fa-robot mr-1"></i> Procesado con IA
+                        </p>
+                    </div>
+                    @endif
+                </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Video --}}
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-900/20 flex items-center justify-center">
+                    <i class="fas fa-video text-purple-600"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Video</h4>
+            </div>
+            <div class="space-y-4">
+                <div class="relative">
+                    <input id="video" type="file" name="video" accept="video/*" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
+                    <label class="absolute inset-0 w-full h-full cursor-pointer" for="video"></label>
+                </div>
+                @if($tableM->video)
+                <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $tableM->video }}</span>
+                        <a href="{{ asset('video/worship/' . $tableM->video) }}" target="_blank" class="text-green-600 hover:text-green-800 dark:text-green-400">
+                            <i class="fas fa-external-link-alt"></i>
+                        </a>
+                    </div>
+                    <video controls class="w-full">
+                        <source src="{{ asset('video/worship/' . $tableM->video) }}" type="video/mp4">
+                        Tu navegador no soporta este elemento de video.
+                    </video>
+                </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- Resumen de IA --}}
+        @if($tableM->ai_summary)
+        <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
+                    <i class="fas fa-robot text-blue-600"></i>
+                </div>
+                <h4 class="text-lg font-semibold text-slate-900 dark:text-white">Resumen generado por IA</h4>
+            </div>
+            <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+                <p class="text-sm text-slate-700 dark:text-slate-300">{{ $tableM->ai_summary }}</p>
+            </div>
+        </div>
+        @endif
+    </div>
+</div>
+@endif
                 {{-- Campos específicos para News --}}
                 @if($sectionType === 'news')
                 <div class="px-6 py-4 space-y-6">

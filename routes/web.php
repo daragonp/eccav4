@@ -72,13 +72,14 @@ Route::get('/delete-override/{id}', [ScheduleOverrideController::class, 'destroy
     Route::get('/api/schedule/date/{date}', [ScheduleOverrideController::class, 'getScheduleForDate'])->name('api.date.schedule');
 
     //Rutas para administrador: Culto dominical
-    Route::get('/show-worship', [WorshipController::class, 'show']);
-    Route::post('/addworship', [WorshipController::class, 'store']);
-    Route::get('/view-worship/{id}', [WorshipController::class, 'view']);
-    Route::post('update-worship/{id}', [WorshipController::class, 'edit']);
-    Route::get('/delete-worship/{id}', [WorshipController::class, 'destroy']);
-    Route::get('/activate-worship/{id}', [WorshipController::class, 'activate']);
-    Route::get('/realdelete-worship/{id}', [WorshipController::class, 'delete']);
+Route::get('/show-worship', [WorshipController::class, 'show']);
+Route::post('/addworship', [WorshipController::class, 'store']);
+Route::get('/view-worship/{id}', [WorshipController::class, 'view']);
+Route::post('update-worship/{id}', [WorshipController::class, 'edit']);
+Route::get('/delete-worship/{id}', [WorshipController::class, 'destroy']);      // Soft delete
+Route::get('/activate-worship/{id}', [WorshipController::class, 'activate']);   // Activar
+Route::delete('/realdelete-worship/{id}', [WorshipController::class, 'delete']); // Eliminación permanente
+Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWithAI']);
 
 
     
@@ -266,3 +267,7 @@ Route::get('/programacion', function() {
 
 Route::get('/programa-actual', [ScheduleController::class, 'getCurrentProgram'])
     ->name('public.current.program');
+
+// Rutas para ver los registros de culto en la parte pública
+Route::get('/cultos', [WorshipController::class, 'publicIndex'])->name('worship.public.index');
+Route::get('/cultos/{slug}', [WorshipController::class, 'publicShow'])->name('worship.public.show');

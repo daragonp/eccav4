@@ -113,6 +113,14 @@
                                 <span class="nav-text">Banner Carrusel</span>
                             </div>
                         </a>
+                        <a href="{{ url('show-worship') }}" class="nav-item group {{ request()->is('show-worship*') ? 'active' : '' }}">
+                            <div class="flex items-center gap-3">
+                                <div class="nav-icon">
+                                    <i class="fas fa-church"></i>
+                                </div>
+                                <span class="nav-text">Culto dominical</span>
+                            </div>
+                        </a>
                         <a href="{{ url('show-categories') }}" class="nav-item group {{ request()->is('show-categories*') ? 'active' : '' }}">
                             <div class="flex items-center gap-3">
                                 <div class="nav-icon">
@@ -208,6 +216,11 @@
                         <a href="{{ url('show-slider') }}" class="nav-item-collapsed group {{ request()->is('show-slider*') ? 'active' : '' }}" title="Banner Carrusel">
                             <div class="nav-icon-collapsed">
                                 <i class="fas fa-sliders"></i>
+                            </div>
+                        </a>
+                        <a href="{{ url('show-woship') }}" class="nav-item-collapsed group {{ request()->is('show-woship*') ? 'active' : '' }}" title="Culto dominical">
+                            <div class="nav-icon-collapsed">
+                                <i class="fas fa-church"></i>
                             </div>
                         </a>
                         <a href="{{ url('show-categories') }}" class="nav-item-collapsed group {{ request()->is('show-categories*') ? 'active' : '' }}" title="PodCast">

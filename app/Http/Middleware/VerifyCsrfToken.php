@@ -14,4 +14,20 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         //
     ];
+    
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, \Closure $next)
+    {
+        // Aumentar el límite para archivos grandes
+        ini_set('upload_max_filesize', '100M');
+        ini_set('post_max_size', '100M');
+        
+        return parent::handle($request, $next);
+    }
 }

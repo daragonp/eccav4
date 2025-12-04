@@ -1,25 +1,30 @@
-/node_modules
-/public/audio
-/public/documents
-/public/feed
-/public/images/bible
-/public/seeders
-/public/video
-/storage/*.key
+# Crea o edita tu .gitignore
+cat > .gitignore << EOF
 /vendor
+/node_modules
 .env
-.env.backup
-.phpunit.result.cache
-docker-compose.override.yml
-Homestead.json
-Homestead.yaml
-npm-debug.log
-yarn-error.log
-/.idea
-/.vscode
-/storage/framework/
-/storage/framework/
-/storage/framework/
+/storage/*.key
+/storage/app/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
 /storage/logs/*
-/storage/app/images/slider/*
+/public/hot
 /public/storage
+/storage/logs/laravel.log
+/npm-debug.log
+/yarn-error.log
+# Archivos multimedia grandes que no deberían estar en Git
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.pdf
+*.zip
+*.tar.gz
+EOF
+
+# Remueve archivos ya rastreados que no deberían estarlo
+git rm -r --cached .gitignore 2>/dev/null || true
+git add .gitignore
+git commit -m "Add proper .gitignore"
