@@ -1,111 +1,112 @@
 <header
     data-turbo-permanent
-    class="sticky top-0 z-50
-         bg-white/85 dark:bg-gray-900/85
-         supports-[backdrop-filter]:bg-white/40 supports-[backdrop-filter]:dark:bg-gray-900/30
-         backdrop-blur-md
-         border-b border-gray-200/80 dark:border-gray-700/60
-         transition-colors duration-300">
-    <nav x-data="{ open:false }" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    class="sticky top-0 z-50 w-full
+         bg-white/90 dark:bg-gray-900/90
+         supports-[backdrop-filter]:bg-white/70 supports-[backdrop-filter]:dark:bg-gray-900/60
+         backdrop-blur-xl
+         border-b border-gray-200/60 dark:border-gray-700/50
+         transition-all duration-300 ease-in-out">
+    <nav x-data="{ open: false, mobileDropdownOpen: null }" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-        {{-- Barra principal (una sola franja) --}}
-        <div class="relative flex h-20 items-center justify-between">
+        {{-- Barra principal --}}
+        <div class="relative flex h-16 items-center justify-between">
 
-            {{-- Izquierda: botón móvil --}}
-            <div class="flex items-center lg:hidden">
-                <button @click="open=!open" aria-label="Abrir menú"
-                    class="inline-flex items-center justify-center rounded-md p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
-                    <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            {{-- Centro-izquierda: logo (crece un poco) --}}
-            <div class="flex flex-1 justify-center lg:justify-start">
-                <a href="/" class="flex items-center">
-                    <img src="{{ asset('images/logo/logo.png') }}" alt="ECCA_LOGO" class="h-12 sm:h-16 w-auto" />
+            {{-- Izquierda: Logo --}}
+            <div class="flex-shrink-0">
+                <a href="/" class="flex items-center group">
+                    <img src="{{ asset('images/logo/logo.png') }}" alt="ECCA_LOGO" class="h-10 w-auto transition-transform duration-300 ease-in-out group-hover:scale-105" />
                 </a>
             </div>
 
-            {{-- Menú de escritorio centrado --}}
-            <div
-                class="hidden lg:flex absolute inset-y-0 left-1/2 -translate-x-1/2 z-10
-               items-center justify-center gap-6">
+            {{-- Menú de escritorio --}}
+            <div class="hidden lg:flex lg:items-center lg:space-x-1">
+                {{-- Usamos un contenedor para los enlaces para centrarlos mejor --}}
+                <div class="flex items-center space-x-1">
+                    <a href="/" class="nav-link {{ request()->is('/') ? 'nav-link-active' : '' }}">Inicio</a>
 
-                <a href="/" class="text-gray-800 dark:text-gray-100 hover:text-brand-light">Inicio</a>
+                    {{-- Dropdown "Conócenos" --}}
+                    <div x-data="{ dd: false }" @mouseenter="dd = true" @mouseleave="dd = false" class="relative">
+                        <button @click="dd = !dd" @focus="dd = true" @blur="setTimeout(() => dd = false, 150)"
+                            class="nav-link-dropdown {{ request()->routeIs('mision', 'objetivos', 'declaracion', 'meta', 'mensajero') ? 'nav-link-active' : '' }}">
+                            Conócenos
+                            <svg class="h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': dd }" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
 
-                {{-- Dropdown "Conócenos" --}}
-                <div x-data="{dd:false}" class="relative">
-                    <button @click="dd=!dd"
-                        class="inline-flex items-center gap-1 text-gray-800 dark:text-gray-100 hover:text-brand-light">
-                        Conócenos
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.044l3.71-3.813a.75.75 0 111.08 1.04l-4.24 4.36a.75.75 0 01-1.08 0L5.21 8.27a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    <div x-show="dd" @click.outside="dd=false" x-transition
-                        class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 rounded-md
-                      border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg p-2">
-                        <a class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700" href="{{ url('mision') }}">Misión</a>
-                        <a class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700" href="{{ url('objetivos') }}">Objetivo</a>
-                        <a class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700" href="{{ url('declaracion') }}">Declaración de fe</a>
-                        <a class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700" href="{{ url('meta') }}">Meta</a>
-                        <a class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700" href="{{ url('mensajero') }}">Mensajero veloz</a>
+                        <div x-show="dd" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+                            class="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-64 rounded-xl
+                              border border-gray-200/60 dark:border-gray-700/60 bg-white/95 dark:bg-gray-800/95 shadow-2xl backdrop-blur-sm p-2">
+                            <a href="{{ url('mision') }}" class="dropdown-item">Misión</a>
+                            <a href="{{ url('objetivos') }}" class="dropdown-item">Objetivo</a>
+                            <a href="{{ url('declaracion') }}" class="dropdown-item">Declaración de fe</a>
+                            <a href="{{ url('meta') }}" class="dropdown-item">Meta</a>
+                            <a href="{{ url('mensajero') }}" class="dropdown-item">Mensajero veloz</a>
+                        </div>
                     </div>
+
+                    <a href="{{ url('worship-home') }}" class="nav-link {{ request()->is('worship-home') ? 'nav-link-active' : '' }}">Palabras de vida</a>
+                    <a href="{{ url('worship') }}" class="nav-link {{ request()->is('worship') ? 'nav-link-active' : '' }}">Culto dominical</a>
+                    <a href="{{ url('/biblia') }}" class="nav-link {{ request()->is('/biblia') ? 'nav-link-active' : '' }}">Biblia</a>
+                    <a href="{{ url('lumbrera') }}" class="nav-link {{ request()->is('lumbrera') ? 'nav-link-active' : '' }}">Programas</a>
                 </div>
-
-                <a href="{{ url('worship-home') }}" class="text-gray-800 dark:text-gray-100 hover:text-brand-light">Palabras de vida</a>
-                <a href="{{ url('cultos') }}" class="text-gray-800 dark:text-gray-100 hover:text-brand-light">Cultos</a>
-
-                <a href="{{ url('/biblia') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
-                    Biblia
-                </a>
-                <a href="{{ url('lumbrera') }}" class="text-gray-800 dark:text-gray-100 hover:text-brand-light">Programas</a>
             </div>
 
-            {{-- Derecha: toggle tema --}}
-            <div class="flex items-center gap-2">
-                <button id="toggleTheme"
-                    class="px-3 py-1 rounded bg-gray-200/90 dark:bg-gray-700/90 text-gray-900 dark:text-gray-100">
-                    <span id="themeIcon">🌙</span>
+            {{-- Derecha: Acciones --}}
+            <div class="flex items-center space-x-3">
+                {{-- Toggle tema --}}
+                <button id="toggleTheme" aria-label="Cambiar tema" class="p-2 rounded-lg bg-gray-100/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
+                    <span id="themeIcon" class="text-xl">🌙</span>
+                </button>
+
+                {{-- Botón móvil --}}
+                <button @click="open = !open" aria-label="Abrir menú" aria-expanded="false" :aria-expanded="open.toString()"
+                    class="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200">
+                    <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                    <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                 </button>
             </div>
         </div>
 
         {{-- Menú móvil (colapsable) --}}
-        <div x-show="open" x-transition class="lg:hidden py-2 space-y-1">
-            <a href="/" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Inicio</a>
+        <div x-show="open" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 transform translate-y-0" x-transition:leave-end="opacity-0 transform -translate-y-2"
+            class="lg:hidden border-t border-gray-200 dark:border-gray-700 mt-2 pt-4 pb-6">
+            <div class="space-y-1">
+                <a href="/" class="mobile-nav-link {{ request()->is('/') ? 'mobile-nav-link-active' : '' }}">Inicio</a>
 
-            <details class="px-3 py-2">
-                <summary class="cursor-pointer select-none text-gray-800 dark:text-gray-100">Conócenos</summary>
-                <div class="mt-2 ml-3 space-y-1">
-                    <a class="block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800" href="{{ url('mision') }}">Misión</a>
-                    <a class="block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800" href="{{ url('objetivos') }}">Objetivo</a>
-                    <a class="block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800" href="{{ url('declaracion') }}">Declaración de fe</a>
-                    <a class="block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800" href="{{ url('meta') }}">Meta</a>
-                    <a class="block px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800" href="{{ url('mensajero') }}">Mensajero veloz</a>
+                {{-- Dropdown Móvil "Conócenos" --}}
+                <div>
+                    <button @click="mobileDropdownOpen = mobileDropdownOpen === 'conocenos' ? null : 'conocenos'" class="mobile-nav-dropdown-button {{ request()->routeIs('mision', 'objetivos', 'declaracion', 'meta', 'mensajero') ? 'mobile-nav-link-active' : '' }}">
+                        Conócenos
+                        <svg class="h-4 w-4 transition-transform duration-200" :class="{ 'rotate-180': mobileDropdownOpen === 'conocenos' }" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div x-show="mobileDropdownOpen === 'conocenos'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 max-h-0" x-transition:enter-end="opacity-100 max-h-60" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 max-h-60" x-transition:leave-end="opacity-0 max-h-0"
+                         class="overflow-hidden">
+                        <div class="mt-2 ml-4 space-y-1">
+                            <a href="{{ url('mision') }}" class="mobile-sub-link">Misión</a>
+                            <a href="{{ url('objetivos') }}" class="mobile-sub-link">Objetivo</a>
+                            <a href="{{ url('declaracion') }}" class="mobile-sub-link">Declaración de fe</a>
+                            <a href="{{ url('meta') }}" class="mobile-sub-link">Meta</a>
+                            <a href="{{ url('mensajero') }}" class="mobile-sub-link">Mensajero veloz</a>
+                        </div>
+                    </div>
                 </div>
-            </details>
 
-            <a href="{{ url('worship-home') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Palabras de vida</a>
-            <a href="{{ url('cultos') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Cultos</a>
-           <a href="{{ url('/biblia') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
-                Biblia
-            </a>
-            <a href="{{ url('lumbrera') }}" class="block px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">Programas</a>
+                <a href="{{ url('worship-home') }}" class="mobile-nav-link {{ request()->is('worship-home') ? 'mobile-nav-link-active' : '' }}">Palabras de vida</a>
+                <a href="{{ url('worship') }}" class="mobile-nav-link {{ request()->is('worship') ? 'mobile-nav-link-active' : '' }}">Culto dominical</a>
+                <a href="{{ url('/biblia') }}" class="mobile-nav-link {{ request()->is('/biblia') ? 'mobile-nav-link-active' : '' }}">Biblia</a>
+                <a href="{{ url('lumbrera') }}" class="mobile-nav-link {{ request()->is('lumbrera') ? 'mobile-nav-link-active' : '' }}">Programas</a>
+            </div>
         </div>
     </nav>
 
-    {{-- Toggle dark + sombra al hacer scroll (forzado a evaluar con Turbo) --}}
+    {{-- Script para el tema y sombra al hacer scroll --}}
     <script data-turbo-eval="true">
         (function() {
             const root = document.documentElement;
@@ -133,16 +134,21 @@
                 };
             }
 
-            // Sombra sutil al hacer scroll
+            // Sombra más pronunciada al hacer scroll
             const headerEl = document.currentScript.closest('header');
             const onScroll = () => {
                 const y = window.scrollY || document.documentElement.scrollTop;
-                headerEl.classList.toggle('shadow-sm', y > 4);
+                // Añadimos una sombra más elegante y un ligero cambio de fondo
+                if (y > 10) {
+                    headerEl.classList.add('shadow-lg', 'bg-white/95', 'dark:bg-gray-900/95');
+                    headerEl.classList.remove('shadow-sm', 'bg-white/90', 'dark:bg-gray-900/90');
+                } else {
+                    headerEl.classList.remove('shadow-lg', 'bg-white/95', 'dark:bg-gray-900/95');
+                    headerEl.classList.add('shadow-sm', 'bg-white/90', 'dark:bg-gray-900/90');
+                }
             };
             onScroll();
-            window.addEventListener('scroll', onScroll, {
-                passive: true
-            });
+            window.addEventListener('scroll', onScroll, { passive: true });
         })();
     </script>
 </header>

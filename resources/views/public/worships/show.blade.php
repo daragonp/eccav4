@@ -124,24 +124,6 @@
                     </div>
                 @endif
             </div>
-            
-            <!-- Botones de acción -->
-            <div class="flex flex-wrap gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
-                <button class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors">
-                    <i class="fas fa-share-alt"></i>
-                    Compartir
-                </button>
-                
-                <button class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors">
-                    <i class="fas fa-bookmark"></i>
-                    Guardar
-                </button>
-                
-                <button class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors">
-                    <i class="fas fa-print"></i>
-                    Imprimir
-                </button>
-            </div>
         </div>
     </article>
     

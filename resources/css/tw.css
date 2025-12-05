@@ -754,3 +754,116 @@ audio, video {
     font-size: 0.85rem;
   }
 }
+
+/* =======================
+   Estilos del Navegador (Header)
+   ======================= */
+@layer components {
+  /* Variables para los enlaces */
+  :root {
+    --nav-link-padding: 0.625rem 1rem;
+    --nav-link-radius: 0.5rem;
+    --nav-link-size: 0.95rem;
+    --nav-link-weight: 500;
+    --nav-link-color: theme('colors.gray.700');
+    --nav-link-color-dark: theme('colors.gray.200');
+    --nav-link-hover-bg: theme('colors.gray.100');
+    --nav-link-hover-bg-dark: theme('colors.gray.800');
+    --nav-link-active-color: theme('colors.white');
+    --nav-link-active-bg: var(--green-light);
+  }
+
+  /* Estilos base para enlaces de navegación de escritorio */
+  .nav-link, .nav-link-dropdown {
+    @apply inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium;
+    color: var(--nav-link-color);
+    transition: all 0.2s ease-in-out;
+    position: relative;
+  }
+
+  .dark .nav-link, .dark .nav-link-dropdown {
+    color: var(--nav-link-color-dark);
+  }
+
+  .nav-link:hover, .nav-link-dropdown:hover {
+    background-color: var(--nav-link-hover-bg);
+    color: var(--green-dark);
+  }
+
+  .dark .nav-link:hover, .dark .nav-link-dropdown:hover {
+    background-color: var(--nav-link-hover-bg-dark);
+    color: var(--green-light);
+  }
+
+  /* Estilo para el enlace activo */
+  .nav-link-active, .mobile-nav-link-active {
+    color: var(--nav-link-active-color) !important;
+    background-color: var(--nav-link-active-bg) !important;
+    font-weight: 600;
+  }
+  
+  /* Estilos para los items del dropdown de escritorio */
+  .dropdown-item {
+    @apply block px-4 py-2.5 text-sm rounded-lg transition-all duration-200;
+    color: var(--nav-link-color);
+    font-weight: 500;
+  }
+
+  .dark .dropdown-item {
+    color: var(--nav-link-color-dark);
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--nav-link-hover-bg);
+    color: var(--green-dark);
+    transform: translateX(4px);
+  }
+
+  .dark .dropdown-item:hover {
+    background-color: var(--nav-link-hover-bg-dark);
+    color: var(--green-light);
+  }
+
+  /* Estilos para enlaces de navegación móvil */
+  .mobile-nav-link, .mobile-nav-dropdown-button {
+    @apply block w-full text-left px-4 py-3 text-base font-medium rounded-lg transition-all duration-200;
+    color: var(--nav-link-color-dark); /* Por defecto más oscuro para contraste en el fondo claro */
+  }
+
+  .dark .mobile-nav-link, .dark .mobile-nav-dropdown-button {
+    color: var(--nav-link-color);
+  }
+
+  .mobile-nav-link:hover, .mobile-nav-dropdown-button:hover {
+    background-color: var(--nav-link-hover-bg);
+    color: var(--green-dark);
+    padding-left: 1.5rem; /* Efecto de indentación al hover */
+  }
+
+  .dark .mobile-nav-link:hover, .dark .mobile-nav-dropdown-button:hover {
+    background-color: var(--nav-link-hover-bg-dark);
+    color: var(--green-light);
+  }
+
+  .mobile-sub-link {
+    @apply block px-4 py-2 text-sm rounded-md transition-all duration-200;
+    color: var(--nav-link-color-dark);
+    opacity: 0.85;
+  }
+
+  .dark .mobile-sub-link {
+    color: var(--nav-link-color);
+  }
+
+  .mobile-sub-link:hover {
+    opacity: 1;
+    background-color: var(--nav-link-hover-bg);
+    color: var(--green-dark);
+    padding-left: 1.75rem;
+  }
+
+  .dark .mobile-sub-link:hover {
+    background-color: var(--nav-link-hover-bg-dark);
+    color: var(--green-light);
+  }
+}

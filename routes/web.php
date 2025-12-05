@@ -269,5 +269,5 @@ Route::get('/programa-actual', [ScheduleController::class, 'getCurrentProgram'])
     ->name('public.current.program');
 
 // Rutas para ver los registros de culto en la parte pública
-Route::get('/cultos', [WorshipController::class, 'publicIndex'])->name('worship.public.index');
-Route::get('/cultos/{slug}', [WorshipController::class, 'publicShow'])->name('worship.public.show');
+Route::get('/worship', [WorshipController::class, 'publicIndex'])->name('worship.public.index');
+Route::get('/worship/{slug}', [WorshipController::class, 'publicShow'])->name('worship.public.show');

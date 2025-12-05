@@ -1,8 +1,8 @@
 <?php
-    // Obtener los 3 cultos más recientes
+    // Obtener los 4 cultos más recientes (cambiado de 3 a 4)
     $latestWorships = App\Models\Worship::orderBy('broadcast', 'desc')
         ->whereNull('deleted_at')
-        ->take(3)
+        ->take(4)  // Cambiado a 4 para mostrar más elementos
         ->get();
         
     // Determinar cuál es el más reciente para mostrar el badge "NUEVO"
@@ -43,12 +43,13 @@
             <!-- Carrusel de tarjetas compactas -->
             <div class="relative" x-data="carouselComponent()">
                 <!-- Contenedor con scroll horizontal -->
-                <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth" 
+                <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide scroll-smooth snap-x snap-mandatory" 
                      x-ref="carousel"
-                     x-on:scroll="updateScrollPosition()">
+                     x-on:scroll="updateScrollPosition()"
+                     style="scrollbar-width: none; -ms-overflow-style: none;">
                     
                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $latestWorships; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $worship): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <article class="flex-none w-72 group">
+                        <article class="flex-none w-72 snap-start group">
                             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 h-32 flex">
                                 <!-- Imagen miniatura -->
                                 <div class="w-28 h-32 relative overflow-hidden flex-shrink-0">
@@ -138,14 +139,17 @@
                             </div>
                         </article>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                    
+                    <!-- Espaciador final para mejor alineación -->
+                    <div class="w-4 flex-shrink-0"></div>
                 </div>
                 
                 <!-- Indicadores de scroll (solo visibles en desktop) -->
-                <div class="hidden md:flex justify-center gap-1 mt-3">
+                <div class="hidden md:flex justify-center gap-2 mt-3">
                     <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php $__currentLoopData = $latestWorships; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $worship): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                        <button class="w-8 h-1 rounded-full bg-green-200 dark:bg-green-800 transition-all duration-300"
-                                :class="scrollPosition > (<?php echo e($key * 288 - 144); ?>) && scrollPosition < (<?php echo e($key * 288 + 144); ?>) ? 'bg-green-600 dark:bg-green-400 w-10' : ''"
-                                @click="$refs.carousel.scrollTo({left: <?php echo e($key * 288); ?>, behavior: 'smooth'})">
+                        <button class="carousel-dot w-2 h-2 rounded-full bg-green-200 dark:bg-green-800 transition-all duration-300"
+                                :class="currentSlide === <?php echo e($key); ?> ? 'bg-green-600 dark:bg-green-400 w-8' : ''"
+                                @click="goToSlide(<?php echo e($key); ?>)">
                         </button>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                 </div>
@@ -192,10 +196,59 @@
 <script>
 function carouselComponent() {
     return {
+        currentSlide: 0,
         scrollPosition: 0,
+        itemWidth: 288, // Ancho de cada tarjeta + gap
+        gapWidth: 16,   // Espacio entre tarjetas
+        
+        init() {
+            // Calcular el ancho real de cada elemento
+            this.$nextTick(() => {
+                const firstItem = this.$refs.carousel.querySelector('.flex-none');
+                if (firstItem) {
+                    this.itemWidth = firstItem.offsetWidth + this.gapWidth;
+                }
+                this.updateCurrentSlide();
+            });
+        },
+        
         updateScrollPosition() {
             this.scrollPosition = this.$refs.carousel.scrollLeft;
+            this.updateCurrentSlide();
+        },
+        
+        updateCurrentSlide() {
+            // Calcular qué diapositiva está actualmente visible
+            const slideIndex = Math.round(this.scrollPosition / this.itemWidth);
+            this.currentSlide = Math.max(0, Math.min(slideIndex, this.$refs.carousel.querySelectorAll('.flex-none').length - 1));
+        },
+        
+        goToSlide(index) {
+            const targetPosition = index * this.itemWidth;
+            this.$refs.carousel.scrollTo({
+                left: targetPosition,
+                behavior: 'smooth'
+            });
         }
     }
 }
-</script><?php /**PATH /Applications/XAMPP/xamppfiles/htdocs/eccav4/resources/views/components/latest-worships.blade.php ENDPATH**/ ?>
+</script>
+
+<style>
+/* Estilos para el carrusel */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-dot {
+    transition: all 0.3s ease;
+}
+
+.carousel-dot:hover {
+    background-color: rgb(34 197 94 / 0.5);
+}
+
+.dark .carousel-dot:hover {
+    background-color: rgb(74 222 128 / 0.5);
+}
+</style><?php /**PATH /Applications/XAMPP/xamppfiles/htdocs/eccav4/resources/views/components/latest-worships.blade.php ENDPATH**/ ?>

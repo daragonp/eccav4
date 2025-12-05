@@ -26,7 +26,7 @@
       <p>@tez_brillante</p>
     </a>
 
-    <a href="#" target="_blank" rel="noopener" class="card" aria-label="Audios del culto dominical (se abre en nueva pestaña)">
+    <a href="{{ url('worship') }}" target="_blank" rel="noopener" class="card" aria-label="Audios del culto dominical (se abre en nueva pestaña)">
       <img src="{{ asset('images/brands/worship.png') }}" alt="Culto dominical" class="icon-img">
       <p>Culto dominical</p>
     </a>
