@@ -167,6 +167,8 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
         Davcpas1234\LaravelPdfViewer\LaravelPdfViewerServiceProvider::class,
         \Yajra\DataTables\DataTablesServiceProvider::class,
+        App\Providers\BibleServiceProvider::class,
+
         /*
          * Package Service Providers...
          */

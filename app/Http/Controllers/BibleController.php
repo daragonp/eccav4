@@ -242,158 +242,207 @@ public function apiStart()
         'is_start' => true,
     ]);
 }
-    /** GET /biblia/api/buscar?q=palabra -> matches con fragmento, estadísticas y paginación */
-    public function apiSearch(Request $req)
-    {
-        $q = trim((string)$req->query('q', ''));
-        $page = (int)$req->query('page', 1);
-        $perPage = 10; // Resultados por página
-        
-        if ($q === '' || mb_strlen($q) < 2) {
-            return response()->json([
-                'q' => $q, 
-                'total' => 0, 
-                'results' => [],
-                'stats' => null,
-                'pagination' => [
-                    'current_page' => 1,
-                    'total_pages' => 0,
-                    'total_results' => 0,
-                    'per_page' => $perPage,
-                    'has_prev' => false,
-                    'has_next' => false,
-                    'prev_page' => null,
-                    'next_page' => null,
-                ]
-            ]);
-        }
 
-        $data = $this->bible();
-        $needle = mb_strtolower($q);
-        
-        // Lista de libros del Antiguo y Nuevo Testamento
-        $booksInfo = $this->booksInfo();
-        $oldTestamentBooks = array_column($booksInfo['old_testament']['books'], 'slug');
-        $newTestamentBooks = array_column($booksInfo['new_testament']['books'], 'slug');
+/** GET /biblia/api/buscar?q=palabra -> matches con fragmento, estadísticas y paginación */
+public function apiSearch(Request $req)
+{
+    $q = trim((string)$req->query('q', ''));
+    $page = (int)$req->query('page', 1);
+    $perPage = 10;
+    
+    if ($q === '' || mb_strlen($q) < 2) {
+        return response()->json([
+            'q' => $q, 
+            'total' => 0, 
+            'results' => [],
+            'stats' => null,
+            'pagination' => [
+                'current_page' => 1,
+                'total_pages' => 0,
+                'total_results' => 0,
+                'per_page' => $perPage,
+                'has_prev' => false,
+                'has_next' => false,
+                'prev_page' => null,
+                'next_page' => null,
+            ]
+        ]);
+    }
 
-        $allResults = [];
-        $stats = [
-            'total_results' => 0,
-            'books_count' => 0,
-            'old_testament' => 0,
-            'new_testament' => 0
-        ];
-        
-        $foundBooks = [];
-        
-        foreach ($data as $libro => $caps) {
-            foreach ($caps as $cap => $vers) {
-                foreach ($vers as $n => $t) {
-                    $hay = mb_strtolower($t);
-                    $pos = mb_strpos($hay, $needle);
-                    if ($pos !== false) {
-                        // Genera snippet alrededor del match
-                        $start = max(0, $pos - 40);
-                        $len   = 80 + mb_strlen($q);
-                        $frag  = mb_substr($t, $start, $len);
+    $data = $this->bible();
+    
+    // ========== NUEVA LÓGICA: Dividir en palabras ==========
+    $searchTerms = $this->extractSearchTerms($q);
+    
+    if (empty($searchTerms)) {
+        return response()->json([
+            'q' => $q, 
+            'total' => 0, 
+            'results' => [],
+            'stats' => null,
+            'pagination' => [
+                'current_page' => 1,
+                'total_pages' => 0,
+                'total_results' => 0,
+                'per_page' => $perPage,
+                'has_prev' => false,
+                'has_next' => false,
+                'prev_page' => null,
+                'next_page' => null,
+            ]
+        ]);
+    }
+
+    // Lista de libros del Antiguo y Nuevo Testamento
+    $booksInfo = $this->booksInfo();
+    $oldTestamentBooks = array_column($booksInfo['old_testament']['books'], 'slug');
+    $newTestamentBooks = array_column($booksInfo['new_testament']['books'], 'slug');
+
+    $allResults = [];
+    $stats = [
+        'total_results' => 0,
+        'books_count' => 0,
+        'old_testament' => 0,
+        'new_testament' => 0
+    ];
+    
+    $foundBooks = [];
+    
+    foreach ($data as $libro => $caps) {
+        foreach ($caps as $cap => $vers) {
+            foreach ($vers as $n => $t) {
+                $textLower = mb_strtolower($t);
+                
+                // ========== NUEVA LÓGICA: Verificar TODAS las palabras ==========
+                $matchCount = 0;
+                foreach ($searchTerms as $term) {
+                    if (mb_strpos($textLower, $term) !== false) {
+                        $matchCount++;
+                    }
+                }
+                
+                // Solo incluir si TODAS las palabras están presentes
+                if ($matchCount === count($searchTerms)) {
+                    // Genera snippet
+                    $firstTerm = $searchTerms[0];
+                    $pos = mb_strpos($textLower, $firstTerm);
+                    $start = max(0, $pos - 40);
+                    $len = 80 + mb_strlen($q);
+                    $frag = mb_substr($t, $start, $len);
+                    
+                    // Resaltar TODAS las palabras encontradas
+                    $highlighted = $t;
+                    foreach ($searchTerms as $term) {
+                        $highlighted = preg_replace('/(' . preg_quote($term, '/') . ')/ui', '<mark>$1</mark>', $highlighted);
+                    }
+                    
+                    // Determinar si es AT o NT
+                    $testament = in_array($libro, $oldTestamentBooks) ? 'old' : 'new';
+                    
+                    $allResults[] = [
+                        'book'    => $libro,
+                        'chapter' => (int)$cap,
+                        'verse'   => (int)$n,
+                        'ref'     => $this->pretty($libro)." $cap:$n",
+                        'text'    => $t,
+                        'highlighted' => $highlighted,
+                        'snippet' => ($start > 0 ? '…' : '') . $frag . (mb_strlen($t) > $start + $len ? '…' : ''),
+                        'testament' => $testament,
+                        'match_count' => $matchCount
+                    ];
+                    
+                    // Actualizar estadísticas
+                    $stats['total_results']++;
+                    
+                    if (!in_array($libro, $foundBooks)) {
+                        $foundBooks[] = $libro;
+                        $stats['books_count']++;
                         
-                        // Resaltar el texto encontrado
-                        $highlighted = str_ireplace($q, "<mark>{$q}</mark>", $t);
-                        
-                        // Determinar si es AT o NT
-                        $testament = in_array($libro, $oldTestamentBooks) ? 'old' : 'new';
-                        
-                        $allResults[] = [
-                            'book'    => $libro,
-                            'chapter' => (int)$cap,
-                            'verse'   => (int)$n,
-                            'ref'     => $this->pretty($libro)." $cap:$n",
-                            'text'    => $t,
-                            'highlighted' => $highlighted,
-                            'snippet' => ($start > 0 ? '…' : '') . $frag . (mb_strlen($t) > $start + $len ? '…' : ''),
-                            'testament' => $testament
-                        ];
-                        
-                        // Actualizar estadísticas
-                        $stats['total_results']++;
-                        
-                        if (!in_array($libro, $foundBooks)) {
-                            $foundBooks[] = $libro;
-                            $stats['books_count']++;
-                            
-                            if ($testament === 'old') {
-                                $stats['old_testament']++;
-                            } else {
-                                $stats['new_testament']++;
-                            }
+                        if ($testament === 'old') {
+                            $stats['old_testament']++;
+                        } else {
+                            $stats['new_testament']++;
                         }
                     }
                 }
             }
         }
-        
-        // Ordenar resultados por relevancia (primero los que coinciden exactamente)
-        usort($allResults, function($a, $b) use ($needle) {
-            $aText = mb_strtolower($a['text']);
-            $bText = mb_strtolower($b['text']);
-            
-            // Coincidencia exacta
-            $aExact = mb_strpos($aText, $needle) !== false;
-            $bExact = mb_strpos($bText, $needle) !== false;
-            
-            if ($aExact && !$bExact) return -1;
-            if (!$aExact && $bExact) return 1;
-            
-            // Orden bíblico
-            $booksInfo = $this->booksInfo();
-            $allBooks = array_merge(
-                $booksInfo['old_testament']['books'],
-                $booksInfo['new_testament']['books']
-            );
-            
-            $aBookIndex = array_search($a['book'], array_column($allBooks, 'slug'));
-            $bBookIndex = array_search($b['book'], array_column($allBooks, 'slug'));
-            
-            if ($aBookIndex != $bBookIndex) {
-                return $aBookIndex - $bBookIndex;
-            }
-            
-            // Si es el mismo libro, ordenar por capítulo y versículo
-            if ($a['chapter'] != $b['chapter']) {
-                return $a['chapter'] - $b['chapter'];
-            }
-            
-            return $a['verse'] - $b['verse'];
-        });
-        
-        // Paginar resultados
-        $totalResults = count($allResults);
-        $totalPages = ceil($totalResults / $perPage);
-        
-        // Asegurar que la página solicitada sea válida
-        $page = max(1, min($page, $totalPages));
-        $offset = ($page - 1) * $perPage;
-        
-        $results = array_slice($allResults, $offset, $perPage);
-        
-        return response()->json([
-            'q'       => $q,
-            'total'   => $totalResults,
-            'results' => $results,
-            'stats'   => $stats,
-            'pagination' => [
-                'current_page' => $page,
-                'total_pages' => $totalPages,
-                'total_results' => $totalResults,
-                'per_page' => $perPage,
-                'has_prev' => $page > 1,
-                'has_next' => $page < $totalPages,
-                'prev_page' => $page > 1 ? $page - 1 : null,
-                'next_page' => $page < $totalPages ? $page + 1 : null,
-            ]
-        ]);
     }
+    
+    // Ordenar por cantidad de coincidencias y luego por orden bíblico
+    $bookOrder = [];
+    foreach ($booksInfo['old_testament']['books'] as $b) $bookOrder[] = $b['slug'];
+    foreach ($booksInfo['new_testament']['books'] as $b) $bookOrder[] = $b['slug'];
+    
+    usort($allResults, function($a, $b) use ($bookOrder) {
+        // Primero por cantidad de coincidencias
+        if ($a['match_count'] !== $b['match_count']) {
+            return $b['match_count'] - $a['match_count'];
+        }
+        // Luego por orden bíblico
+        $aIdx = array_search($a['book'], $bookOrder);
+        $bIdx = array_search($b['book'], $bookOrder);
+        if ($aIdx !== $bIdx) return $aIdx - $bIdx;
+        if ($a['chapter'] !== $b['chapter']) return $a['chapter'] - $b['chapter'];
+        return $a['verse'] - $b['verse'];
+    });
+    
+    // Paginar resultados
+    $totalResults = count($allResults);
+    $totalPages = max(1, ceil($totalResults / $perPage));
+    $page = max(1, min($page, $totalPages));
+    $offset = ($page - 1) * $perPage;
+    
+    $results = array_slice($allResults, $offset, $perPage);
+    
+    // Limpiar campo interno
+    $results = array_map(function($r) {
+        unset($r['match_count']);
+        return $r;
+    }, $results);
+    
+    return response()->json([
+        'q'       => $q,
+        'total'   => $totalResults,
+        'results' => $results,
+        'stats'   => $stats,
+        'pagination' => [
+            'current_page' => $page,
+            'total_pages' => $totalPages,
+            'total_results' => $totalResults,
+            'per_page' => $perPage,
+            'has_prev' => $page > 1,
+            'has_next' => $page < $totalPages,
+            'prev_page' => $page > 1 ? $page - 1 : null,
+            'next_page' => $page < $totalPages ? $page + 1 : null,
+        ]
+    ]);
+}
 
+/**
+ * Extrae términos de búsqueda (nuevo método auxiliar)
+ */
+protected function extractSearchTerms(string $query): array
+{
+    // Stop words en español
+    $stopWords = [
+        'y', 'o', 'de', 'la', 'el', 'en', 'que', 'los', 'las', 'un', 'una',
+        'es', 'al', 'del', 'se', 'por', 'con', 'para', 'como', 'no', 'su',
+        'sus', 'le', 'lo', 'me', 'te', 'si', 'más', 'ya', 'fue', 'son', 'ser'
+    ];
+    
+    $words = preg_split('/\s+/', mb_strtolower(trim($query)));
+    
+    $terms = [];
+    foreach ($words as $word) {
+        $word = trim($word);
+        if (mb_strlen($word) >= 2 && !in_array($word, $stopWords) && !preg_match('/^\d+$/', $word)) {
+            $terms[] = $word;
+        }
+    }
+    
+    return array_unique($terms);
+}
     /** GET /biblia/api/versiculo/{libro}/{cap}/{vers} -> { book, chapter, verse, text, pretty, navigation } */
     public function apiVerse(string $libro, string $cap, string $vers)
     {

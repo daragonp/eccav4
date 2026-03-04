@@ -42,10 +42,11 @@
     38 => 'Barryvdh\\DomPDF\\ServiceProvider',
     39 => 'Davcpas1234\\LaravelPdfViewer\\LaravelPdfViewerServiceProvider',
     40 => 'Yajra\\DataTables\\DataTablesServiceProvider',
-    41 => 'App\\Providers\\AppServiceProvider',
-    42 => 'App\\Providers\\AuthServiceProvider',
-    43 => 'App\\Providers\\EventServiceProvider',
-    44 => 'App\\Providers\\RouteServiceProvider',
+    41 => 'App\\Providers\\BibleServiceProvider',
+    42 => 'App\\Providers\\AppServiceProvider',
+    43 => 'App\\Providers\\AuthServiceProvider',
+    44 => 'App\\Providers\\EventServiceProvider',
+    45 => 'App\\Providers\\RouteServiceProvider',
   ),
   'eager' => 
   array (
@@ -77,10 +78,11 @@
     25 => 'Barryvdh\\DomPDF\\ServiceProvider',
     26 => 'Davcpas1234\\LaravelPdfViewer\\LaravelPdfViewerServiceProvider',
     27 => 'Yajra\\DataTables\\DataTablesServiceProvider',
-    28 => 'App\\Providers\\AppServiceProvider',
-    29 => 'App\\Providers\\AuthServiceProvider',
-    30 => 'App\\Providers\\EventServiceProvider',
-    31 => 'App\\Providers\\RouteServiceProvider',
+    28 => 'App\\Providers\\BibleServiceProvider',
+    29 => 'App\\Providers\\AppServiceProvider',
+    30 => 'App\\Providers\\AuthServiceProvider',
+    31 => 'App\\Providers\\EventServiceProvider',
+    32 => 'App\\Providers\\RouteServiceProvider',
   ),
   'deferred' => 
   array (

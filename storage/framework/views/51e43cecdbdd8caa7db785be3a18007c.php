@@ -1149,10 +1149,10 @@
     <div class="mt-4">
       <label class="block text-sm font-medium mb-1">Buscar en toda la Biblia</label>
       <div class="relative">
-        <input type="search"
+        <input type="text"
                x-model="q"
                @input="onSearchInput"
-               placeholder="Ej: fe, amor, no temas…"
+               placeholder="Ej: dios amor, 'tez brillante', esperanza"
                class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-800 pr-10" />
         <div class="absolute inset-y-0 right-0 flex items-center pr-3">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1664,17 +1664,23 @@ function biblia() {
     // Debouncer
     _searchTimer: null,
     onSearchInput(e){
-      const v = (e.target.value || '').trim();
-      this.q = v;
-      this.errorBusqueda = '';
-      clearTimeout(this._searchTimer);
-      if (!v || v.length < 2) { 
-        this.resultado = {q:v, total:0, results:[]}; 
-        return; 
-      }
-      this.cargandoBusqueda = true;
-      this._searchTimer = setTimeout(() => this.buscar(), 400);
-    },
+  // NO hacer trim aquí - permite escribir espacios
+  const v = e.target.value || '';
+  
+  this.q = v;
+  this.errorBusqueda = '';
+  
+  clearTimeout(this._searchTimer);
+  
+  // Validar con trim solo para verificar longitud
+  if (v.trim().length < 2) { 
+    this.resultado = {q:v, total:0, results:[]}; 
+    return; 
+  }
+  
+  this.cargandoBusqueda = true;
+  this._searchTimer = setTimeout(() => this.buscar(), 400);
+},
 
     async init() {
       await this.cargarLibros();
