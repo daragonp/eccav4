@@ -291,13 +291,19 @@
 
                         {{-- Activar / Desactivar --}}
                         @if ($worship->deleted_at)
-                        <a href="{{ url('activate-worship', $worship->id) }}" class="btn btn-success w-full justify-center">
-                            <i class="fas fa-toggle-on mr-2"></i> Activar
-                        </a>
+                        <form action="{{ url('activate-worship', $worship->id) }}" method="POST" class="w-full" onsubmit="return confirm('¿Desea activar este culto?');">
+                            @csrf
+                            <button type="submit" class="btn btn-success w-full justify-center">
+                                <i class="fas fa-toggle-on mr-2"></i> Activar
+                            </button>
+                        </form>
                         @else
-                        <a href="{{ url('delete-worship', $worship->id) }}" class="btn btn-warning w-full justify-center">
-                            <i class="fas fa-power-off mr-2"></i> Desactivar
-                        </a>
+                        <form action="{{ url('delete-worship', $worship->id) }}" method="POST" class="w-full" onsubmit="return confirm('¿Desea desactivar este culto?');">
+                            @csrf
+                            <button type="submit" class="btn btn-warning w-full justify-center">
+                                <i class="fas fa-power-off mr-2"></i> Desactivar
+                            </button>
+                        </form>
                         @endif
 
 <form action="{{ url('realdelete-worship', $worship->id) }}" method="POST">

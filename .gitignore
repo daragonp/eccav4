@@ -1,30 +1,30 @@
-# Crea o edita tu .gitignore
-cat > .gitignore << EOF
 /vendor
 /node_modules
-.env
+/.env
+/.env.*
+!.env.example
+
 /storage/*.key
 /storage/app/*
+!/storage/app/.gitignore
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/testing/*
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
 /storage/logs/*
+!/storage/logs/.gitignore
+
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
+
 /public/hot
 /public/storage
-/storage/logs/laravel.log
+
 /npm-debug.log
 /yarn-error.log
-# Archivos multimedia grandes que no deberían estar en Git
-*.mp3
-*.mp4
-*.avi
-*.mov
-*.pdf
-*.zip
-*.tar.gz
-EOF
+/yarn-debug.log
+/pnpm-debug.log
 
-# Remueve archivos ya rastreados que no deberían estarlo
-git rm -r --cached .gitignore 2>/dev/null || true
-git add .gitignore
-git commit -m "Add proper .gitignore"
+.DS_Store
+**/.DS_Store

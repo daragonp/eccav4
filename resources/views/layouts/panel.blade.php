@@ -8,6 +8,7 @@
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <meta name="color-scheme" content="light dark">
+    <meta name="turbo-visit-control" content="reload">
     {{-- Favicons / manifest --}}
     <link rel="icon" href="{{ asset('images/fav/favicon.svg') }}" type="image/svg+xml" />
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/fav/apple-touch-icon.png') }}" />
@@ -43,9 +44,7 @@
             <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div class="flex items-center gap-3">
                     <div class="relative">
-                        <div class="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
-                            {{ substr(auth()->user()->name, 0, 1) }}
-                        </div>
+                        <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover shadow-md">
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -61,6 +60,17 @@
             </div>
 
             {{-- Navegación --}}
+            @php
+                $panelUser = auth()->user();
+                $panelAvatar = $panelUser?->avatar_url ?? asset('images/logo/logo.png');
+                $isSuperAdmin = (int) ($panelUser->role_id ?? 0) === 1;
+                if (!$isSuperAdmin) {
+                    $roleNames = collect(optional($panelUser)->roles ?? [])
+                        ->pluck('name')
+                        ->map(fn ($name) => mb_strtolower((string) $name));
+                    $isSuperAdmin = $roleNames->contains('superadministrador') || $roleNames->contains('super-admin') || $roleNames->contains('super admin');
+                }
+            @endphp
             <nav class="flex-1 overflow-y-auto px-2 pb-4">
                 <div class="space-y-1">
                     {{-- Panel principal --}}
@@ -92,6 +102,16 @@
                                 <span class="nav-text">Usuarios</span>
                             </div>
                         </a>
+                        @if($isSuperAdmin)
+                        <a href="{{ route('access.control') }}" class="nav-item group {{ request()->is('access-control*') ? 'active' : '' }}">
+                            <div class="flex items-center gap-3">
+                                <div class="nav-icon">
+                                    <i class="fas fa-user-shield"></i>
+                                </div>
+                                <span class="nav-text">Control de accesos</span>
+                            </div>
+                        </a>
+                        @endif
                     </div>
 
                     {{-- Contenido --}}
@@ -203,6 +223,13 @@
                                 <i class="fas fa-users"></i>
                             </div>
                         </a>
+                        @if($isSuperAdmin)
+                        <a href="{{ route('access.control') }}" class="nav-item-collapsed group {{ request()->is('access-control*') ? 'active' : '' }}" title="Control de accesos">
+                            <div class="nav-icon-collapsed">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                        </a>
+                        @endif
 
                         {{-- Separador --}}
                         <div class="border-t border-slate-200 dark:border-slate-700 my-2"></div>
@@ -249,9 +276,7 @@
                 {{-- Usuario --}}
                 <div class="p-4 border-t border-slate-200 dark:border-slate-700">
                     <div class="relative">
-                        <div class="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
-                            {{ substr(auth()->user()->name, 0, 1) }}
-                        </div>
+                        <img src="{{ $panelAvatar }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover shadow-md">
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
                     </div>
                 </div>
@@ -279,9 +304,7 @@
                     <div class="relative">
                         <button id="userMenuBtn" class="btn btn-ghost flex items-center gap-2" aria-haspopup="true" aria-expanded="false">
                             <div class="relative">
-                                <div class="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-sm shadow-md">
-                                    {{ substr(auth()->user()->name, 0, 1) }}
-                                </div>
+                                <img src="{{ $panelAvatar }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover shadow-md">
                                 <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-white dark:border-slate-900"></div>
                             </div>
                             <i class="fas fa-chevron-down text-xs"></i>
@@ -292,9 +315,7 @@
                                 {{-- Cabecera del menú --}}
                                 <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold shadow-md">
-                                            {{ substr(auth()->user()->name, 0, 1) }}
-                                        </div>
+                                        <img src="{{ $panelAvatar }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover shadow-md">
                                         <div>
                                             <div class="font-semibold text-slate-900 dark:text-white">{{ auth()->user()->name }}</div>
                                             <div class="text-xs text-slate-500 dark:text-slate-400">{{ auth()->user()->roles->first()?->name ?? 'Sin rol' }}</div>

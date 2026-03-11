@@ -98,21 +98,35 @@
                                         </button>
                                         
                                         {{-- Botón toggle activo/inactivo --}}
-                                        <a 
-                                            href="{{ url('/toggle-override/' . $override->id) }}" 
-                                            class="btn btn-sm {{ $override->is_active ? 'btn-warning' : 'btn-success' }}"
-                                            title="{{ $override->is_active ? 'Desactivar' : 'Activar' }}">
-                                            <i class="fas fa-{{ $override->is_active ? 'pause' : 'play' }}"></i>
-                                        </a>
+                                        <form
+                                            action="{{ url('/toggle-override/' . $override->id) }}"
+                                            method="POST"
+                                            class="inline"
+                                            onsubmit="return confirm('¿Desea {{ $override->is_active ? 'desactivar' : 'activar' }} esta programación especial?');">
+                                            @csrf
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm {{ $override->is_active ? 'btn-warning' : 'btn-success' }}"
+                                                title="{{ $override->is_active ? 'Desactivar' : 'Activar' }}">
+                                                <i class="fas fa-{{ $override->is_active ? 'pause' : 'play' }}"></i>
+                                            </button>
+                                        </form>
                                         
                                         {{-- Botón eliminar --}}
-                                        <a 
-                                            href="{{ url('/delete-override/' . $override->id) }}" 
-                                            class="btn btn-sm btn-danger"
-                                            onclick="return confirm('¿Está seguro de eliminar esta programación especial?')"
-                                            title="Eliminar">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        <form
+                                            action="{{ url('/delete-override/' . $override->id) }}"
+                                            method="POST"
+                                            class="inline"
+                                            onsubmit="return confirm('¿Está seguro de eliminar esta programación especial?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-danger"
+                                                title="Eliminar">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

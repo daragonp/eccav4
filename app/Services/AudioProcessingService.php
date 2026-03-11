@@ -10,6 +10,32 @@ use Illuminate\Support\Str;
 class AudioProcessingService
 {
     /**
+     * Resuelve la ruta física del audio (public o storage/app).
+     */
+    private function resolveAudioPath(string $audioPath): ?string
+    {
+        $pathsToTry = [
+            public_path($audioPath),
+            storage_path('app/' . $audioPath),
+            storage_path('app/public/' . $audioPath),
+            base_path($audioPath),
+        ];
+
+        foreach ($pathsToTry as $path) {
+            if (is_readable($path)) {
+                return $path;
+            }
+        }
+
+        Log::error('El archivo de audio no existe en rutas conocidas', [
+            'audio_path' => $audioPath,
+            'paths' => $pathsToTry,
+        ]);
+
+        return null;
+    }
+
+    /**
      * Procesa un archivo de audio para generar un resumen y una imagen
      *
      * @param string $audioPath Ruta al archivo de audio
@@ -18,15 +44,13 @@ class AudioProcessingService
      */
     public function processAudio(string $audioPath, string $title = ''): array
     {
-        // Verifica que el archivo exista antes de procesar
-        $fullPath = storage_path('app/' . $audioPath);
-        if (!file_exists($fullPath)) {
-            Log::error('El archivo de audio no existe: ' . $fullPath);
+        $fullPath = $this->resolveAudioPath($audioPath);
+        if (!$fullPath) {
             return [
                 'title' => $title,
                 'summary' => 'Error: El archivo de audio no existe.',
                 'image_url' => null,
-                'transcription' => 'Error: El archivo de audio no existe en la ruta: ' . $fullPath
+                'transcription' => 'Error: El archivo de audio no existe en la ruta esperada.'
             ];
         }
         
@@ -52,45 +76,30 @@ class AudioProcessingService
      */
     private function transcribeAudio(string $audioPath): string
     {
-        // Intenta diferentes rutas posibles
-        $pathsToTry = [
-            public_path($audioPath),          // Primero intenta en public/
-            storage_path('app/' . $audioPath), // Luego en storage/app/
-            base_path($audioPath),           // Luego en la raíz del proyecto
-        ];
-        
-        $fullPath = null;
-        foreach ($pathsToTry as $path) {
-            if (file_exists($path)) {
-                $fullPath = $path;
-                Log::info('Archivo encontrado en: ' . $path);
-                break;
-            }
-        }
-        
+        $fullPath = $this->resolveAudioPath($audioPath);
         if (!$fullPath) {
-            Log::error('El archivo de audio no existe en ninguna de las rutas probadas');
-            Log::error('Rutas probadas: ' . implode(', ', $pathsToTry));
             return "Error: El archivo de audio no existe.";
         }
-        
+
+        $apiKey = (string) config('services.openai.api_key');
+        if ($apiKey === '') {
+            Log::error('OPENAI_API_KEY no está configurada');
+            return 'No se pudo transcribir el audio. Falta configurar la API key.';
+        }
+
         try {
-            $audioFile = file_get_contents($fullPath);
-            $audioBase64 = base64_encode($audioFile);
-            
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('services.openai.api_key'),
-            ])->post('https://api.openai.com/v1/audio/transcriptions', [
-                'file' => $audioBase64,
-                'model' => 'whisper-1',
-                'response_format' => 'text',
-            ]);
-            
+            $response = Http::withToken($apiKey)
+                ->attach('file', file_get_contents($fullPath), basename($fullPath))
+                ->asMultipart()
+                ->post('https://api.openai.com/v1/audio/transcriptions', [
+                    'model' => 'whisper-1',
+                    'response_format' => 'text',
+                ]);
+
             if ($response->successful()) {
-                return $response->body();
+                return trim($response->body());
             }
-            
-            // En caso de error, devolvemos un texto genérico
+
             Log::error('Error en transcripción de audio: ' . $response->body());
             return "No se pudo transcribir el audio. Error: " . $response->json('error.message', 'Error desconocido');
         } catch (\Exception $e) {
@@ -104,6 +113,14 @@ class AudioProcessingService
      */
     private function generateSummary(string $transcription, string $title = ''): array
     {
+        $apiKey = (string) config('services.openai.api_key');
+        if ($apiKey === '') {
+            return [
+                'title' => $title,
+                'summary' => 'No se pudo generar un resumen del audio.',
+            ];
+        }
+
         // Si ya hay un título, solo generar resumen
         if (!empty($title)) {
             $prompt = "Por favor, genera un resumen conciso pero completo del siguiente texto de un sermón o predicación cristiana. El resumen debe capturar los puntos principales, mensajes clave y enseñanzas. El título del sermón es: '{$title}'.\n\nTexto transcrito:\n\n{$transcription}\n\nResumen:";
@@ -113,9 +130,7 @@ class AudioProcessingService
         }
         
         try {
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('services.openai.api_key'),
-            ])->post('https://api.openai.com/v1/chat/completions', [
+            $response = Http::withToken($apiKey)->post('https://api.openai.com/v1/chat/completions', [
                 'model' => 'gpt-4',
                 'messages' => [
                     ['role' => 'system', 'content' => 'Eres un asistente experto en analizar contenido religioso cristiano. Responde siempre en formato JSON válido.'],
@@ -156,13 +171,16 @@ class AudioProcessingService
      */
     private function generateImage(string $summary, string $title = ''): ?string
     {
+        $apiKey = (string) config('services.openai.api_key');
+        if ($apiKey === '') {
+            return null;
+        }
+
         try {
             // Creamos un prompt para DALL-E basado en el resumen
             $prompt = "Crea una imagen inspiradora y espiritual que represente visualmente este sermón cristiano: '{$title}'. La imagen debe ser apropiada para un contexto religioso, con tonos cálidos y pacíficos. Estilo artístico, no fotográfico realista.";
             
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('services.openai.api_key'),
-            ])->post('https://api.openai.com/v1/images/generations', [
+            $response = Http::withToken($apiKey)->post('https://api.openai.com/v1/images/generations', [
                 'model' => 'dall-e-3',
                 'prompt' => $prompt,
                 'n' => 1,
@@ -174,10 +192,14 @@ class AudioProcessingService
                 $imageUrl = $response->json('data.0.url');
                 
                 if ($imageUrl) {
-                    // Descargamos la imagen y la guardamos en nuestro storage
-                    $imageContents = file_get_contents($imageUrl);
+                    $download = Http::timeout(30)->get($imageUrl);
+                    if (!$download->successful()) {
+                        Log::error('No se pudo descargar imagen generada por IA');
+                        return null;
+                    }
+
                     $imageName = 'ai_worship_' . Str::random(10) . '.png';
-                    Storage::disk('public')->put('images/worship/' . $imageName, $imageContents);
+                    Storage::disk('public')->put('images/worship/' . $imageName, $download->body());
                     
                     return $imageName;
                 }

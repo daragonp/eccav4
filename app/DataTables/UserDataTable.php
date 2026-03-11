@@ -118,7 +118,7 @@ class UserDataTable extends DataTable
                    '</div>';
         }
         
-        $url = asset('images/logo/logo.png');
+        $url = $user->avatar_url;
         return '<img src="' . $url . '" alt="' . e($user->name) . '" class="w-10 h-10 rounded-full object-cover">';
     }
 

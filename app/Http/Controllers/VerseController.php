@@ -147,7 +147,7 @@ class VerseController extends Controller
             $verse = Verse::whereDate('date', $date)->firstOrFail();
             return view('single-feed', compact('verse'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return redirect()->route('home')->with('error', 'No se encontró el contenido para la fecha seleccionada.');
+            return redirect('/')->with('error', 'No se encontró el contenido para la fecha seleccionada.');
         }
     }
 }

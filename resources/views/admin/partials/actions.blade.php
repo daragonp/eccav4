@@ -20,17 +20,23 @@
 <p>|</p>
   {{-- Activar / Desactivar --}}
   @if (!$isActive)
-    <a href="{{ $activate ?? '#' }}" 
-       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-all duration-200 group" 
-       title="Activar versículo">
-      <i class="fa-solid fa-toggle-off text-sm group-hover:scale-110 transition-transform"></i>
-    </a>
+    <form action="{{ $activate ?? '#' }}" method="POST" onsubmit="return confirm('¿Desea activar este elemento?');" class="inline">
+      @csrf
+      <button type="submit"
+         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-all duration-200 group"
+         title="Activar elemento">
+        <i class="fa-solid fa-toggle-off text-sm group-hover:scale-110 transition-transform"></i>
+      </button>
+    </form>
   @else
-    <a href="{{ $softdelete ?? '#' }}" 
-       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all duration-200 group" 
-       title="Desactivar versículo">
-      <i class="fa-solid fa-toggle-on text-sm group-hover:scale-110 transition-transform"></i>
-    </a>
+    <form action="{{ $softdelete ?? '#' }}" method="POST" onsubmit="return confirm('¿Desea desactivar este elemento?');" class="inline">
+      @csrf
+      <button type="submit"
+         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all duration-200 group"
+         title="Desactivar elemento">
+        <i class="fa-solid fa-toggle-on text-sm group-hover:scale-110 transition-transform"></i>
+      </button>
+    </form>
   @endif
   {{-- Botón de reprocesar con IA --}}
 @if(isset($reprocess) && $tableM->audio && !$tableM->ai_processed)

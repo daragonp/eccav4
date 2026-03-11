@@ -47,4 +47,23 @@ class User extends Authenticatable
     public function role(){
         return $this->belongsTo(Role::class,'role_id');
     }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        $image = trim((string) ($this->image ?? ''));
+
+        if ($image === '' || in_array($image, ['human.png', 'default.png', 'logo.png'], true)) {
+            return asset('images/logo/logo.png');
+        }
+
+        if (str_starts_with($image, 'http://') || str_starts_with($image, 'https://')) {
+            return $image;
+        }
+
+        if (str_starts_with($image, 'images/') || str_starts_with($image, 'storage/')) {
+            return asset($image);
+        }
+
+        return asset('images/users/' . $image);
+    }
 }

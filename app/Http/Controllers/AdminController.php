@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 use App\DataTables\UserDataTable;
 use App\Models\User;
@@ -14,6 +15,9 @@ use App\Models\Schedule;
 use App\Models\Verse;
 use App\Models\Banner;
 use App\Models\News;
+use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\Models\Role as SpatieRole;
+use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
@@ -79,7 +83,7 @@ class AdminController extends Controller
     {
         // Usar Auth::user() en vez de auth()->user()
         // calma a Intelephense y es equivalente en Laravel.
-        $user = Auth::user();
+        $user = Auth::user()?->loadMissing('roles');
 
         if ($user) {
             return view('admin.profile', compact('user'));
@@ -87,6 +91,68 @@ class AdminController extends Controller
 
         // Vista de login con notación correcta tipo Blade
         return view('auth.login');
+    }
+
+    /**
+     * Actualiza el perfil del usuario autenticado.
+     */
+    public function updateProfile(Request $request)
+    {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'phone' => ['nullable', 'string', 'max:30'],
+            'birthdate' => ['nullable', 'date'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:2048'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        if (Schema::hasColumn('users', 'phone')) {
+            $user->phone = $validated['phone'] ?? null;
+        }
+        if (Schema::hasColumn('users', 'birthdate')) {
+            $user->birthdate = $validated['birthdate'] ?? null;
+        }
+
+        if (!empty($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
+            $image = $request->file('image');
+            $directory = public_path('images/users');
+
+            if (!is_dir($directory)) {
+                @mkdir($directory, 0775, true);
+            }
+
+            $newImageName = 'user_' . Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+            $image->move($directory, $newImageName);
+
+            if (!empty($user->image) && str_starts_with($user->image, 'user_')) {
+                $oldImagePath = $directory . DIRECTORY_SEPARATOR . $user->image;
+                if (is_file($oldImagePath)) {
+                    @unlink($oldImagePath);
+                }
+            }
+
+            $user->image = $newImageName;
+        }
+
+        $user->save();
+
+        return redirect()
+            ->back()
+            ->with('profile_updated', 'Perfil actualizado correctamente.');
     }
 
     /**
@@ -138,7 +204,7 @@ class AdminController extends Controller
      */
     public function uview($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('roles')->findOrFail($id);
         return view('admin.user.view-user', compact('user'));
     }
 
@@ -225,5 +291,121 @@ class AdminController extends Controller
     {
         $hoy = Carbon::now();
         return view('admin.topbar', compact('hoy'));
+    }
+
+    /**
+     * Vista para gestión de accesos (solo superadmin).
+     */
+    public function accessControl()
+    {
+        $columns = ['id', 'name', 'email'];
+        if (Schema::hasColumn('users', 'role_id')) {
+            $columns[] = 'role_id';
+        }
+
+        $users = User::query()
+            ->with(['roles:id,name', 'permissions:id,name'])
+            ->orderBy('name')
+            ->get($columns)
+            ->reject(fn (User $user) => $user->id === (int) Auth::id() || $this->isSuperAdminUser($user))
+            ->values();
+
+        $roles = SpatieRole::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $permissions = Permission::query()
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return view('admin.access.index', compact('users', 'roles', 'permissions'));
+    }
+
+    /**
+     * Asigna roles y permisos directos a un usuario (solo superadmin).
+     */
+    public function updateUserAccess(Request $request, User $user)
+    {
+        if ($this->isSuperAdminUser($user)) {
+            return redirect()
+                ->back()
+                ->withErrors(['access_control' => 'No está permitido modificar los accesos del superadministrador.']);
+        }
+
+        $validated = $request->validate([
+            'roles' => ['nullable', 'array'],
+            'roles.*' => ['integer', 'exists:roles,id'],
+            'permissions' => ['nullable', 'array'],
+            'permissions.*' => ['integer', 'exists:permissions,id'],
+        ]);
+
+        $roleIds = array_map('intval', $validated['roles'] ?? []);
+        $permissionIds = array_map('intval', $validated['permissions'] ?? []);
+
+        $roleNames = SpatieRole::query()
+            ->whereIn('id', $roleIds)
+            ->pluck('name')
+            ->all();
+
+        $permissionNames = Permission::query()
+            ->whereIn('id', $permissionIds)
+            ->pluck('name')
+            ->all();
+
+        $user->syncRoles($roleNames);
+        $user->syncPermissions($permissionNames);
+
+        if (!empty($roleIds) && Schema::hasColumn('users', 'role_id')) {
+            $user->role_id = $roleIds[0];
+            $user->save();
+        }
+
+        return redirect()
+            ->back()
+            ->with('success', 'Accesos actualizados para ' . $user->name . '.');
+    }
+
+    /**
+     * Prueba si un permiso está concedido para un usuario.
+     */
+    public function testUserPermission(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'permission_id' => ['required', 'integer', 'exists:permissions,id'],
+        ]);
+
+        $permission = Permission::query()->findOrFail((int) $validated['permission_id']);
+        $granted = $user->can($permission->name);
+
+        return redirect()
+            ->back()
+            ->with('permission_test', [
+                'user_id' => $user->id,
+                'permission_name' => $permission->name,
+                'granted' => $granted,
+            ]);
+    }
+
+    /**
+     * Vista de configuración del panel (placeholder seguro).
+     */
+    public function settings()
+    {
+        return view('admin.settings');
+    }
+
+    private function isSuperAdminUser(User $user): bool
+    {
+        if (isset($user->role_id) && (int) $user->role_id === 1) {
+            return true;
+        }
+
+        $roleNames = collect($user->roles ?? [])
+            ->pluck('name')
+            ->map(fn ($name) => mb_strtolower((string) $name));
+
+        return $roleNames->contains('superadministrador')
+            || $roleNames->contains('super-admin')
+            || $roleNames->contains('super admin');
     }
 }

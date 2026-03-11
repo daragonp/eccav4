@@ -20,17 +20,14 @@ use App\Http\Controllers\BibleController;
 use App\Http\Controllers\PrivacyController;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 require __DIR__ . '/auth.php';
 
-Route::group(['middleware' => 'auth'], function () {
+Route::group(['middleware' => ['auth', 'admin']], function () {
 
     //Rutas para administrador:
     Route::get('/dashboard', [AdminController::class, 'index']);
     Route::get('/profile', [AdminController::class, 'profile']);
+    Route::put('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
 
     //Rutas para administrador: Programación
 
@@ -43,9 +40,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/addschedule', [ScheduleController::class, 'store'])->name('schedule.store');
     Route::get('/view-schedule/{id}', [ScheduleController::class, 'view'])->name('schedule.view');
     Route::post('/update-schedule/{id}', [ScheduleController::class, 'edit'])->name('schedule.update');
-    Route::get('/delete-schedule/{id}', [ScheduleController::class, 'delete'])->name('schedule.softDelete');
-    Route::get('/activate-schedule/{id}', [ScheduleController::class, 'activate'])->name('schedule.activate');
-    Route::get('/realdelete-schedule/{id}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
+    Route::post('/delete-schedule/{id}', [ScheduleController::class, 'delete'])->name('schedule.softDelete');
+    Route::post('/activate-schedule/{id}', [ScheduleController::class, 'activate'])->name('schedule.activate');
+    Route::delete('/realdelete-schedule/{id}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
 
     // Importación CSV
     Route::get('/import-schedule', function () {
@@ -64,8 +61,8 @@ Route::get('/holiday-schedule', [ScheduleOverrideController::class, 'index'])->n
 Route::post('/add-override', [ScheduleOverrideController::class, 'store'])->name('override.store');
 Route::post('/update-override/{id}', [ScheduleOverrideController::class, 'update'])->name('override.update');
 Route::post('/duplicate-override/{id}', [ScheduleOverrideController::class, 'duplicate'])->name('override.duplicate');
-Route::get('/toggle-override/{id}', [ScheduleOverrideController::class, 'toggleActive'])->name('override.toggle');
-Route::get('/delete-override/{id}', [ScheduleOverrideController::class, 'destroy'])->name('override.destroy');
+Route::post('/toggle-override/{id}', [ScheduleOverrideController::class, 'toggleActive'])->name('override.toggle');
+Route::delete('/delete-override/{id}', [ScheduleOverrideController::class, 'destroy'])->name('override.destroy');
 
 
     // API para obtener programación considerando overrides
@@ -76,8 +73,8 @@ Route::get('/show-worship', [WorshipController::class, 'show']);
 Route::post('/addworship', [WorshipController::class, 'store']);
 Route::get('/view-worship/{id}', [WorshipController::class, 'view']);
 Route::post('update-worship/{id}', [WorshipController::class, 'edit']);
-Route::get('/delete-worship/{id}', [WorshipController::class, 'destroy']);      // Soft delete
-Route::get('/activate-worship/{id}', [WorshipController::class, 'activate']);   // Activar
+Route::post('/delete-worship/{id}', [WorshipController::class, 'destroy']);      // Soft delete
+Route::post('/activate-worship/{id}', [WorshipController::class, 'activate']);   // Activar
 Route::delete('/realdelete-worship/{id}', [WorshipController::class, 'delete']); // Eliminación permanente
 Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWithAI']);
 
@@ -88,9 +85,9 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::post('/addverse', [VerseController::class, 'store']);
     Route::get('/view-quote/{id}', [VerseController::class, 'view']);
     Route::post('/update-quote/{id}', [VerseController::class, 'edit']);
-    Route::get('/delete-quote/{id}', [VerseController::class, 'destroy']);
-    Route::get('/activate-quote/{id}', [VerseController::class, 'activate']);
-    Route::get('/realdelete-quote/{id}', [VerseController::class, 'delete']);
+    Route::post('/delete-quote/{id}', [VerseController::class, 'destroy']);
+    Route::post('/activate-quote/{id}', [VerseController::class, 'activate']);
+    Route::delete('/realdelete-quote/{id}', [VerseController::class, 'delete']);
 
 
     //Rutas para administrador: Banner
@@ -98,9 +95,9 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::post('/addslider', [BannerController::class, 'store']);
     Route::get('/view-slider/{id}', [BannerController::class, 'view']);
     Route::post('/update-slider/{id}', [BannerController::class, 'edit']);
-    Route::get('/delete-slider/{id}', [BannerController::class, 'destroy']);
-    Route::get('/activate-slider/{id}', [BannerController::class, 'activate']);
-    Route::get('/realdelete-slider/{id}', [BannerController::class, 'delete']);
+    Route::post('/delete-slider/{id}', [BannerController::class, 'destroy']);
+    Route::post('/activate-slider/{id}', [BannerController::class, 'activate']);
+    Route::delete('/realdelete-slider/{id}', [BannerController::class, 'delete']);
 
 
     //Rutas para administrador: Mensaje de la semana (nueva versión)
@@ -109,9 +106,9 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::post('/addnews', [NewsController::class, 'store']);
     Route::get('/view-news/{id}', [NewsController::class, 'view']);
     Route::post('/update-news/{id}', [NewsController::class, 'edit']);
-    Route::get('/delete-news/{id}', [NewsController::class, 'destroy']);
-    Route::get('/activate-news/{id}', [NewsController::class, 'activate']);
-    Route::get('/realdelete-news/{id}', [NewsController::class, 'delete']);
+    Route::post('/delete-news/{id}', [NewsController::class, 'destroy']);
+    Route::post('/activate-news/{id}', [NewsController::class, 'activate']);
+    Route::delete('/realdelete-news/{id}', [NewsController::class, 'delete']);
     Route::get('/admin/news', [NewsController::class, 'adminindex'])->name('news.index');
 
     //Rutas para administrador: Roles de usuario
@@ -121,16 +118,23 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::get('/show-roles', [RoleController::class, 'show']);
     Route::get('/update-role/{id}', [RoleController::class, 'update']);
     Route::post('/updaterole/{id}', [RoleController::class, 'edit']);
-    Route::get('/delete-role/{id}', [RoleController::class, 'delete']);
+    Route::post('/delete-role/{id}', [RoleController::class, 'delete']);
 
     //Rutas para administrador: Usuarios
     Route::get('/show-users', [AdminController::class, 'ushow']);
     Route::post('/adduser', [AdminController::class, 'ustore']);
     Route::get('/view-user/{id}', [AdminController::class, 'uview']);
     Route::post('/update-user/{id}', [AdminController::class, 'uedit']);
-    Route::get('/delete-user/{id}', [AdminController::class, 'udestroy']);
-    Route::get('/activate-user/{id}', [AdminController::class, 'uactivate']);
-    Route::get('/realdelete-user/{id}', [AdminController::class, 'udelete']);
+    Route::post('/delete-user/{id}', [AdminController::class, 'udestroy']);
+    Route::post('/activate-user/{id}', [AdminController::class, 'uactivate']);
+    Route::delete('/realdelete-user/{id}', [AdminController::class, 'udelete']);
+
+    // Gestión de accesos (solo superadministrador)
+    Route::middleware('superadmin')->group(function () {
+        Route::get('/access-control', [AdminController::class, 'accessControl'])->name('access.control');
+        Route::post('/access-control/users/{user}', [AdminController::class, 'updateUserAccess'])->name('access.control.update');
+        Route::post('/access-control/users/{user}/test-permission', [AdminController::class, 'testUserPermission'])->name('access.control.test');
+    });
 
     //Rutas para administrador:
     Route::get('/dashboard', [AdminController::class, 'index']);
@@ -138,6 +142,7 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
 
     //Rutas para administrador: Centro de notificaciones
     Route::get('/topbar', [AdminController::class, 'center']);
+    Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
 
     //Rutas para administrador: Categorías de audios
     Route::get('/new-category', [CategoryController::class, 'category']);
@@ -145,7 +150,7 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::get('/show-categories', [CategoryController::class, 'show']);
     Route::get('/update-category/{id}', [CategoryController::class, 'update']);
     Route::post('/updatecategory/{id}', [CategoryController::class, 'edit']);
-    Route::get('/delete-category/{id}', [CategoryController::class, 'delete']);
+    Route::post('/delete-category/{id}', [CategoryController::class, 'delete']);
 
 
 
@@ -155,7 +160,7 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::get('/show-podcasts', [PodcastController::class, 'show']);
     Route::get('/update-podcast/{id}', [PodcastController::class, 'update']);
     Route::post('/updatepodcast/{id}', [PodcastController::class, 'edit']);
-    Route::get('/delete-podcast/{id}', [PodcastController::class, 'delete']);
+    Route::post('/delete-podcast/{id}', [PodcastController::class, 'delete']);
 });
 
 Route::post('/api/privacy-acceptance', [PrivacyController::class, 'recordAcceptance'])->name('privacy.acceptance');
@@ -193,7 +198,7 @@ Route::get('/donate', [DonateController::class, 'index']);
 Route::post('/adddonor', [DonateController::class, 'create']);
 
 
-Route::get('/', [HomeContentController::class, 'index']);
+Route::get('/', [HomeContentController::class, 'index'])->name('home');
 Route::get('/seeds', [HomeContentController::class, 'seeds']);
 Route::post('/newsuscriber', [HomeContentController::class, 'suscriberemail']);
 Route::get('/search', [HomeContentController::class, 'search']);

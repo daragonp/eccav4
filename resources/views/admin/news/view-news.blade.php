@@ -187,18 +187,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         {{-- Activar / Desactivar --}}
                         @if ($news->deleted_at)
-                            <a href="{{ url('activate-news', $news->id) }}" class="btn btn-success w-full justify-center">
-                                <i class="fas fa-toggle-on mr-2"></i> Activar
-                            </a>
+                            <form action="{{ url('activate-news', $news->id) }}" method="POST" class="w-full" onsubmit="return confirm('¿Desea activar este mensaje?');">
+                                @csrf
+                                <button type="submit" class="btn btn-success w-full justify-center">
+                                    <i class="fas fa-toggle-on mr-2"></i> Activar
+                                </button>
+                            </form>
                         @else
-                            <a href="{{ url('delete-news', $news->id) }}" class="btn btn-warning w-full justify-center">
-                                <i class="fas fa-power-off mr-2"></i> Desactivar
-                            </a>
+                            <form action="{{ url('delete-news', $news->id) }}" method="POST" class="w-full" onsubmit="return confirm('¿Desea desactivar este mensaje?');">
+                                @csrf
+                                <button type="submit" class="btn btn-warning w-full justify-center">
+                                    <i class="fas fa-power-off mr-2"></i> Desactivar
+                                </button>
+                            </form>
                         @endif
 
                         {{-- Eliminar --}}
                         <form action="{{ url('realdelete-news', $news->id) }}" method="POST" onsubmit="return confirm('¿Está seguro de que desea eliminar este mensaje permanentemente?');" class="inline w-full">
                             @csrf
+                            @method('DELETE')
                             <button type="submit" class="btn btn-danger w-full justify-center">
                                 <i class="fas fa-trash-alt mr-2"></i> Eliminar Definitivamente
                             </button>

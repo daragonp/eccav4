@@ -11,8 +11,6 @@ use App\Models\Schedule;
 use App\Models\Suscriber;
 use App\Models\Worship;
 use Illuminate\Http\Request;
-use Illuminate\Support\Fluent;
-use Stevebauman\Location\Position;
 use Stevebauman\Location\Facades\Location;
 
 
@@ -77,17 +75,21 @@ class HomeContentController extends Controller
         return view('seeds');
     }
 
-    public function suscriberemail(Request $request, Position $position, Fluent $location)
+    public function suscriberemail(Request $request)
     {
+        $validated = $request->validate([
+            'email' => ['required', 'email', 'max:255'],
+        ]);
+
         $newsuscribe = new Suscriber();
 
         $position = Location::get();
-        $newsuscribe->email = $request->email;
-        $newsuscribe->ip = $position->ip;
-        $newsuscribe->country = $position->countryName;
-        $newsuscribe->city = $position->cityName;
-        $newsuscribe->latitud = $position->latitude;
-        $newsuscribe->longitude = $position->longitude;
+        $newsuscribe->email = $validated['email'];
+        $newsuscribe->ip = $position->ip ?? $request->ip();
+        $newsuscribe->country = $position->countryName ?? 'N/A';
+        $newsuscribe->city = $position->cityName ?? 'N/A';
+        $newsuscribe->latitud = $position->latitude ?? '0';
+        $newsuscribe->longitude = $position->longitude ?? '0';
         $newsuscribe->save();
 
         return redirect()->back()->with('mensaje', 'Se ha suscrito a nuestro boletín, pronto tendrá más información.');
