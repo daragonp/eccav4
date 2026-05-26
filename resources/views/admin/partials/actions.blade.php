@@ -5,17 +5,17 @@
   $editPartial= $editPartial?? null;
   $sectionType = $sectionType ?? 'news';
   $sectionTitle = $sectionTitle ?? 'Elemento';
-  // Cambiar de deleted_at a active
-  $isActive = isset($tableM) && is_null($tableM->deleted_at);
+  // Usar la columna 'active' para determinar si está activo
+  $isActive = isset($tableM) && ($tableM->active ?? false);
 @endphp
 
 <div class="flex items-center justify-center gap-1.5">
 
   {{-- Ver --}}
-  <a href="{{ $view ?? '#' }}" 
-     class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-all duration-200 group" 
+  <a href="{{ $view ?? '#' }}"
+     class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-all duration-200 group"
      title="Ver detalles">
-    <i class="fa-solid fa-eye text-sm group-hover:scale-110 transition-transform"></i> 
+    <i class="fa-solid fa-eye text-sm group-hover:scale-110 transition-transform"></i>
   </a>
 <p>|</p>
   {{-- Activar / Desactivar --}}

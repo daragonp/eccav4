@@ -15,7 +15,7 @@ class ScheduleController extends Controller
 {
     /**
      * Verificar si hay conflicto de horario para un día específico
-     * 
+     *
      * @param string $start Hora de inicio (HH:MM)
      * @param string $end Hora de finalización (HH:MM)
      * @param int $day Día de la semana (1-7)
@@ -24,59 +24,80 @@ class ScheduleController extends Controller
      */
     private function hayConflictoHorario($start, $end, $day, $emissionKey = null)
     {
-        $query = Schedule::where('day', $day)
+        $day = (int) $day;
+        $nextDay = $day === 7 ? 1 : $day + 1;
+        $previousDay = $day === 1 ? 7 : $day - 1;
+
+        $newSegments = $this->getTimeSegmentsWithDay($day, $start, $end);
+        $candidateDays = [$day];
+
+        if (count($newSegments) > 1) {
+            $candidateDays[] = $nextDay;
+        } else {
+            $candidateDays[] = $previousDay;
+        }
+
+        $query = Schedule::whereIn('day', array_unique($candidateDays))
             ->whereNull('deleted_at')
             ->when($emissionKey, function ($query) use ($emissionKey) {
-                // Excluye los registros que pertenecen al mismo bloque que se está editando
                 $query->where('emission_key', '!=', $emissionKey);
             });
 
-        // Convertir a objetos Carbon para mejor manejo
-        $startTime = Carbon::createFromFormat('H:i', $start);
-        $endTime = Carbon::createFromFormat('H:i', $end);
+        $existingSchedules = $query->get();
 
-        // Manejar programas que cruzan medianoche (ej: 23:00 - 01:00)
-        if ($endTime->lessThanOrEqualTo($startTime)) {
-            // El programa cruza medianoche
-            // Verificar solapamiento en dos partes:
-            // 1. Desde el inicio hasta medianoche (23:59:59)
-            // 2. Desde medianoche (00:00:00) hasta el fin
-            
-            $conflict1 = $query->where(function ($q) use ($start) {
-                // Programas que empiezan antes del nuevo programa y terminan después de su inicio
-                $q->where('start', '<=', $start)
-                  ->where('end', '>', $start);
-            })->orWhere(function ($q) use ($start) {
-                // Programas que empiezan después del nuevo programa (mismo día)
-                $q->where('start', '>=', $start);
-            })->exists();
+        foreach ($existingSchedules as $schedule) {
+            $existingSegments = $this->getTimeSegmentsWithDay((int) $schedule->day, $schedule->start, $schedule->end);
 
-            $conflict2 = Schedule::where('day', $day == 7 ? 1 : $day + 1) // Día siguiente
-                ->whereNull('deleted_at')
-                ->when($emissionKey, function ($query) use ($emissionKey) {
-                    $query->where('emission_key', '!=', $emissionKey);
-                })
-                ->where(function ($q) use ($end) {
-                    $q->where('start', '<', $end)
-                      ->where('end', '>', '00:00');
-                })->exists();
-
-            return $conflict1 || $conflict2;
+            foreach ($existingSegments as $existingSegment) {
+                foreach ($newSegments as $newSegment) {
+                    if ($this->segmentsOverlap($existingSegment, $newSegment)) {
+                        return true;
+                    }
+                }
+            }
         }
 
-        // Lógica estándar para programas que no cruzan medianoche
-        return $query->where(function ($q) use ($start, $end) {
-            $q->where(function ($subQ) use ($start, $end) {
-                // El nuevo programa solapa con programas existentes
-                $subQ->where('start', '<', $end)
-                     ->where('end', '>', $start);
-            });
-        })->exists();
+        return false;
     }
 
-    /**
-     * Traducir número de día a nombre
-     */
+    private function getTimeSegmentsWithDay(int $day, string $start, string $end): array
+    {
+        $startTime = Carbon::createFromFormat('H:i', $start);
+        $endTime = Carbon::createFromFormat('H:i', $end);
+        $startMinutes = $startTime->hour * 60 + $startTime->minute;
+        $endMinutes = $endTime->hour * 60 + $endTime->minute;
+
+        if ($endMinutes > $startMinutes) {
+            return [[
+                'day' => $day,
+                'start' => $startMinutes,
+                'end' => $endMinutes,
+            ]];
+        }
+
+        $nextDay = $day === 7 ? 1 : $day + 1;
+
+        return [
+            [
+                'day' => $day,
+                'start' => $startMinutes,
+                'end' => 1440,
+            ],
+            [
+                'day' => $nextDay,
+                'start' => 0,
+                'end' => $endMinutes,
+            ],
+        ];
+    }
+
+    private function segmentsOverlap(array $first, array $second): bool
+    {
+        return $first['day'] === $second['day']
+            && $first['start'] < $second['end']
+            && $second['start'] < $first['end'];
+    }
+
     private function traducirDia($numero)
     {
         $dias = [
@@ -107,7 +128,7 @@ class ScheduleController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'start' => 'required|date_format:H:i',
-            'end' => 'required|date_format:H:i|after:start',
+            'end' => 'required|date_format:H:i',
             'host' => 'required|string|max:255',
             'day' => 'required|array|min:1|max:7',
             'day.*' => 'integer|between:1,7',
@@ -117,7 +138,7 @@ class ScheduleController extends Controller
             'name.required' => 'El nombre del programa es obligatorio.',
             'start.required' => 'La hora de inicio es obligatoria.',
             'end.required' => 'La hora de finalización es obligatoria.',
-            'end.after' => 'La hora de finalización debe ser posterior a la hora de inicio.',
+            'end.date_format' => 'La hora de finalización debe tener formato HH:MM.',
             'host.required' => 'El director(a) del programa es obligatorio.',
             'day.required' => 'Debe seleccionar al menos un día de emisión.',
             'day.min' => 'Debe seleccionar al menos un día de emisión.',
@@ -128,10 +149,22 @@ class ScheduleController extends Controller
         try {
             $start = Carbon::createFromFormat('H:i', $request->start);
             $end = Carbon::createFromFormat('H:i', $request->end);
-            
+
             // Generar clave única para el bloque de programas
             $emissionKey = Str::slug($request->name) . '_' . $request->start . '_' . $request->end;
-            
+
+            // Validar horario de inicio y fin
+            if ($start->equalTo($end)) {
+                return back()
+                    ->withErrors(['end' => 'La hora de finalización debe ser distinta a la hora de inicio.'])
+                    ->withInput();
+            }
+
+            if ($end->lessThanOrEqualTo($start)) {
+                $end = $end->copy()->addDay();
+            }
+            $duration = $start->diffInMinutes($end);
+
             // Verificar conflictos para cada día seleccionado
             foreach ($request->day as $day) {
                 if ($this->hayConflictoHorario($request->start, $request->end, $day)) {
@@ -156,7 +189,7 @@ class ScheduleController extends Controller
                     'slug' => Str::slug($request->name),
                     'start' => $request->start,
                     'end' => $request->end,
-                    'duration' => $start->diffInMinutes($end),
+                    'duration' => $duration,
                     'host' => $request->host,
                     'about' => $request->about,
                     'day' => $day,
@@ -166,7 +199,7 @@ class ScheduleController extends Controller
             }
 
             return redirect('/show-schedule')->with('success', 'Programa agregado correctamente.');
-            
+
         } catch (Exception $e) {
             return back()
                 ->withErrors(['error' => 'Error al crear el programa: ' . $e->getMessage()])
@@ -180,13 +213,13 @@ class ScheduleController extends Controller
     public function view($id)
     {
         $schedule = Schedule::findOrFail($id);
-        
+
         // Obtener todos los días del mismo bloque
         $allDays = Schedule::where('emission_key', $schedule->emission_key)
             ->whereNull('deleted_at')
             ->orderBy('day')
             ->get();
-        
+
         return view('admin.schedule.view-schedule', compact('schedule', 'allDays'));
     }
 
@@ -198,7 +231,7 @@ class ScheduleController extends Controller
         $this->validate($request, [
             'name' => 'required|string|max:255',
             'start' => 'required|date_format:H:i',
-            'end' => 'required|date_format:H:i|after:start',
+            'end' => 'required|date_format:H:i',
             'host' => 'required|string|max:255',
             'day' => 'required|array|min:1|max:7',
             'day.*' => 'integer|between:1,7',
@@ -208,7 +241,7 @@ class ScheduleController extends Controller
             'name.required' => 'El nombre del programa es obligatorio.',
             'start.required' => 'La hora de inicio es obligatoria.',
             'end.required' => 'La hora de finalización es obligatoria.',
-            'end.after' => 'La hora de finalización debe ser posterior a la hora de inicio.',
+            'end.date_format' => 'La hora de finalización debe tener formato HH:MM.',
             'host.required' => 'El director(a) del programa es obligatorio.',
             'day.required' => 'Debe seleccionar al menos un día de emisión.',
             'day.min' => 'Debe seleccionar al menos un día de emisión.',
@@ -219,9 +252,20 @@ class ScheduleController extends Controller
         try {
             $original = Schedule::findOrFail($id);
             $emissionKey = $original->emission_key ?? uniqid();
-            
+
             $start = Carbon::createFromFormat('H:i', $request->start);
             $end = Carbon::createFromFormat('H:i', $request->end);
+
+            if ($start->equalTo($end)) {
+                return back()
+                    ->withErrors(['end' => 'La hora de finalización debe ser distinta a la hora de inicio.'])
+                    ->withInput();
+            }
+
+            if ($end->lessThanOrEqualTo($start)) {
+                $end = $end->copy()->addDay();
+            }
+            $duration = $start->diffInMinutes($end);
 
             // Verificar conflictos para cada día seleccionado
             foreach ($request->day as $day) {
@@ -242,7 +286,7 @@ class ScheduleController extends Controller
                 if ($imgName != 'genericprogramimage.png' && Storage::disk('public')->exists('images/schedule/' . $imgName)) {
                     Storage::disk('public')->delete('images/schedule/' . $imgName);
                 }
-                
+
                 $image = $request->file('image');
                 $imgName = uniqid() . '.' . $image->getClientOriginalExtension();
                 Storage::disk('public')->putFileAs('images/schedule', $image, $imgName);
@@ -255,7 +299,7 @@ class ScheduleController extends Controller
                     'slug' => Str::slug($request->name),
                     'start' => $request->start,
                     'end' => $request->end,
-                    'duration' => $start->diffInMinutes($end),
+                    'duration' => $duration,
                     'host' => $request->host,
                     'about' => $request->about,
                     'day' => $day,
@@ -265,7 +309,7 @@ class ScheduleController extends Controller
             }
 
             return redirect('/show-schedule')->with('success', 'Programa actualizado correctamente.');
-            
+
         } catch (Exception $e) {
             return back()
                 ->withErrors(['error' => 'Error al actualizar el programa: ' . $e->getMessage()])
@@ -294,7 +338,7 @@ class ScheduleController extends Controller
             }
 
             return redirect()->back()->with('success', 'El programa ha sido eliminado definitivamente.');
-            
+
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Error al eliminar el programa: ' . $e->getMessage()]);
         }
@@ -307,13 +351,13 @@ class ScheduleController extends Controller
     {
         try {
             $program = Schedule::withTrashed()->findOrFail($id);
-            
+
             Schedule::withTrashed()
                 ->where('emission_key', $program->emission_key)
                 ->restore();
 
             return redirect()->back()->with('success', 'El programa ha sido activado correctamente.');
-            
+
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Error al activar el programa: ' . $e->getMessage()]);
         }
@@ -326,12 +370,12 @@ class ScheduleController extends Controller
     {
         try {
             $program = Schedule::findOrFail($id);
-            
+
             Schedule::where('emission_key', $program->emission_key)
                 ->update(['deleted_at' => now()]);
 
             return redirect()->back()->with('success', 'El programa ha sido desactivado correctamente.');
-            
+
         } catch (Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Error al desactivar el programa: ' . $e->getMessage()]);
         }
@@ -370,7 +414,7 @@ class ScheduleController extends Controller
                     'image_url' => $program->image_url,
                 ]
             ]);
-            
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -407,7 +451,7 @@ class ScheduleController extends Controller
                 'message' => 'Programación del día',
                 'data' => $programs
             ]);
-            
+
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
@@ -434,14 +478,14 @@ class ScheduleController extends Controller
             $file = $request->file('csv_file');
             $path = $file->getRealPath();
             $data = array_map('str_getcsv', file($path));
-            
+
             $imported = 0;
             $errors = [];
             $lineNumber = 1;
 
             foreach ($data as $row) {
                 $lineNumber++;
-                
+
                 // Validar que la fila tenga todos los campos necesarios
                 if (count($row) < 9) {
                     $errors[] = "Línea {$lineNumber}: Faltan campos requeridos";
@@ -489,7 +533,7 @@ class ScheduleController extends Controller
                     ]);
 
                     $imported++;
-                    
+
                 } catch (Exception $e) {
                     $errors[] = "Línea {$lineNumber}: Error al importar - " . $e->getMessage();
                 }
@@ -501,7 +545,7 @@ class ScheduleController extends Controller
             }
 
             return redirect('/show-schedule')->with('success', $message);
-            
+
         } catch (Exception $e) {
             return back()->withErrors(['error' => 'Error al importar el archivo: ' . $e->getMessage()])->withInput();
         }

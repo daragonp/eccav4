@@ -1,31 +1,32 @@
 @php
-use Illuminate\Support\Str;
-
 // Normaliza banners - Versión mejorada
 $slides = collect($slider ?? [])->map(function ($b) {
-    // Obtener nombres de archivos
-    $left = $b->image_left ?? null;
-    $right = $b->image_right ?? null;
-    
-    // Si no hay ambas imágenes, saltar este banner
-    if (!$left || !$right) return null;
-    
-    // Construir URLs correctamente
-    // Los nombres se guardan sin ruta, así que agregamos la ruta completa
-    $leftUrl = asset('images/slider/' . $left);
-    $rightUrl = asset('images/slider/' . $right);
-    
+    if (!$b->image_left || !$b->image_right) {
+        return null;
+    }
+
     return [
-        'left' => $leftUrl, 
-        'right' => $rightUrl,
-        'id' => $b->id // Agregar ID para debugging si es necesario
+        'left' => [
+            'type' => $b->left_media_type,
+            'src' => $b->left_media_src,
+            'mime' => $b->left_media_mime,
+        ],
+        'right' => [
+            'type' => $b->right_media_type,
+            'src' => $b->right_media_src,
+            'mime' => $b->right_media_mime,
+        ],
+        'id' => $b->id,
     ];
 })->filter()->values();
 
 // Si no hay slides, mostrar placeholders
 if ($slides->isEmpty()) {
     $slides = collect([
-        ['left' => asset('images/slider/izq_placeholder.png'), 'right' => asset('images/slider/der_placeholder.png')],
+        [
+            'left' => ['type' => 'image', 'src' => asset('images/slider/izq_placeholder.png'), 'mime' => null],
+            'right' => ['type' => 'image', 'src' => asset('images/slider/der_placeholder.png'), 'mime' => null],
+        ],
     ]);
 }
 
@@ -48,6 +49,10 @@ $inner = !empty($narrow)
         next() { this.index = (this.index + 1) % this.slides.length; },
         prev() { this.index = (this.index - 1 + this.slides.length) % this.slides.length; },
         go(i) { this.index = i % this.slides.length; this.start(); },
+        youtubeEmbed(url) {
+            const match = url.match(/(?:youtube(?:-nocookie)?\.com\/(?:.*[?&]v=|embed\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+            return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+        }
     }'
     x-init="init()"
     x-cloak
@@ -61,34 +66,74 @@ $inner = !empty($narrow)
     aria-roledescription="carrusel"
     aria-label="Banners promocionales"
     aria-live="polite">
-    
+
     <div class="{{ $inner }}">
         <div class="overflow-hidden bg-white dark:bg-gray-800">
             <template x-for="(slide, i) in slides" :key="i">
                 <div x-show="index === i" x-transition.opacity class="grid grid-cols-1 md:grid-cols-2 gap-2 p-2">
                     <div class="text-center p-2">
-                        <img :src="slide.left"
-                            class="mx-auto max-h-[480px] w-full object-cover rounded shadow"
-                            :alt="`Banner izquierdo ${i+1}`"
-                            loading="lazy" 
-                            decoding="async" 
-                            draggable="false"
-                            onerror="console.error('Error cargando imagen:', this.src)">
+                        <template x-if="slide.left.type === 'image'">
+                            <div class="mx-auto w-full h-72 sm:h-[360px] md:h-[420px] overflow-hidden rounded shadow">
+                                <img :src="slide.left.src"
+                                    class="w-full h-full object-cover"
+                                    :alt="`Banner izquierdo ${i+1}`"
+                                    loading="lazy"
+                                    decoding="async"
+                                    draggable="false"
+                                    onerror="console.error('Error cargando imagen:', this.src)">
+                            </div>
+                        </template>
+                        <template x-if="slide.left.type === 'video'">
+                            <div class="mx-auto w-full h-72 sm:h-[360px] md:h-[420px] overflow-hidden rounded shadow">
+                                <video controls playsinline preload="metadata" :src="slide.left.src" class="block w-full h-full min-h-full min-w-full object-cover object-center">
+                                    Tu navegador no soporta el elemento de video.
+                                </video>
+                            </div>
+                        </template>
+                        <template x-if="slide.left.type === 'youtube'">
+                            <div class="mx-auto w-full h-72 sm:h-[360px] md:h-[420px] overflow-hidden rounded shadow">
+                                <iframe :src="youtubeEmbed(slide.left.src)"
+                                    class="block w-full h-full"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
+                            </div>
+                        </template>
                     </div>
                     <div class="text-center p-2">
-                        <img :src="slide.right"
-                            class="mx-auto max-h-[480px] w-full object-cover rounded shadow"
-                            :alt="`Banner derecho ${i+1}`"
-                            loading="lazy" 
-                            decoding="async" 
-                            draggable="false"
-                            onerror="console.error('Error cargando imagen:', this.src)">
+                        <template x-if="slide.right.type === 'image'">
+                            <div class="mx-auto w-full h-72 sm:h-[360px] md:h-[420px] overflow-hidden rounded shadow">
+                                <img :src="slide.right.src"
+                                    class="w-full h-full object-cover"
+                                    :alt="`Banner derecho ${i+1}`"
+                                    loading="lazy"
+                                    decoding="async"
+                                    draggable="false"
+                                    onerror="console.error('Error cargando imagen:', this.src)">
+                            </div>
+                        </template>
+                        <template x-if="slide.right.type === 'video'">
+                            <div class="mx-auto w-full h-72 sm:h-[360px] md:h-[420px] overflow-hidden rounded shadow">
+                                <video controls playsinline preload="metadata" :src="slide.right.src" class="block w-full h-full min-h-full min-w-full object-cover object-center">
+                                    Tu navegador no soporta el elemento de video.
+                                </video>
+                            </div>
+                        </template>
+                        <template x-if="slide.right.type === 'youtube'">
+                            <div class="mx-auto w-full h-72 sm:h-[360px] md:h-[420px] overflow-hidden rounded shadow">
+                                <iframe :src="youtubeEmbed(slide.right.src)"
+                                    class="block w-full h-full"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen></iframe>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </template>
         </div>
     </div>
-    
+
     <!-- Botones de navegación -->
     <template x-if="slides.length > 1">
         <div>
@@ -100,7 +145,7 @@ $inner = !empty($narrow)
                 aria-label="Siguiente">›</button>
         </div>
     </template>
-    
+
     <!-- Indicadores (bullets) -->
     <template x-if="slides.length > 1">
         <div

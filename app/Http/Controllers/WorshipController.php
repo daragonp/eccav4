@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Log;
 class WorshipController extends Controller
 {
     protected $audioProcessingService;
-    
+
     public function __construct(AudioProcessingService $audioProcessingService)
     {
         $this->audioProcessingService = $audioProcessingService;
     }
-    
+
     /**
      * Display a listing of resource.
      *
@@ -50,220 +50,187 @@ class WorshipController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'broadcast' => 'required',
-            'audio' => 'required|mimes:mp3,wav,ogg|max:102400', // 100MB máximo
+            'broadcast' => 'required|date',
+            'title' => 'nullable|string|max:255',
+            'abstract' => 'nullable|string|max:5000',
+            'badge' => 'nullable|string|max:255',
+            'autor' => 'nullable|string|max:30',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'pdfdoc' => 'nullable|file|mimes:pdf|max:10240',
+            'audio' => 'required|file|mimes:mp3,wav,ogg|max:102400',
+            'video' => 'nullable|file|mimes:mp4,mov,avi|max:512000',
         ], [
             'broadcast.required' => 'El campo fecha de emisión es obligatorio.',
-            'audio.required' => 'El campo audio es obligatorio.',
+            'broadcast.date' => 'La fecha de emisión debe ser válida.',
+            'audio.required' => 'El audio es obligatorio.',
             'audio.mimes' => 'El audio debe ser un archivo mp3, wav u ogg.',
             'audio.max' => 'El audio no puede ser mayor a 100MB.',
         ]);
 
         $worship = new Worship();
-        
-        // Si no se proporciona título, generar uno automáticamente
-        if ($request->has('title') && !empty($request->input('title'))) {
+
+        if ($request->filled('title')) {
             $worship->title = $request->input('title');
         } else {
-            $worship->title = 'Culto del ' . \Carbon\Carbon::parse($request->input('broadcast'))->format('d/m/Y');
+            $worship->title = 'Culto del ' . Carbon::parse($request->input('broadcast'))->format('d/m/Y');
         }
-        
-        // Generar slug
-        $slug = Str::slug($worship->title);
-        $str = preg_replace('/[^a-z0-9]/', '-', $slug);
-        $worship->slug = $str;
-        
-        // Autor por defecto
-        $worship->autor = 'P. Henry Belalcázar';
-        
-        // Etiqueta por defecto
-        $worship->badge = 'Culto Dominical';
-        
-        // Usar el resumen proporcionado o dejar vacío para IA
+
+        $slugBase = Str::slug($worship->title);
+        $slug = $slugBase;
+        $count = 1;
+        while (Worship::where('slug', $slug)->exists()) {
+            $slug = $slugBase . '-' . $count++;
+        }
+        $worship->slug = $slug;
+
+        $worship->autor = $request->input('autor', 'P. Henry Belalcázar');
+        $worship->badge = $request->input('badge', 'Culto Dominical');
         $worship->abstract = $request->input('abstract', '');
-        
         $worship->broadcast = $request->input('broadcast');
-        
-        // Valor por defecto para pdfdoc para evitar el error
         $worship->pdfdoc = '';
 
-        // Procesamiento de imagen manual
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $imgName = time() . '.' . $request->file('image')->getClientOriginalExtension();
-            $request->file('image')->move('images/worship', $imgName);
+            $request->file('image')->move(public_path('images/worship'), $imgName);
             $worship->image = $imgName;
         }
 
-        // Procesamiento de audio y generación de contenido con IA
         $audioPath = null;
         $needsAIProcessing = false;
-        
-        if ($request->hasFile('audio')) {
+        if ($request->hasFile('audio') && $request->file('audio')->isValid()) {
             $audioName = time() . '.' . $request->file('audio')->getClientOriginalExtension();
-            
-            // Verificar que el directorio exista
             $audioDir = public_path('audio/worship');
             if (!is_dir($audioDir)) {
                 mkdir($audioDir, 0755, true);
             }
-            
             $request->file('audio')->move($audioDir, $audioName);
             $worship->audio = $audioName;
             $audioPath = 'audio/worship/' . $audioName;
-            
-            // Determinar si se necesita procesamiento con IA
             $needsAIProcessing = empty($request->input('abstract')) || !$request->hasFile('image');
-            
-            Log::info('Audio guardado en: ' . $audioDir . '/' . $audioName);
-            Log::info('Ruta que se pasará al servicio: ' . $audioPath);
-            Log::info('¿Se necesita procesamiento con IA?: ' . ($needsAIProcessing ? 'Sí' : 'No'));
         }
 
-        $worship->created_at = Carbon::now();
-        $worship->updated_at = Carbon::now();
+        if ($request->hasFile('pdfdoc') && $request->file('pdfdoc')->isValid()) {
+            $docuName = time() . '.' . $request->file('pdfdoc')->getClientOriginalExtension();
+            $request->file('pdfdoc')->move(public_path('documents/worship'), $docuName);
+            $worship->pdfdoc = $docuName;
+        }
+
+        if ($request->hasFile('video') && $request->file('video')->isValid()) {
+            $videoName = time() . '.' . $request->file('video')->getClientOriginalExtension();
+            $request->file('video')->move(public_path('video/worship'), $videoName);
+            $worship->video = $videoName;
+        }
+
         $worship->save();
 
-        // Procesar el audio con IA solo si es necesario
         if ($audioPath && $needsAIProcessing) {
             try {
-                Log::info('Iniciando procesamiento con IA para: ' . $audioPath);
                 $aiResult = $this->audioProcessingService->processAudio($audioPath, $worship->title);
-                
-                // Actualizar el registro con los resultados de la IA
                 $worship->ai_summary = $aiResult['summary'];
                 $worship->ai_image = $aiResult['image_url'];
                 $worship->ai_processed = true;
-                
-                // Si no se proporcionó resumen, usar el generado por IA
+
                 if (empty($request->input('abstract')) && !empty($aiResult['summary'])) {
                     $worship->abstract = $aiResult['summary'];
                 }
-                
-                // Si no se proporcionó título y la IA generó uno, usarlo
-                if (!$request->has('title') && !empty($aiResult['title'])) {
+
+                if (!$request->filled('title') && !empty($aiResult['title'])) {
                     $worship->title = $aiResult['title'];
-                    // Actualizar el slug
-                    $slug = Str::slug($worship->title);
-                    $str = preg_replace('/[^a-z0-9]/', '-', $slug);
-                    $worship->slug = $str;
+                    $worship->slug = Str::slug($worship->title);
                 }
-                
-                // Si no se proporcionó imagen manual y la IA generó una, usarla
-                if (!$request->hasFile('image') && $aiResult['image_url']) {
+
+                if (!$request->hasFile('image') && !empty($aiResult['image_url'])) {
                     $worship->image = $aiResult['image_url'];
                 }
-                
+
                 $worship->save();
-                
-                Log::info('Procesamiento con IA completado exitosamente');
             } catch (\Exception $e) {
                 Log::error('Error procesando audio con IA: ' . $e->getMessage());
-                // Continuar sin procesamiento de IA si hay un error
             }
         }
 
         return redirect('show-worship')->with('success', 'Se ha agregado el culto dominical');
     }
-    
-    public function view($id)
-    {
-        $worship = Worship::findOrFail($id);
-        return view('admin.worship.view-worship', compact('worship'));
-    }
-    
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Worship  $worship
-     * @return \Illuminate\Http\Response
-     */
-    public function show(WorshipDataTable $worship)
-    {
-        return $worship->render('admin.worship.show-worship');
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Worship  $worship
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id, Request $request)
     {
         $this->validate($request, [
-            'title' => 'required',
-            'abstract' => 'required',
-            'broadcast' => 'required',
-            'autor' => 'required',
+            'title' => 'required|string|max:255',
+            'abstract' => 'required|string|max:5000',
+            'broadcast' => 'required|date',
+            'autor' => 'required|string|max:30',
+            'badge' => 'nullable|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'pdfdoc' => 'nullable|file|mimes:pdf|max:10240',
+            'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:102400',
+            'video' => 'nullable|file|mimes:mp4,mov,avi|max:512000',
+        ], [
+            'title.required' => 'El título es obligatorio.',
+            'abstract.required' => 'El resumen es obligatorio.',
+            'broadcast.required' => 'La fecha de emisión es obligatoria.',
+            'broadcast.date' => 'La fecha debe ser válida.',
+            'autor.required' => 'El autor es obligatorio.',
         ]);
 
         $worship = Worship::findOrFail($id);
-
         $worship->title = $request->input('title');
-        $slug = Str::slug($request->title);
-        $str = preg_replace('/[^a-z0-9]/', '-', $slug);
-        $worship->slug = $str;
+
+        $slugBase = Str::slug($request->title);
+        $slug = $slugBase;
+        $count = 1;
+        while (Worship::where('slug', $slug)->where('id', '!=', $worship->id)->exists()) {
+            $slug = $slugBase . '-' . $count++;
+        }
+        $worship->slug = $slug;
         $worship->abstract = $request->input('abstract');
         $worship->broadcast = $request->input('broadcast');
         $worship->badge = $request->input('badge');
+        $worship->autor = $request->input('autor');
 
-        // Procesamiento de PDF
-        if ($request->hasFile('pdfdoc')) {
+        if ($request->hasFile('pdfdoc') && $request->file('pdfdoc')->isValid()) {
             $docuName = time() . '.' . $request->file('pdfdoc')->getClientOriginalExtension();
-            $request->file('pdfdoc')->move('documents/worship', $docuName);
+            $request->file('pdfdoc')->move(public_path('documents/worship'), $docuName);
             $worship->pdfdoc = $docuName;
         }
 
-        $worship->autor = $request->input('autor');
-
-        // Procesamiento de imagen
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('image') && $request->file('image')->isValid()) {
             $imgName = time() . '.' . $request->file('image')->getClientOriginalExtension();
-            $request->file('image')->move('images/worship', $imgName);
+            $request->file('image')->move(public_path('images/worship'), $imgName);
             $worship->image = $imgName;
         }
 
-        // Procesamiento de audio y generación de contenido con IA
         $audioPath = null;
-        if ($request->hasFile('audio')) {
+        if ($request->hasFile('audio') && $request->file('audio')->isValid()) {
             $audioName = time() . '.' . $request->file('audio')->getClientOriginalExtension();
             $request->file('audio')->move(public_path('audio/worship'), $audioName);
             $worship->audio = $audioName;
             $audioPath = 'audio/worship/' . $audioName;
-            
-            // Marcar como no procesado por IA para que se procese de nuevo
             $worship->ai_processed = false;
         }
 
-        // Procesamiento de video
-        if ($request->hasFile('video')) {
+        if ($request->hasFile('video') && $request->file('video')->isValid()) {
             $videoName = time() . '.' . $request->file('video')->getClientOriginalExtension();
-            $request->file('video')->move('video/worship', $videoName);
+            $request->file('video')->move(public_path('video/worship'), $videoName);
             $worship->video = $videoName;
         }
 
         $worship->updated_at = Carbon::now();
         $worship->save();
 
-        // Procesar el audio con IA si se proporcionó un nuevo audio
         if ($audioPath) {
             try {
                 $aiResult = $this->audioProcessingService->processAudio($audioPath, $worship->title);
-                
-                // Actualizar el registro con los resultados de la IA
                 $worship->ai_summary = $aiResult['summary'];
                 $worship->ai_image = $aiResult['image_url'];
                 $worship->ai_processed = true;
                 $worship->save();
-                
-                // Si se generó una imagen con IA y no hay imagen manual, usar la de IA
-                if (!$request->hasFile('image') && $aiResult['image_url']) {
+
+                if (!$request->hasFile('image') && !empty($aiResult['image_url'])) {
                     $worship->image = $aiResult['image_url'];
                     $worship->save();
                 }
             } catch (\Exception $e) {
                 Log::error('Error procesando audio con IA: ' . $e->getMessage());
-                // Continuar sin procesamiento de IA si hay un error
             }
         }
 
@@ -271,10 +238,9 @@ class WorshipController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Show the form for editing the specified resource.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Worship  $worship
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update($id)
@@ -292,17 +258,15 @@ class WorshipController extends Controller
     public function destroy($id)
     {
         $worship = Worship::findOrFail($id);
-        $worship->deleted_at = Carbon::now();
-        $worship->save();
+        $worship->delete();
 
         return redirect()->back()->with('success', 'La publicación no está disponible al público');
     }
 
     public function activate($id)
     {
-        $worship = Worship::findOrFail($id);
-        $worship->deleted_at = NULL;
-        $worship->save();
+        $worship = Worship::withTrashed()->findOrFail($id);
+        $worship->restore();
 
         return redirect()->back()->with('success', 'La publicación ha sido activada al público');
     }
@@ -313,35 +277,35 @@ class WorshipController extends Controller
     public function reprocessWithAI($id)
     {
         $worship = Worship::findOrFail($id);
-        
+
         if (!$worship->audio) {
             return redirect()->back()->with('error', 'No hay audio para procesar');
         }
-        
+
         try {
             $audioPath = 'audio/worship/' . $worship->audio;
             $aiResult = $this->audioProcessingService->processAudio($audioPath, $worship->title);
-            
+
             // Actualizar el registro con los resultados de la IA
             $worship->ai_summary = $aiResult['summary'];
             $worship->ai_image = $aiResult['image_url'];
             $worship->ai_processed = true;
             $worship->save();
-            
+
             return redirect()->back()->with('success', 'El audio ha sido procesado con IA correctamente');
         } catch (\Exception $e) {
             Log::error('Error procesando audio con IA: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error al procesar el audio con IA: ' . $e->getMessage());
         }
     }
-    
+
     /**
      * Elimina permanentemente un registro
      */
     public function delete($id)
     {
-        $worship = Worship::findOrFail($id);
-        $worship->delete();
+        $worship = Worship::withTrashed()->findOrFail($id);
+        $worship->forceDelete();
 
         return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
     }
@@ -357,7 +321,7 @@ public function publicIndex()
     $worships = Worship::orderBy('broadcast', 'desc')
         ->whereNull('deleted_at') // Solo mostrar registros no eliminados
         ->paginate(12);
-        
+
     return view('public.worships.index', compact('worships'));
 }
 
@@ -378,25 +342,25 @@ public function publicShow($slug)
     $worship = Worship::where('slug', $slug)
         ->whereNull('deleted_at') // Solo mostrar registros no eliminados
         ->firstOrFail();
-        
+
     // Obtener cultos relacionados (anteriores y posteriores)
     $previous = Worship::where('broadcast', '<', $worship->broadcast)
         ->whereNull('deleted_at')
         ->orderBy('broadcast', 'desc')
         ->first();
-        
+
     $next = Worship::where('broadcast', '>', $worship->broadcast)
         ->whereNull('deleted_at')
         ->orderBy('broadcast', 'asc')
         ->first();
-    
+
     // Obtener cultos relacionados para mostrar en la sección inferior
     $relatedWorships = Worship::where('id', '!=', $worship->id)
         ->whereNull('deleted_at')
         ->orderBy('broadcast', 'desc')
         ->take(3)
         ->get();
-    
+
     return view('public.worships.show', compact('worship', 'previous', 'next', 'relatedWorships'));
 }
 
@@ -412,8 +376,8 @@ public function getLatestForWelcome()
         ->whereNull('deleted_at')
         ->take(3)
         ->get();
-        
+
     return $latestWorships;
 }
-    
+
 }

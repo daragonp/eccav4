@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const imageModal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
     const modalCaption = document.getElementById('modalCaption');
-    
+
     document.querySelectorAll('.carousel-image').forEach(img => {
         img.addEventListener('click', function() {
             modalImage.src = this.src;
@@ -69,13 +69,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Imagen Izquierda --}}
                     <div>
-                        <h3 class="text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Imagen izquierda</h3>
+                        <h3 class="text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Media izquierda</h3>
                         @if($slider->image_left)
-                            <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group carousel-image" title="Haz clic para ampliar">
-                                <img src="{{ asset('images/slider/' . $slider->image_left) }}" 
-                                     alt="Imagen izquierda del carrusel" 
-                                     class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105">
-                            </div>
+                            @if($slider->left_media_type === 'image')
+                                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group carousel-image" title="Haz clic para ampliar">
+                                    <img src="{{ $slider->left_media_src }}"
+                                         alt="Imagen izquierda del carrusel"
+                                         class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105">
+                                </div>
+                            @elseif($slider->left_media_type === 'video')
+                                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 h-72 sm:h-[360px] md:h-[420px]">
+                                    <video controls class="block w-full h-full min-h-full min-w-full object-cover object-center" src="{{ $slider->left_media_src }}">
+                                        Tu navegador no soporta el elemento de video.
+                                    </video>
+                                </div>
+                            @else
+                                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 h-72 sm:h-[360px] md:h-[420px]">
+                                    <iframe src="{{ $slider->left_media_embed_url ?? $slider->left_media_src }}" class="block w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            @endif
                         @else
                             <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center h-48">
                                 <i class="fas fa-image text-slate-400 dark:text-slate-500 text-4xl"></i>
@@ -83,16 +95,28 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                         @endif
                     </div>
-                    
+
                     {{-- Imagen Derecha --}}
                     <div>
-                        <h3 class="text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Imagen derecha</h3>
+                        <h3 class="text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Media derecha</h3>
                         @if($slider->image_right)
-                            <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group carousel-image" title="Haz clic para ampliar">
-                                <img src="{{ asset('images/slider/' . $slider->image_right) }}" 
-                                     alt="Imagen derecha del carrusel" 
-                                     class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105">
-                            </div>
+                            @if($slider->right_media_type === 'image')
+                                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group carousel-image" title="Haz clic para ampliar">
+                                    <img src="{{ $slider->right_media_src }}"
+                                         alt="Imagen derecha del carrusel"
+                                         class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105">
+                                </div>
+                            @elseif($slider->right_media_type === 'video')
+                                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 h-72 sm:h-[360px] md:h-[420px]">
+                                    <video controls class="block w-full h-full min-h-full min-w-full object-cover object-center" src="{{ $slider->right_media_src }}">
+                                        Tu navegador no soporta el elemento de video.
+                                    </video>
+                                </div>
+                            @else
+                                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 h-72 sm:h-[360px] md:h-[420px]">
+                                    <iframe src="{{ $slider->right_media_embed_url ?? $slider->right_media_src }}" class="block w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                </div>
+                            @endif
                         @else
                             <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center h-48">
                                 <i class="fas fa-image text-slate-400 dark:text-slate-500 text-4xl"></i>
@@ -142,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <button type="button" class="btn btn-info w-full justify-center" data-modal-open="EditModal_{{ $slider->id }}">
                             <i class="fas fa-edit mr-2"></i> Editar Carrusel
                         </button>
-                        
+
                         {{-- Activar / Desactivar --}}
                         @if ($slider->active)
                             <form action="{{ url('delete-slider', $slider->id) }}" method="POST" class="w-full" onsubmit="return confirm('¿Desea desactivar este carrusel?');">

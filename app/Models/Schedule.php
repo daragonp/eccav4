@@ -99,7 +99,7 @@ class Schedule extends Model
             6 => 'Sábado',
             7 => 'Domingo',
         ];
-        
+
         return $dias[$this->day] ?? 'Desconocido';
     }
 
@@ -110,7 +110,7 @@ class Schedule extends Model
     {
         $hours = floor($this->duration / 60);
         $minutes = $this->duration % 60;
-        
+
         if ($hours > 0 && $minutes > 0) {
             return "{$hours}h {$minutes}min";
         } elseif ($hours > 0) {
@@ -133,7 +133,7 @@ class Schedule extends Model
 
     /**
      * Verificar si el programa está en emisión en este momento
-     * 
+     *
      * @return bool
      */
     public function isCurrentlyAiring()
@@ -148,22 +148,28 @@ class Schedule extends Model
             ->first();
 
         $dayToCheck = $override ? $override->override_day : $currentDay;
+        $previousDay = $currentDay === 1 ? 7 : $currentDay - 1;
 
-        return $this->day == $dayToCheck 
-            && $currentTime >= $this->start 
-            && $currentTime < $this->end;
+        if ($this->start <= $this->end) {
+            return $this->day == $dayToCheck
+                && $currentTime >= $this->start
+                && $currentTime < $this->end;
+        }
+
+        return ($this->day == $dayToCheck && $currentTime >= $this->start)
+            || ($this->day == $previousDay && $currentTime < $this->end);
     }
 
     /**
      * Obtener el programa que está al aire en este momento
-     * 
+     *
      * @return Schedule|null
      */
     public static function getCurrentProgram()
     {
         $now = now();
         $currentDay = $now->dayOfWeekIso; // 1 = Lunes, 7 = Domingo
-        $currentTime = $now->format('H:i:s');
+        $currentTime = $now->format('H:i');
 
         // Verificar si hay override para hoy
         $override = \App\Models\ScheduleOverride::where('date', $now->format('Y-m-d'))
@@ -171,12 +177,23 @@ class Schedule extends Model
             ->first();
 
         $dayToCheck = $override ? $override->override_day : $currentDay;
+        $previousDay = $currentDay === 1 ? 7 : $currentDay - 1;
 
-        return self::where('day', $dayToCheck)
-            ->whereNull('deleted_at')
-            ->where('start', '<=', $currentTime)
-            ->where('end', '>', $currentTime)
+        $candidates = self::whereNull('deleted_at')
+            ->where(function ($query) use ($dayToCheck, $previousDay) {
+                $query->where('day', $dayToCheck)
+                    ->orWhere('day', $previousDay);
+            })
+            ->orderBy('day')
             ->orderBy('start', 'asc')
-            ->first();
+            ->get();
+
+        foreach ($candidates as $program) {
+            if ($program->isCurrentlyAiring()) {
+                return $program;
+            }
+        }
+
+        return null;
     }
 }

@@ -43,8 +43,7 @@ class NewsController extends Controller
 
     public function view($id)
     {
-        //
-        $news = News::findorFail($id);
+        $news = News::findOrFail($id);
 
         return view('admin.news.view-news', compact('news'));
     }
@@ -58,65 +57,56 @@ class NewsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required',
-            'pdfdoc' => 'required',
-            'image' => 'required',
+            'title' => 'required|string|max:255',
+            'category' => 'required|integer',
+            'autor' => 'required|string|max:30',
+            'abstract' => 'nullable|string|max:5000',
+            'pdfdoc' => 'required|file|mimes:pdf|max:5120',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:102400',
         ], [
-            'date.required' => 'El campo títular de la noticia es obligatorio.',
-            'pdfdoc.required' => 'El campo documento pdf es obligatorio.',
+            'title.required' => 'El campo titular de la noticia es obligatorio.',
+            'category.required' => 'La categoría es obligatoria.',
+            'autor.required' => 'El autor es obligatorio.',
+            'pdfdoc.required' => 'El campo documento PDF es obligatorio.',
             'image.required' => 'El campo imagen es obligatorio.',
         ]);
 
+        $slugBase = Str::slug($request->title);
+        $slug = $slugBase;
+        $counter = 1;
+
+        while (News::where('slug', $slug)->exists()) {
+            $slug = $slugBase . '-' . $counter++;
+        }
+
         $news = new News();
-
         $news->category = $request->input('category');
-
         $news->title = $request->input('title');
+        $news->slug = $slug;
+        $news->abstract = $request->input('abstract');
+        $news->autor = $request->input('autor');
 
-        $slug = Str::slug($request->title);
-        $str = preg_replace('/[^a-z0-9]/', '-', $slug);
-        $news->slug = $str;
-
-        $document = $request->pdfdoc;
-
-        if ($document) {
-
-            $docname = time() . '.' . $document->getClientOriginalExtension();
-
-            $request->pdfdoc->move('documents/news', $docname);
-
+        $pdfdoc = $request->file('pdfdoc');
+        if ($pdfdoc && $pdfdoc->isValid()) {
+            $docname = time() . '.' . $pdfdoc->getClientOriginalExtension();
+            $pdfdoc->storeAs('documents/news', $docname, 'public');
             $news->pdfdoc = $docname;
         }
 
-        $image = $request->image;
-
-        if ($image) {
-
+        $image = $request->file('image');
+        if ($image && $image->isValid()) {
             $imgName = time() . '.' . $image->getClientOriginalExtension();
-
-            $request->image->move('images/news', $imgName);
-
+            $image->storeAs('images/news', $imgName, 'public');
             $news->image = $imgName;
         }
 
-        $audio = $request->audio;
-
-        if ($audio) {
-
+        $audio = $request->file('audio');
+        if ($audio && $audio->isValid()) {
             $audioName = time() . '.' . $audio->getClientOriginalExtension();
-
-            $request->audio->move('audio/news', $audioName);
-
+            $audio->storeAs('audio/news', $audioName, 'public');
             $news->audio = $audioName;
         }
-
-        $news->abstract = $request->input('abstract');
-
-        $news->autor = $request->input('autor');
-
-        $news->created_at = Carbon::now();
-
-        $news->updated_at = Carbon::now();
 
         $news->save();
 
@@ -126,64 +116,54 @@ class NewsController extends Controller
     public function edit($id, Request $request)
     {
         $this->validate($request, [
-            'title' => 'required',
-            'autor' => 'required',
+            'title' => 'required|string|max:255',
+            'category' => 'required|integer',
+            'autor' => 'required|string|max:30',
+            'abstract' => 'nullable|string|max:5000',
+            'pdfdoc' => 'nullable|file|mimes:pdf|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:4096',
+            'audio' => 'nullable|file|mimes:mp3,wav,ogg|max:102400',
         ], [
-            'date.required' => 'El campo títular de la noticia es obligatorio.',
-            'autor.required' => 'El campo autor pdf es obligatorio.',
+            'title.required' => 'El campo titular de la noticia es obligatorio.',
+            'category.required' => 'La categoría es obligatoria.',
+            'autor.required' => 'El autor es obligatorio.',
         ]);
 
-        $news = News::findorFail($id);
-
+        $news = News::findOrFail($id);
         $news->category = $request->input('category');
-
         $news->title = $request->input('title');
 
-        $slug = Str::slug($request->title);
-        $str = preg_replace('/[^a-z0-9]/', '-', $slug);
-        $news->slug = $str;
+        $slugBase = Str::slug($request->title);
+        $slug = $slugBase;
+        $counter = 1;
+        while (News::where('slug', $slug)->where('id', '!=', $news->id)->exists()) {
+            $slug = $slugBase . '-' . $counter++;
+        }
+        $news->slug = $slug;
 
-        $document = $request->pdfdoc;
-
-        if ($document) {
-
-            $docname = time() . '.' . $document->getClientOriginalExtension();
-
-            $request->pdfdoc->move('documents/news', $docname);
-
+        $pdfdoc = $request->file('pdfdoc');
+        if ($pdfdoc && $pdfdoc->isValid()) {
+            $docname = time() . '.' . $pdfdoc->getClientOriginalExtension();
+            $pdfdoc->storeAs('documents/news', $docname, 'public');
             $news->pdfdoc = $docname;
         }
 
-        $image = $request->image;
-
-        if ($image) {
-
+        $image = $request->file('image');
+        if ($image && $image->isValid()) {
             $imgName = time() . '.' . $image->getClientOriginalExtension();
-
-            $request->image->move('images/news', $imgName);
-
+            $image->storeAs('images/news', $imgName, 'public');
             $news->image = $imgName;
         }
 
-        $audio = $request->audio;
-
-        if ($audio) {
-
+        $audio = $request->file('audio');
+        if ($audio && $audio->isValid()) {
             $audioName = time() . '.' . $audio->getClientOriginalExtension();
-
-            $request->audio->move('audio/news', $audioName);
-
+            $audio->storeAs('audio/news', $audioName, 'public');
             $news->audio = $audioName;
         }
 
         $news->abstract = $request->input('abstract');
-
         $news->autor = $request->input('autor');
-
-        $news->created_at = Carbon::now();
-
-        $news->updated_at = Carbon::now();
-
         $news->save();
 
         return redirect()->back()->with('success', 'Los datos han sido actualizados');
@@ -234,14 +214,17 @@ class NewsController extends Controller
 
     public function delete($id)
     {
-        //
-        $news = news::findorFail($id);
+        $news = News::findOrFail($id);
 
         $news->delete();
 
         return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
     }
 
+    public function adminindex(NewsDataTable $dataTable)
+    {
+        return $dataTable->render('admin.news.show-news');
+    }
 
     public function opinion()
     {

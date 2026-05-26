@@ -13,20 +13,25 @@
 {{-- CAMPOS PARA EL MODAL PARA AGREGAR UN REGISTRO --}}
 @section('modalFields')
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    {{-- Campo imagen izquierda --}}
+    {{-- Campo media izquierda (imagen / video / YouTube) --}}
     <div>
-        <label for="image_left" class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">
-            Imagen izquierda <span class="text-red-500">*</span>
+        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">
+            Medio izquierda <span class="text-red-500">*</span>
         </label>
         <div class="space-y-2">
-            {{-- Input de archivo sin overlay --}}
-            <input 
-                id="image_left" 
-                type="file" 
-                name="image_left" 
-                accept="image/*" 
-                required
-                class="block w-full text-sm text-slate-500
+            <select id="left_type" name="left_type" class="w-full p-2 rounded border border-slate-300 dark:border-slate-600">
+                <option value="image" selected>Imagen (por defecto)</option>
+                <option value="video">Video (archivo)</option>
+                <option value="youtube">YouTube (enlace)</option>
+            </select>
+
+            {{-- Input imagen --}}
+            <input
+                id="image_left"
+                type="file"
+                name="image_left"
+                accept="image/*"
+                class="mt-2 block w-full text-sm text-slate-500
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-lg file:border-0
                     file:text-sm file:font-semibold
@@ -38,9 +43,21 @@
                     rounded border border-slate-300 dark:border-slate-600
                     p-2"
             >
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-                JPG, PNG, GIF, WebP • Máx. 20MB
-            </p>
+            <p id="image-left-help" class="text-xs text-slate-500 dark:text-slate-400">JPG, PNG, GIF, WebP • Máx. 20MB</p>
+
+            {{-- Input video --}}
+            <input
+                id="video_left"
+                type="file"
+                name="video_left"
+                accept="video/*"
+                class="hidden mt-2 block w-full text-sm text-slate-500 rounded border border-slate-300 dark:border-slate-600 p-2"
+            >
+            <p id="video-left-help" class="hidden text-xs text-slate-500 dark:text-slate-400">Video cualquier formato válido • Máx. 50MB</p>
+
+            {{-- Input YouTube --}}
+            <input id="youtube_left" name="youtube_left" type="url" placeholder="https://www.youtube.com/watch?v=..." class="hidden mt-2 block w-full p-2 rounded border border-slate-300 dark:border-slate-600">
+
             {{-- Nombre del archivo seleccionado --}}
             <div id="filename-left" class="text-xs text-slate-600 dark:text-slate-400 italic hidden">
                 Archivo seleccionado: <span id="filename-left-name"></span>
@@ -48,20 +65,25 @@
         </div>
     </div>
 
-    {{-- Campo imagen derecha --}}
+    {{-- Campo media derecha (imagen / video / YouTube) --}}
     <div>
-        <label for="image_right" class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">
-            Imagen derecha <span class="text-red-500">*</span>
+        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">
+            Medio derecha <span class="text-red-500">*</span>
         </label>
         <div class="space-y-2">
-            {{-- Input de archivo sin overlay --}}
-            <input 
-                id="image_right" 
-                type="file" 
-                name="image_right" 
-                accept="image/*" 
-                required
-                class="block w-full text-sm text-slate-500
+            <select id="right_type" name="right_type" class="w-full p-2 rounded border border-slate-300 dark:border-slate-600">
+                <option value="image" selected>Imagen (por defecto)</option>
+                <option value="video">Video (archivo)</option>
+                <option value="youtube">YouTube (enlace)</option>
+            </select>
+
+            {{-- Input imagen --}}
+            <input
+                id="image_right"
+                type="file"
+                name="image_right"
+                accept="image/*"
+                class="mt-2 block w-full text-sm text-slate-500
                     file:mr-4 file:py-2 file:px-4
                     file:rounded-lg file:border-0
                     file:text-sm file:font-semibold
@@ -73,9 +95,21 @@
                     rounded border border-slate-300 dark:border-slate-600
                     p-2"
             >
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-                JPG, PNG, GIF, WebP • Máx. 20MB
-            </p>
+            <p id="image-right-help" class="text-xs text-slate-500 dark:text-slate-400">JPG, PNG, GIF, WebP • Máx. 20MB</p>
+
+            {{-- Input video --}}
+            <input
+                id="video_right"
+                type="file"
+                name="video_right"
+                accept="video/*"
+                class="hidden mt-2 block w-full text-sm text-slate-500 rounded border border-slate-300 dark:border-slate-600 p-2"
+            >
+            <p id="video-right-help" class="hidden text-xs text-slate-500 dark:text-slate-400">Video cualquier formato válido • Máx. 50MB</p>
+
+            {{-- Input YouTube --}}
+            <input id="youtube_right" name="youtube_right" type="url" placeholder="https://www.youtube.com/watch?v=..." class="hidden mt-2 block w-full p-2 rounded border border-slate-300 dark:border-slate-600">
+
             {{-- Nombre del archivo seleccionado --}}
             <div id="filename-right" class="text-xs text-slate-600 dark:text-slate-400 italic hidden">
                 Archivo seleccionado: <span id="filename-right-name"></span>
@@ -141,10 +175,16 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Inicializando vista previa de imágenes');
+            const leftType = document.getElementById('left_type');
+            const rightType = document.getElementById('right_type');
 
             const imageLeftInput = document.getElementById('image_left');
             const imageRightInput = document.getElementById('image_right');
+            const videoLeftInput = document.getElementById('video_left');
+            const videoRightInput = document.getElementById('video_right');
+            const youtubeLeft = document.getElementById('youtube_left');
+            const youtubeRight = document.getElementById('youtube_right');
+
             const previewLeft = document.getElementById('preview-left');
             const previewRight = document.getElementById('preview-right');
             const filenameLeftDiv = document.getElementById('filename-left');
@@ -152,98 +192,114 @@
             const filenameRightDiv = document.getElementById('filename-right');
             const filenameRightName = document.getElementById('filename-right-name');
 
-            // Función para validar archivo
-            function validateFile(file, inputName) {
-                if (!file) return { valid: false, message: 'Sin archivo' };
+            function showAsImage(target, src) {
+                target.innerHTML = `<img src="${src}" alt="Preview" class="w-full h-full object-cover">`;
+            }
 
-                // Validar tipo de archivo
-                const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp'];
-                if (!validTypes.includes(file.type)) {
-                    return { 
-                        valid: false, 
-                        message: 'Formato no válido. Usa: JPG, PNG, GIF, WebP' 
-                    };
+            function showAsVideo(target, src) {
+                target.innerHTML = `<video controls class="w-full h-full object-cover"><source src="${src}"></video>`;
+            }
+
+            function showAsYouTube(target, url) {
+                const id = parseYouTubeId(url);
+                if (!id) {
+                    target.innerHTML = `<div class="text-center text-slate-500"><i class="fas fa-video text-3xl mb-2"></i><p class="text-xs">Enlace YouTube inválido</p></div>`;
+                    return;
                 }
+                const embed = `https://www.youtube.com/embed/${id}`;
+                target.innerHTML = `<iframe src="${embed}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>`;
+            }
 
-                // Validar tamaño (20MB)
-                const maxSize = 20 * 1024 * 1024;
-                if (file.size > maxSize) {
-                    return { 
-                        valid: false, 
-                        message: 'Archivo muy grande. Máximo 20MB' 
-                    };
+            function parseYouTubeId(url) {
+                if (!url) return null;
+                const regExp = /(?:youtube(?:-nocookie)?\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|embed|shorts)\/|.*[?&]v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+                const match = url.match(regExp);
+                return match ? match[1] : null;
+            }
+
+            function updateVisibility(side) {
+                const type = (side === 'left') ? leftType.value : rightType.value;
+
+                const imageInput = document.getElementById(side === 'left' ? 'image_left' : 'image_right');
+                const videoInput = document.getElementById(side === 'left' ? 'video_left' : 'video_right');
+                const youtubeInput = document.getElementById(side === 'left' ? 'youtube_left' : 'youtube_right');
+                const imageHelp = document.getElementById(side === 'left' ? 'image-left-help' : 'image-right-help');
+                const videoHelp = document.getElementById(side === 'left' ? 'video-left-help' : 'video-right-help');
+
+                if (type === 'image') {
+                    imageInput.classList.remove('hidden'); imageHelp.classList.remove('hidden');
+                    videoInput.classList.add('hidden'); videoHelp.classList.add('hidden');
+                    youtubeInput.classList.add('hidden');
+                } else if (type === 'video') {
+                    imageInput.classList.add('hidden'); imageHelp.classList.add('hidden');
+                    videoInput.classList.remove('hidden'); videoHelp.classList.remove('hidden');
+                    youtubeInput.classList.add('hidden');
+                } else if (type === 'youtube') {
+                    imageInput.classList.add('hidden'); imageHelp.classList.add('hidden');
+                    videoInput.classList.add('hidden'); videoHelp.classList.add('hidden');
+                    youtubeInput.classList.remove('hidden');
                 }
-
-                return { valid: true, message: 'OK' };
             }
 
-            // Evento para imagen izquierda
-            if (imageLeftInput) {
-                imageLeftInput.addEventListener('change', function(e) {
-                    const file = this.files[0];
+            // Inicializar
+            updateVisibility('left');
+            updateVisibility('right');
 
-                    if (!file) {
-                        previewLeft.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
-                        filenameLeftDiv.classList.add('hidden');
-                        return;
-                    }
+            leftType.addEventListener('change', function() { updateVisibility('left'); });
+            rightType.addEventListener('change', function() { updateVisibility('right'); });
 
-                    // Validar archivo
-                    const validation = validateFile(file, 'image_left');
-                    if (!validation.valid) {
-                        alert('Imagen izquierda: ' + validation.message);
-                        this.value = '';
-                        previewLeft.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
-                        filenameLeftDiv.classList.add('hidden');
-                        return;
-                    }
+            // Handlers de selección de archivos y youtube
+            imageLeftInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+                filenameLeftName.textContent = file.name; filenameLeftDiv.classList.remove('hidden');
+                const reader = new FileReader();
+                reader.onload = function(e) { showAsImage(previewLeft, e.target.result); };
+                reader.readAsDataURL(file);
+            });
 
-                    // Mostrar nombre del archivo
-                    filenameLeftName.textContent = file.name;
-                    filenameLeftDiv.classList.remove('hidden');
+            imageRightInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+                filenameRightName.textContent = file.name; filenameRightDiv.classList.remove('hidden');
+                const reader = new FileReader();
+                reader.onload = function(e) { showAsImage(previewRight, e.target.result); };
+                reader.readAsDataURL(file);
+            });
 
-                    // Mostrar vista previa
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        previewLeft.innerHTML = `<img src="${event.target.result}" alt="Preview" class="w-full h-full object-cover">`;
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
+            videoLeftInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+                filenameLeftName.textContent = file.name; filenameLeftDiv.classList.remove('hidden');
+                const url = URL.createObjectURL(file);
+                showAsVideo(previewLeft, url);
+            });
 
-            // Evento para imagen derecha
-            if (imageRightInput) {
-                imageRightInput.addEventListener('change', function(e) {
-                    const file = this.files[0];
+            videoRightInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (!file) return;
+                filenameRightName.textContent = file.name; filenameRightDiv.classList.remove('hidden');
+                const url = URL.createObjectURL(file);
+                showAsVideo(previewRight, url);
+            });
 
-                    if (!file) {
-                        previewRight.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
-                        filenameRightDiv.classList.add('hidden');
-                        return;
-                    }
+            youtubeLeft.addEventListener('input', function() {
+                const url = this.value.trim();
+                if (!url) {
+                    previewLeft.innerHTML = '<div class="text-center"><i class="fas fa-video text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Introduce enlace YouTube</p></div>';
+                    return;
+                }
+                showAsYouTube(previewLeft, url);
+            });
 
-                    // Validar archivo
-                    const validation = validateFile(file, 'image_right');
-                    if (!validation.valid) {
-                        alert('Imagen derecha: ' + validation.message);
-                        this.value = '';
-                        previewRight.innerHTML = '<div class="text-center"><i class="fas fa-image text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Selecciona una imagen</p></div>';
-                        filenameRightDiv.classList.add('hidden');
-                        return;
-                    }
-
-                    // Mostrar nombre del archivo
-                    filenameRightName.textContent = file.name;
-                    filenameRightDiv.classList.remove('hidden');
-
-                    // Mostrar vista previa
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        previewRight.innerHTML = `<img src="${event.target.result}" alt="Preview" class="w-full h-full object-cover">`;
-                    };
-                    reader.readAsDataURL(file);
-                });
-            }
+            youtubeRight.addEventListener('input', function() {
+                const url = this.value.trim();
+                if (!url) {
+                    previewRight.innerHTML = '<div class="text-center"><i class="fas fa-video text-3xl mb-2 text-slate-500"></i><p class="text-xs text-slate-500">Introduce enlace YouTube</p></div>';
+                    return;
+                }
+                showAsYouTube(previewRight, url);
+            });
 
             // Aplicar estilos DataTables (después de un pequeño delay)
             setTimeout(function() {

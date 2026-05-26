@@ -35,20 +35,38 @@ class BannerDataTable extends DataTable
 
     protected function renderBannerInfo($slide)
     {
-        // Renderizar imágenes del carrusel
-        $leftImage = $slide->image_left 
-            ? '<img src="' . asset('images/slider/' . $slide->image_left) . '" alt="Imagen izquierda" class="w-16 h-16 rounded-lg object-cover mr-2">' 
-            : '<div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-2"><i class="fas fa-image text-slate-500 dark:text-slate-400"></i></div>';
-            
-        $rightImage = $slide->image_right 
-            ? '<img src="' . asset('images/slider/' . $slide->image_right) . '" alt="Imagen derecha" class="w-16 h-16 rounded-lg object-cover mr-2">' 
-            : '<div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-2"><i class="fas fa-image text-slate-500 dark:text-slate-400"></i></div>';
-        
-        return '<div class="flex items-center">' . 
-            '<div class="flex mr-2">' . $leftImage . $rightImage . '</div>' . 
-            '<div class="min-w-0 flex-1">' . 
-            '<div class="font-medium text-slate-900 dark:text-white text-sm truncate">Carrusel #' . $slide->id . '</div>' . 
-            '<div class="text-xs text-slate-500 dark:text-slate-400 truncate">ID: ' . $slide->id . '</div>' . 
+        $leftType = $slide->left_media_type;
+        $rightType = $slide->right_media_type;
+
+        if ($slide->left_media_src) {
+            if ($leftType === 'video') {
+                $leftContent = '<div class="w-16 h-16 rounded-lg overflow-hidden bg-slate-900 mr-2"><video muted playsinline class="w-full h-full object-cover"><source src="' . $slide->left_media_src . '" type="' . ($slide->left_media_mime ?? 'video/mp4') . '"></video></div>';
+            } elseif ($leftType === 'youtube') {
+                $leftContent = '<div class="w-16 h-16 rounded-lg bg-black text-white flex items-center justify-center mr-2"><i class="fab fa-youtube text-lg"></i></div>';
+            } else {
+                $leftContent = '<img src="' . $slide->left_media_src . '" alt="Imagen izquierda" class="w-16 h-16 rounded-lg object-cover mr-2">';
+            }
+        } else {
+            $leftContent = '<div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-2"><i class="fas fa-image text-slate-500 dark:text-slate-400"></i></div>';
+        }
+
+        if ($slide->right_media_src) {
+            if ($rightType === 'video') {
+                $rightContent = '<div class="w-16 h-16 rounded-lg overflow-hidden bg-slate-900 mr-2"><video muted playsinline class="w-full h-full object-cover"><source src="' . $slide->right_media_src . '" type="' . ($slide->right_media_mime ?? 'video/mp4') . '"></video></div>';
+            } elseif ($rightType === 'youtube') {
+                $rightContent = '<div class="w-16 h-16 rounded-lg bg-black text-white flex items-center justify-center mr-2"><i class="fab fa-youtube text-lg"></i></div>';
+            } else {
+                $rightContent = '<img src="' . $slide->right_media_src . '" alt="Imagen derecha" class="w-16 h-16 rounded-lg object-cover mr-2">';
+            }
+        } else {
+            $rightContent = '<div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-2"><i class="fas fa-image text-slate-500 dark:text-slate-400"></i></div>';
+        }
+
+        return '<div class="flex items-center">' .
+            '<div class="flex mr-2">' . $leftContent . $rightContent . '</div>' .
+            '<div class="min-w-0 flex-1">' .
+            '<div class="font-medium text-slate-900 dark:text-white text-sm truncate">Carrusel #' . $slide->id . '</div>' .
+            '<div class="text-xs text-slate-500 dark:text-slate-400 truncate">ID: ' . $slide->id . '</div>' .
             '</div></div>';
     }
 

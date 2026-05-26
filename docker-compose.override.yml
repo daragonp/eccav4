@@ -1,0 +1,48 @@
+# Generado por scripts/bootstrap.sh — modo MongoDB local.
+# Borra este archivo (o vuelve a correr bootstrap eligiendo Atlas) si
+# quieres apuntar a un cluster externo en su lugar.
+services:
+  mongodb:
+    image: mongo:7.0
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - widestream
+
+  backend:
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8001:8001"
+
+  frontend:
+    ports:
+      - "127.0.0.1:3000:80"
+
+  icecast:
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  grafana:
+    ports:
+      - "127.0.0.1:3001:3000"
+
+  prometheus:
+    ports:
+      - "127.0.0.1:9090:9090"
+
+  # Liquidsoap: el harbor SÍ se expone públicamente para que los DJs
+  # remotos puedan emitir desde Mixxx/BUTT/OBS. Telnet 1234 sigue
+  # interno al docker network — NUNCA lo publiques.
+  liquidsoap:
+    ports: !override
+      - "0.0.0.0:8002:8002"
+    volumes:
+      - ./data/hls:/var/www/hls
