@@ -1,0 +1,46 @@
+name: Deploy Laravel Application
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Execute remote SSH commands to deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd /var/www/laravel
+
+            # Activar modo mantenimiento en Laravel para que los usuarios no vean errores intermitentes
+            php artisan down
+
+            # Descargar los últimos cambios del repositorio
+            git pull origin main
+
+            # Instalar dependencias de PHP optimizadas para producción
+            composer install --no-dev --optimize-autoloader
+
+            # Correr migraciones de base de datos de forma automática y sin preguntar
+            php artisan migrate --force
+
+            # Limpiar y optimizar cachés de rutas, configuraciones y vistas
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # Asegurar que Nginx siga teniendo permisos correctos sobre las nuevas carpetas creadas
+            chown -R www-data:www-data /var/www/laravel
+
+            # Desactivar modo mantenimiento
+            php artisan up
