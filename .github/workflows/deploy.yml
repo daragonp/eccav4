@@ -20,7 +20,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd /var/www/laravel
+            cd /var/www/eccav4
 
             # Activar modo mantenimiento en Laravel para que los usuarios no vean errores intermitentes
             php artisan down
