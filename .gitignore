@@ -3,6 +3,7 @@
 /.env
 /.env.*
 !.env.example
+/app/.env
 
 /storage/*.key
 /storage/app/*
@@ -26,5 +27,20 @@
 /yarn-debug.log
 /pnpm-debug.log
 
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/debugbar/*
+/public/audio/*
+/public/documents/*
+/public/feed/*
+/public/images/slider/*
+/public/images/bible/*
+/public/images/news/*
+/public/images/schedule/*
+/public/images/worship/*
+*.sql
 .DS_Store
 **/.DS_Store
