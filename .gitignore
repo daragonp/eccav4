@@ -34,10 +34,14 @@
 /storage/framework/views/*
 /storage/debugbar/*
 /public/audio/*
+/public/build/
+
 /public/documents/*
 /public/feed/*
 /public/images/slider/*
 /public/images/bible/*
+/public/images/logo/ImagenRadio.jpg
+/public/images/logo/*.jpg
 /public/images/news/*
 /public/images/schedule/*
 /public/images/worship/*
