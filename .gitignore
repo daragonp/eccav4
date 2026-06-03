@@ -33,9 +33,10 @@
 /storage/framework/sessions/*
 /storage/framework/views/*
 /storage/debugbar/*
+
+deploy.sh
 /public/audio/*
 /public/build/
-
 /public/documents/*
 /public/feed/*
 /public/images/slider/*
