@@ -9,21 +9,24 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('schedules', function (Blueprint $table) {
-            $table->string('emission_key')->nullable()->index();
-        });
+        if (!Schema::hasColumn('schedules', 'emission_key')) {
+            Schema::table('schedules', function (Blueprint $table) {
+                $table->string('emission_key')->nullable()->index();
+            });
+        }
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('schedules', function (Blueprint $table) {
-            $table->dropColumn('emission_key');
-        });
+        if (Schema::hasColumn('schedules', 'emission_key')) {
+            Schema::table('schedules', function (Blueprint $table) {
+                $table->dropColumn('emission_key');
+            });
+        }
     }
 };
