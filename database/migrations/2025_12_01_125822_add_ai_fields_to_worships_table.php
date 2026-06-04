@@ -8,27 +8,49 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('worships', function (Blueprint $table) {
-            $table->text('ai_summary')->nullable()->comment('Resumen generado por IA del audio');
-            $table->string('ai_image')->nullable()->comment('Imagen generada por IA basada en el contenido del audio');
-            $table->boolean('ai_processed')->default(false)->comment('Indica si el audio ha sido procesado por IA');
-        });
+        if (!Schema::hasColumn('worships', 'ai_summary')) {
+            Schema::table('worships', function (Blueprint $table) {
+                $table->text('ai_summary')->nullable()->comment('Resumen generado por IA del audio');
+            });
+        }
+
+        if (!Schema::hasColumn('worships', 'ai_image')) {
+            Schema::table('worships', function (Blueprint $table) {
+                $table->string('ai_image')->nullable()->comment('Imagen generada por IA basada en el contenido del audio');
+            });
+        }
+
+        if (!Schema::hasColumn('worships', 'ai_processed')) {
+            Schema::table('worships', function (Blueprint $table) {
+                $table->boolean('ai_processed')->default(false)->comment('Indica si el audio ha sido procesado por IA');
+            });
+        }
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::table('worships', function (Blueprint $table) {
-            $table->dropColumn(['ai_summary', 'ai_image', 'ai_processed']);
-        });
+        if (Schema::hasColumn('worships', 'ai_summary')) {
+            Schema::table('worships', function (Blueprint $table) {
+                $table->dropColumn('ai_summary');
+            });
+        }
+
+        if (Schema::hasColumn('worships', 'ai_image')) {
+            Schema::table('worships', function (Blueprint $table) {
+                $table->dropColumn('ai_image');
+            });
+        }
+
+        if (Schema::hasColumn('worships', 'ai_processed')) {
+            Schema::table('worships', function (Blueprint $table) {
+                $table->dropColumn('ai_processed');
+            });
+        }
     }
 };
