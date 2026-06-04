@@ -135,7 +135,7 @@ class VerseDataTable extends DataTable
         return $this->builder()
             ->setTableId('verse-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax('/show-quote')
             // Si ‘date’ es columna real, este orderBy(0,'desc') sirve; si no, mapear con orderColumn
             ->orderBy(0, 'desc')
             ->parameters([
