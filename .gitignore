@@ -8,13 +8,15 @@
 /storage/*.key
 /storage/app/*
 !/storage/app/.gitignore
+storage/framework/.
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/testing/*
 /storage/framework/views/*
 !/storage/framework/views/.gitignore
-/storage/logs/*
 !/storage/logs/.gitignore
+/storage/logs/*
+/storage/debugbar/*
 
 /bootstrap/cache/*.php
 !/bootstrap/cache/.gitignore
@@ -27,12 +29,6 @@
 /yarn-debug.log
 /pnpm-debug.log
 
-/storage/*.key
-/storage/logs/*
-/storage/framework/cache/*
-/storage/framework/sessions/*
-/storage/framework/views/*
-/storage/debugbar/*
 
 deploy.sh
 /public/audio/*
