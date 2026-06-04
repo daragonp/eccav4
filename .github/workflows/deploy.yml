@@ -1,29 +1,36 @@
-name: Deploy Laravel to VPS
+#!/usr/bin/env bash
+set -e
 
-on:
-  push:
-    branches:
-      - master
+APP_DIR="/srv/laravel"
+COMPOSE="docker compose"
+SERVICE="app"   # <-- cambia esto si tu servicio tiene otro nombre
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+cd "$APP_DIR"
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+echo "==> Actualizando código"
+git fetch origin master
+git reset --hard origin/master
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+echo "==> Instalando dependencias PHP"
+$COMPOSE exec -T $SERVICE composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Deploy via SSH
-        run: |
-          ssh -i ~/.ssh/id_ed25519 \
-            -o StrictHostKeyChecking=no \
-            -p ${{ secrets.VPS_PORT }} \
-            ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            "bash /srv/laravel/deploy.sh"
+echo "==> Instalando dependencias Node"
+$COMPOSE exec -T $SERVICE npm ci
+
+echo "==> Compilando assets"
+$COMPOSE exec -T $SERVICE npm run build
+
+echo "==> Limpiando y cacheando"
+$COMPOSE exec -T $SERVICE php artisan optimize:clear
+$COMPOSE exec -T $SERVICE php artisan config:cache
+$COMPOSE exec -T $SERVICE php artisan route:cache
+$COMPOSE exec -T $SERVICE php artisan view:cache
+
+echo "==> Migrando base de datos"
+$COMPOSE exec -T $SERVICE php artisan migrate --force
+
+echo "==> Ajustando permisos"
+chown -R www-data:www-data storage bootstrap/cache || true
+chmod -R 775 storage bootstrap/cache || true
+
+echo "==> Deploy completado"
