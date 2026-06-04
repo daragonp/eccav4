@@ -8,24 +8,17 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('schedule_overrides', function (Blueprint $table) {
-            $table->id();
-            $table->date('date');
-            $table->unsignedBigInteger('override_day');
-            $table->string('reason')->nullable();
-            $table->boolean('is_active')->default(true);
-            
-            $table->foreign('override_day')
-                ->references('id')
-                ->on('weeks')
-                ->onDelete('cascade');
-            
-            $table->timestamps();
-            $table->softDeletes();
-            
-            $table->unique(['date', 'is_active']);
-            $table->index('date');
-        });
+        if (!Schema::hasTable('schedule_overrides')) {
+            Schema::create('schedule_overrides', function (Blueprint $table) {
+                $table->id();
+                $table->date('date');
+                $table->unsignedBigInteger('override_day');
+                $table->string('reason')->nullable();
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+                $table->softDeletes();
+            });
+        }
     }
 
     public function down(): void
