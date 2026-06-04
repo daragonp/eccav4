@@ -51,7 +51,7 @@ class WorshipDataTable extends DataTable
                     if (!$row->audio) {
                         return '<span class="chip-brand bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300 border-gray-300 dark:border-gray-700"><i class="fas fa-volume-mute mr-1"></i> Sin audio</span>';
                     }
-                    
+
                     return $row->ai_processed
                         ? '<span class="chip-brand bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-300 dark:border-blue-700"><i class="fas fa-robot mr-1"></i> Procesado con IA</span>'
                         : '<span class="chip-brand bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700"><i class="fas fa-clock mr-1"></i> Pendiente de IA</span>';
@@ -134,7 +134,7 @@ class WorshipDataTable extends DataTable
         return $this->builder()
             ->setTableId('worship-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax('/show-worship')
             // Si 'broadcast' es columna real, este orderBy(0,'desc') sirve; si no, mapear con orderColumn
             ->orderBy(0, 'desc')
             ->parameters([

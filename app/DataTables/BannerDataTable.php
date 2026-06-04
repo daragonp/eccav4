@@ -128,7 +128,7 @@ class BannerDataTable extends DataTable
         return $this->builder()
             ->setTableId('slider-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax('/show-slider')
             ->orderBy(1)
             ->parameters([
                 'responsive' => true,

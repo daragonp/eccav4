@@ -102,7 +102,7 @@ class ScheduleDataTable extends DataTable
         return $this->builder()
             ->setTableId('schedule-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax('/show-schedule')
             ->orderBy(2) // Ordenar por hora de inicio
             ->parameters([
                 'responsive' => true,
