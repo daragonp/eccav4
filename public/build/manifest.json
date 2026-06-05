@@ -1,7 +1,7 @@
 {
-  "_chunk-QTnfLwEv.js": {
-    "file": "assets/chunk-QTnfLwEv.js",
-    "name": "chunk"
+  "_jquery-CeL_IsWr.js": {
+    "file": "assets/jquery-CeL_IsWr.js",
+    "name": "jquery"
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
     "file": "assets/fa-brands-400-BP5tdqmh.woff2",
@@ -71,28 +71,27 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BpIp_t2l.js",
+    "file": "assets/app-CzdQEAep.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_chunk-QTnfLwEv.js"
-    ],
-    "dynamicImports": [
+      "_jquery-CeL_IsWr.js",
+      "resources/js/privacy-notice.js",
       "resources/js/privacy-notice.js"
     ]
   },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-CEW8Vjvm.js",
+    "file": "assets/dashboard-Cam2h7MM.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
     "isEntry": true,
     "imports": [
-      "_chunk-QTnfLwEv.js"
+      "_jquery-CeL_IsWr.js"
     ]
   },
   "resources/js/privacy-notice.js": {
-    "file": "assets/privacy-notice-DP7JMaDf.js",
+    "file": "assets/privacy-notice-CpBh3iAI.js",
     "name": "privacy-notice",
     "src": "resources/js/privacy-notice.js",
     "isEntry": true

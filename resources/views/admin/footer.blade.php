@@ -11,7 +11,7 @@
         <div class="mt-2">
             <p class="mb-0">
                 <small>&copy; <span id="currentYear"></span> Todos los Derechos Reservados | <a
-                        href="http://www.tezbrillante.org" class="text-light">tezbrillante.org</a></small>
+                        href="https://www.tezbrillante.org" class="text-light">tezbrillante.org</a></small>
             </p>
         </div>
     </div>

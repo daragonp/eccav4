@@ -32,22 +32,27 @@ Alpine.plugin(focus)
 console.log('✨ [APP] Alpine.js configurado')
 
 // ═══════════════════════════════════════════════════════════════════
-// 4. PRIVACIDAD (Importar ANTES de Alpine.start)
+// 4. PRIVACIDAD (Importar SINCRÓNICO antes de Alpine.start)
 // ═══════════════════════════════════════════════════════════════════
-import('./privacy-notice').then(module => {
-  console.log('🔐 [APP] Privacy Notice registrado con Alpine')
-}).catch(err => {
-  console.error('❌ [APP] Error cargando Privacy Notice:', err)
-})
+import './privacy-notice'
 
 // ═══════════════════════════════════════════════════════════════════
-// 5. INICIAR ALPINE (Una sola vez)
+// 5. LIGHTBOX2 (necesita jQuery en window)
+// ═══════════════════════════════════════════════════════════════════
+import jQuery from 'jquery'
+window.jQuery = jQuery
+window.$ = jQuery
+import 'lightbox2'
+console.log('🖼️ [APP] Lightbox2 inicializado')
+
+// ═══════════════════════════════════════════════════════════════════
+// 6. INICIAR ALPINE (Una sola vez, DESPUÉS de registrar componentes)
 // ══════════════════════════════════════════════════════════════════
 Alpine.start()
 console.log('✅ [APP] Alpine.js iniciado')
 
 // ═══════════════════════════════════════════════════════════════════
-// 6. SWEETALERT (Notificaciones bonitas)
+// 7. SWEETALERT (Notificaciones bonitas)
 // ═══════════════════════════════════════════════════════════════════
 import Swal from 'sweetalert2'
 window.Swal = Swal
@@ -87,10 +92,10 @@ function syncThemeIcon() {
 function bindThemeToggle() {
   const btn = document.getElementById('toggleTheme')
   if (!btn) return
-  
+
   // Limpiar handler previo (para evitar duplicados con Turbo)
   btn.onclick = null
-  
+
   // Nuevo handler
   btn.onclick = () => {
     root.classList.toggle('dark')
@@ -98,7 +103,7 @@ function bindThemeToggle() {
     syncThemeIcon()
     console.log('🔄 [THEME] Tema cambiado')
   }
-  
+
   syncThemeIcon()
 }
 
@@ -114,7 +119,7 @@ document.addEventListener('turbo:load', () => {
   console.log('🔄 [THEME] Turbo navigó - re-aplicando tema')
   applySavedTheme()
   bindThemeToggle()
-  
+
   // También reiniciar Privacy Notice si es primera página
   initPrivacyNoticeOnTurboLoad()
 })
@@ -128,12 +133,12 @@ function initPrivacyNoticeOnTurboLoad() {
   // Solo en la primera carga (no en navegaciones Turbo posteriores)
   const currentPath = window.location.pathname
   const privacyInitPath = sessionStorage.getItem('privacyInitPath')
-  
+
   if (privacyInitPath === null) {
     // Primera carga - inicializar privacidad
     sessionStorage.setItem('privacyInitPath', currentPath)
     console.log('🔐 [PRIVACY] Inicializando en primera carga')
-    
+
     // Esperar a que el DOM esté listo
     setTimeout(() => {
       const wrapper = document.querySelector('[x-data="privacyNoticeApp()"]')
