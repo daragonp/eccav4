@@ -13,8 +13,8 @@ echo "==> Actualizando código"
 git fetch origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
 
-echo "==> Deteniendo contenedores previos (evita conflictos de nombre)"
-$COMPOSE down --remove-orphans 2>/dev/null || true
+echo "==> Eliminando contenedores huerfanos o conflictivos"
+docker rm -f laravel_redis laravel_db laravel_app laravel_backup 2>/dev/null || true
 
 echo "==> Levantando contenedores base"
 $COMPOSE up -d --force-recreate --remove-orphans
