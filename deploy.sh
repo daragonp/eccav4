@@ -9,12 +9,12 @@ BRANCH="master"
 
 cd "$APP_DIR"
 
+echo "==> Eliminando contenedores previos (antes del pull, evita conflictos)"
+docker rm -f laravel_redis laravel_db laravel_app laravel_backup 2>/dev/null || true
+
 echo "==> Actualizando código"
 git fetch origin "$BRANCH"
 git reset --hard "origin/$BRANCH"
-
-echo "==> Eliminando contenedores huerfanos o conflictivos"
-docker rm -f laravel_redis laravel_db laravel_app laravel_backup 2>/dev/null || true
 
 echo "==> Levantando contenedores base"
 $COMPOSE up -d --force-recreate --remove-orphans
