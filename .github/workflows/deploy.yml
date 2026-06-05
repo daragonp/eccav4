@@ -26,4 +26,4 @@ jobs:
             -p ${{ secrets.VPS_PORT }} \
             -o StrictHostKeyChecking=no \
             ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
-            "bash /srv/laravel/deploy.sh"
+            "cd /srv/laravel && docker rm -f laravel_redis laravel_db laravel_app laravel_backup 2>/dev/null || true && git fetch origin master && git reset --hard origin/master && bash deploy.sh"
