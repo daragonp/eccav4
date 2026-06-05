@@ -55,16 +55,31 @@ return new class extends Migration
             });
         }
 
-        // ── schedule_overrides: filtro por fecha ──────────────────
+        // ── schedule_overrides: filtro por fecha (idempotente) ────
         if (Schema::hasTable('schedule_overrides')) {
-            Schema::table('schedule_overrides', function (Blueprint $table) {
-                if (Schema::hasColumn('schedule_overrides', 'date')) {
-                    $table->index('date');
-                }
-                if (Schema::hasColumn('schedule_overrides', 'schedule_id')) {
-                    $table->index('schedule_id');
-                }
-            });
+            if (Schema::hasColumn('schedule_overrides', 'date') && !$this->indexExists('schedule_overrides', 'schedule_overrides_date_index')) {
+                Schema::table('schedule_overrides', fn (Blueprint $t) => $t->index('date'));
+            }
+            if (Schema::hasColumn('schedule_overrides', 'schedule_id') && !$this->indexExists('schedule_overrides', 'schedule_overrides_schedule_id_index')) {
+                Schema::table('schedule_overrides', fn (Blueprint $t) => $t->index('schedule_id'));
+            }
+        }
+    }
+
+    /**
+     * Verifica si un índice ya existe en una tabla.
+     */
+    private function indexExists(string $table, string $indexName): bool
+    {
+        try {
+            $result = \DB::select(
+                'SELECT COUNT(*) as cnt FROM information_schema.statistics ' .
+                'WHERE table_schema = DATABASE() AND table_name = ? AND index_name = ?',
+                [$table, $indexName]
+            );
+            return ($result[0]->cnt ?? 0) > 0;
+        } catch (\Throwable) {
+            return false;
         }
     }
 
