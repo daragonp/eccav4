@@ -4,6 +4,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 
+/* FontAwesome */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
 /* DataTables skins base */
 @import "datatables.net-dt";
 @import "datatables.net-responsive-dt";
@@ -34,7 +37,7 @@
   --bg-grad-1: #0ea5e9;
   --bg-grad-2: #22c55e;
   --bg-grad-3: #a78bfa;
-  
+
   /* Nuevas variables para modo oscuro natural */
   --dark-surface: #1e293b;     /* slate-800 - más suave que slate-900 */
   --dark-surface-light: #334155; /* slate-700 */

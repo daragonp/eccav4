@@ -22,7 +22,7 @@
                             <div class="flex items-baseline space-x-2">
                                 <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['users'] ?? 0 }}</span>
                                 <span class="text-sm font-medium text-green-600 dark:text-green-400">
-                                    <i class="fas fa-arrow-up text-xs"></i> 12%
+                                    <i class="fas fa-arrow-up text-xs"></i> —
                                 </span>
                             </div>
                         </div>
@@ -39,7 +39,7 @@
                 </div>
             </div>
         </div>
-    
+
         <!-- Tarjeta de Versículos -->
         <div class="stat-card relative overflow-hidden bg-white dark:bg-slate-800 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300">
             <div class="absolute top-0 left-0 w-2 h-full bg-green-500"></div>
@@ -54,7 +54,7 @@
                             <div class="flex items-baseline space-x-2">
                                 <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['verses'] ?? 0 }}</span>
                                 <span class="text-sm font-medium text-green-600 dark:text-green-400">
-                                    <i class="fas fa-arrow-up text-xs"></i> 8%
+                                    <i class="fas fa-arrow-up text-xs"></i> —
                                 </span>
                             </div>
                         </div>
@@ -84,9 +84,9 @@
                         <div>
                             <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Programación</h3>
                             <div class="flex items-baseline space-x-2">
-                                <span class="text-2xl font-bold text-slate-900 dark:text-white">354</span>
+                                <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['schedules'] ?? 0 }}</span>
                                 <span class="text-sm font-medium text-green-600 dark:text-green-400">
-                                    <i class="fas fa-arrow-up text-xs"></i> 5%
+                                    <i class="fas fa-arrow-up text-xs"></i> —
                                 </span>
                             </div>
                         </div>
@@ -116,9 +116,9 @@
                         <div>
                             <h3 class="text-sm font-medium text-slate-500 dark:text-slate-400">Noticias</h3>
                             <div class="flex items-baseline space-x-2">
-                                <span class="text-2xl font-bold text-slate-900 dark:text-white">27</span>
+                                <span class="text-2xl font-bold text-slate-900 dark:text-white">{{ $stats['news'] ?? 0 }}</span>
                                 <span class="text-sm font-medium text-green-600 dark:text-green-400">
-                                    <i class="fas fa-arrow-up text-xs"></i> 15%
+                                    <i class="fas fa-arrow-up text-xs"></i> —
                                 </span>
                             </div>
                         </div>
@@ -139,7 +139,7 @@
             </div>
         </div>
     </div>
-    
+
 </div>
 
 <!-- Sección de contenido principal -->
@@ -158,7 +158,7 @@
                     <i class="fas fa-book-bible mr-1"></i> Ver todo
                 </a>
             </div>
-            
+
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead>
@@ -240,7 +240,7 @@
                     <i class="fas fa-newspaper mr-1"></i> Ver todo
                 </a>
             </div>
-            
+
             <div class="space-y-3">
                 @forelse ($latestNews as $n)
                 <div class="group/item p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-300 cursor-pointer">
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // ========================================
     // Animación de entrada para las tarjetas
     // ========================================
@@ -309,14 +309,14 @@ document.addEventListener('DOMContentLoaded', function() {
     cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             card.style.opacity = '1';
             card.style.transform = 'translateY(0)';
         }, index * 100);
     });
-    
+
     // ========================================
     // Efecto de actualización automática de estadísticas
     // ========================================
@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const numValue = parseInt(finalValue.replace(/[^0-9]/g, '')) || 0;
             let currentValue = 0;
             const increment = numValue / 30;
-            
+
             const updateNumber = () => {
                 if (currentValue < numValue) {
                     currentValue += increment;
@@ -337,14 +337,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     stat.textContent = finalValue;
                 }
             };
-            
+
             updateNumber();
         });
     };
-    
+
     // Iniciar animación de números
     setTimeout(updateStats, 500);
-    
+
     // ========================================
     // Refrescar datos cada 30 segundos
     // ========================================
@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Aquí podrías hacer una llamada AJAX para actualizar los datos
         console.log('Actualizando datos del dashboard...');
     }, 30000);
-    
+
     // ========================================
     // Efecto hover en las filas de las tablas
     // ========================================
@@ -361,12 +361,12 @@ document.addEventListener('DOMContentLoaded', function() {
         row.addEventListener('mouseenter', function() {
             this.style.transform = 'translateX(5px)';
         });
-        
+
         row.addEventListener('mouseleave', function() {
             this.style.transform = 'translateX(0)';
         });
     });
-    
+
     // ========================================
     // Inicializar tooltips si es necesario
     // ========================================
@@ -378,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     };
-    
+
     initTooltips();
 });
 </script>

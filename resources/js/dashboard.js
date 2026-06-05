@@ -1,3 +1,15 @@
+import jQuery from 'jquery'
+import DataTable from 'datatables.net'
+import 'datatables.net-dt'
+import 'datatables.net-responsive'
+import 'datatables.net-responsive-dt'
+
+window.jQuery = jQuery
+window.$ = jQuery
+window.jQuery.fn.DataTable = DataTable
+
+DataTable.$.fn.dataTable = DataTable
+
 function applyTheme(theme) {
     const root = document.documentElement;
     if (theme === 'dark') {

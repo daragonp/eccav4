@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -50,30 +51,28 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $stats = [
-            'users'     => User::count(),
-            'verses'    => Verse::count(),
-            'schedules' => Schedule::count(),
-            'banners'   => Banner::count(),
-            'news'      => News::count(),
-        ];
+        $cacheKey = 'dashboard:' . Auth::id();
 
-        $latestVerses = Verse::orderByDesc('date')
-            ->take(5)
-            ->get(['id', 'date', 'image', 'video']);
+        $dashboardData = Cache::remember($cacheKey, now()->addMinutes(5), function () {
+            return [
+                'stats'         => [
+                    'users'     => User::count(),
+                    'verses'    => Verse::count(),
+                    'schedules' => Schedule::count(),
+                    'banners'   => Banner::count(),
+                    'news'      => News::count(),
+                ],
+                'latestVerses'  => Verse::orderByDesc('date')
+                    ->take(5)
+                    ->get(['id', 'date', 'image', 'video']),
+                'latestNews'    => News::orderByDesc('created_at')
+                    ->take(5)
+                    ->get(['id', 'title', 'created_at']),
+                'currentProgram'=> $this->getCurrentProgram(),
+            ];
+        });
 
-        $latestNews = News::orderByDesc('created_at')
-            ->take(5)
-            ->get(['id', 'title', 'created_at']);
-
-        $currentProgram = $this->getCurrentProgram();
-
-        return view('admin.dashboard', compact(
-            'stats',
-            'latestVerses',
-            'latestNews',
-            'currentProgram'
-        ));
+        return view('admin.dashboard', $dashboardData);
     }
 
     /**

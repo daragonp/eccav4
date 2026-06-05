@@ -1,0 +1,82 @@
+services:
+  laravel_db:
+    image: mysql:8.0
+    container_name: laravel_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass_laravel
+      MYSQL_DATABASE: eccav4
+      MYSQL_USER: laraveluser
+      MYSQL_PASSWORD: laravelpass
+    volumes:
+      - laravel_db_data:/var/lib/mysql
+    networks:
+      - proxy_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "laraveluser", "-plaravelpass"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  laravel_redis:
+    image: redis:7-alpine
+    container_name: laravel_redis
+    restart: unless-stopped
+    volumes:
+      - laravel_redis_data:/data
+    networks:
+      - proxy_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  laravel_app:
+    image: webdevops/php-apache:8.4
+    container_name: laravel_app
+    restart: unless-stopped
+    depends_on:
+      laravel_db:
+        condition: service_healthy
+      laravel_redis:
+        condition: service_healthy
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+    volumes:
+      - ./:/app
+    networks:
+      - proxy_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  backup:
+    image: alpine:3.19
+    container_name: laravel_backup
+    restart: unless-stopped
+    depends_on:
+      - laravel_db
+    volumes:
+      - ./backups:/backups
+    networks:
+      - proxy_network
+    environment:
+      MYSQL_HOST: laravel_db
+      MYSQL_USER: laraveluser
+      MYSQL_PASSWORD: laravelpass
+      MYSQL_DATABASE: eccav4
+    entrypoint: ["/bin/sh", "-c", "apk add --no-cache mysql-client && while true; do mysqldump -h$$MYSQL_HOST -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE > /backups/eccav4_$$(date +%Y%m%d_%H%M).sql && find /backups -name '*.sql' -mtime +7 -delete && sleep 86400; done"]
+
+volumes:
+  laravel_db_data:
+  laravel_redis_data:
+
+networks:
+  proxy_network:
+    external: true

@@ -15,12 +15,7 @@
     <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
     <title>@yield('title', 'Panel') — Emancipación Cristiana Afro</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
     @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'])
-    <script src="https://kit.fontawesome.com/71f1c28685.js" crossorigin="anonymous"></script>
 </head>
 
 <body class="antialiased">
@@ -44,12 +39,12 @@
             <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div class="flex items-center gap-3">
                     <div class="relative">
-                        <img src="{{ auth()->user()->avatar_url }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover shadow-md">
+                        <img src="{{ $panelAvatar }}" alt="{{ $panelUserName }}" class="w-10 h-10 rounded-full object-cover shadow-md">
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <div class="font-semibold text-slate-900 dark:text-white truncate">{{ auth()->user()->name }}</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ auth()->user()->roles->first()?->name ?? 'Sin rol' }}</div>
+                        <div class="font-semibold text-slate-900 dark:text-white truncate">{{ $panelUserName }}</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ $panelRoleName }}</div>
                     </div>
                 </div>
             </div>
@@ -62,7 +57,9 @@
             {{-- Navegación --}}
             @php
                 $panelUser = auth()->user();
+                $panelUserName = $panelUser?->name ?? '';
                 $panelAvatar = $panelUser?->avatar_url ?? asset('images/logo/logo.png');
+                $panelRoleName = $panelUser?->roles->first()?->name ?? 'Sin rol';
                 $isSuperAdmin = (int) ($panelUser->role_id ?? 0) === 1;
                 if (!$isSuperAdmin) {
                     $roleNames = collect(optional($panelUser)->roles ?? [])
@@ -276,7 +273,7 @@
                 {{-- Usuario --}}
                 <div class="p-4 border-t border-slate-200 dark:border-slate-700">
                     <div class="relative">
-                        <img src="{{ $panelAvatar }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover shadow-md">
+                        <img src="{{ $panelAvatar }}" alt="{{ $panelUserName }}" class="w-10 h-10 rounded-full object-cover shadow-md">
                         <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900"></div>
                     </div>
                 </div>
@@ -304,7 +301,7 @@
                     <div class="relative">
                         <button id="userMenuBtn" class="btn btn-ghost flex items-center gap-2" aria-haspopup="true" aria-expanded="false">
                             <div class="relative">
-                                <img src="{{ $panelAvatar }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover shadow-md">
+                                <img src="{{ $panelAvatar }}" alt="{{ $panelUserName }}" class="w-8 h-8 rounded-full object-cover shadow-md">
                                 <div class="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full border border-white dark:border-slate-900"></div>
                             </div>
                             <i class="fas fa-chevron-down text-xs"></i>
@@ -315,10 +312,10 @@
                                 {{-- Cabecera del menú --}}
                                 <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                                     <div class="flex items-center gap-3">
-                                        <img src="{{ $panelAvatar }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover shadow-md">
+                                        <img src="{{ $panelAvatar }}" alt="{{ $panelUserName }}" class="w-10 h-10 rounded-full object-cover shadow-md">
                                         <div>
-                                            <div class="font-semibold text-slate-900 dark:text-white">{{ auth()->user()->name }}</div>
-                                            <div class="text-xs text-slate-500 dark:text-slate-400">{{ auth()->user()->roles->first()?->name ?? 'Sin rol' }}</div>
+                                            <div class="font-semibold text-slate-900 dark:text-white">{{ $panelUserName }}</div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400">{{ $panelRoleName }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -471,10 +468,6 @@
         </div>
     </section>
     @endif
-
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/responsive/3.0.2/js/dataTables.responsive.min.js"></script>
 
     @stack('scripts')
 
