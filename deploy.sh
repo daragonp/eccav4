@@ -25,12 +25,6 @@ $COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE php artisan down || true
 echo "==> Instalando dependencias PHP"
 $COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
 
-echo "==> Instalando dependencias Node"
-$COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE sh -lc 'rm -rf node_modules && npm install'
-
-echo "==> Compilando assets"
-$COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE npm run build
-
 echo "==> Limpiando caches"
 $COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE php artisan optimize:clear
 

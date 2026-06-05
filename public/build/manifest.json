@@ -1,0 +1,106 @@
+{
+  "_chunk-QTnfLwEv.js": {
+    "file": "assets/chunk-QTnfLwEv.js",
+    "name": "chunk"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
+    "file": "assets/fa-brands-400-BP5tdqmh.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": {
+    "file": "assets/fa-regular-400-nyy7hhHF.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": {
+    "file": "assets/fa-solid-900-DRAAbZTg.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2"
+  },
+  "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2": {
+    "file": "assets/fa-v4compatibility-DD84SGiu.woff2",
+    "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-DoSImxHA.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/dashboard.css": {
+    "file": "assets/dashboard-CnjClME7.css",
+    "name": "dashboard",
+    "names": [
+      "dashboard.css"
+    ],
+    "src": "resources/css/dashboard.css",
+    "isEntry": true,
+    "assets": [
+      "assets/fa-brands-400-BP5tdqmh.woff2",
+      "assets/fa-regular-400-nyy7hhHF.woff2",
+      "assets/fa-solid-900-DRAAbZTg.woff2",
+      "assets/fa-v4compatibility-DD84SGiu.woff2"
+    ]
+  },
+  "resources/css/privacy-notice.css": {
+    "file": "assets/privacy-notice-B8K3zKgT.css",
+    "name": "privacy-notice",
+    "names": [
+      "privacy-notice.css"
+    ],
+    "src": "resources/css/privacy-notice.css",
+    "isEntry": true
+  },
+  "resources/css/radio-player.css": {
+    "file": "assets/radio-player-8Ruld8xL.css",
+    "name": "radio-player",
+    "names": [
+      "radio-player.css"
+    ],
+    "src": "resources/css/radio-player.css",
+    "isEntry": true
+  },
+  "resources/css/tw.css": {
+    "file": "assets/tw-DcwhSHoO.css",
+    "name": "tw",
+    "names": [
+      "tw.css"
+    ],
+    "src": "resources/css/tw.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BpIp_t2l.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_chunk-QTnfLwEv.js"
+    ],
+    "dynamicImports": [
+      "resources/js/privacy-notice.js"
+    ]
+  },
+  "resources/js/dashboard.js": {
+    "file": "assets/dashboard-CEW8Vjvm.js",
+    "name": "dashboard",
+    "src": "resources/js/dashboard.js",
+    "isEntry": true,
+    "imports": [
+      "_chunk-QTnfLwEv.js"
+    ]
+  },
+  "resources/js/privacy-notice.js": {
+    "file": "assets/privacy-notice-DP7JMaDf.js",
+    "name": "privacy-notice",
+    "src": "resources/js/privacy-notice.js",
+    "isEntry": true
+  },
+  "resources/js/radio-player.js": {
+    "file": "assets/radio-player-DhU86x5Z.js",
+    "name": "radio-player",
+    "src": "resources/js/radio-player.js",
+    "isEntry": true
+  }
+}
