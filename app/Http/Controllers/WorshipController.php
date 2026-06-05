@@ -32,6 +32,28 @@ class WorshipController extends Controller
     }
 
     /**
+     * Show the admin panel with worship DataTable.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show(WorshipDataTable $dataTable)
+    {
+        return $dataTable->render('admin.worship.show-worship');
+    }
+
+    /**
+     * Show single worship view for admin.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function view($id)
+    {
+        $worship = Worship::withTrashed()->findOrFail($id);
+        return view('admin.worship.view-worship', compact('worship'));
+    }
+
+    /**
      * Show form for creating a new resource.
      *
      * @return \Illuminate\Http\Response

@@ -28,9 +28,9 @@ class News extends Model
             return \Illuminate\Support\Str::words(html_entity_decode(strip_tags($this->abstract)), 200);
             }
 
-        public function newscategory()
+        public function category()
         {
-            return $this->hasMany(BlogCategory::class);
+            return $this->belongsTo(Category::class);
         }
 
         public function newscomments()

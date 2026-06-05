@@ -7,10 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'blogpostid',
         'useremail',
-        'userename',
+        'username',
         'description',
     ];
+
+    public function news()
+    {
+        return $this->belongsTo(News::class, 'blogpostid');
+    }
 }

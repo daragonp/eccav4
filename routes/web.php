@@ -79,7 +79,7 @@ Route::delete('/realdelete-worship/{id}', [WorshipController::class, 'delete']);
 Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWithAI']);
 
 
-    
+
     //Rutas para administrador: Versículo
     Route::get('/show-quote', [VerseController::class, 'show']);
     Route::post('/addverse', [VerseController::class, 'store']);
@@ -135,10 +135,6 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
         Route::post('/access-control/users/{user}', [AdminController::class, 'updateUserAccess'])->name('access.control.update');
         Route::post('/access-control/users/{user}/test-permission', [AdminController::class, 'testUserPermission'])->name('access.control.test');
     });
-
-    //Rutas para administrador:
-    Route::get('/dashboard', [AdminController::class, 'index']);
-
 
     //Rutas para administrador: Centro de notificaciones
     Route::get('/topbar', [AdminController::class, 'center']);
@@ -242,7 +238,7 @@ Route::prefix('biblia')->name('biblia.')->group(function () {
         ->where('cap', '\d+')
         ->where('page', '\d+')
         ->name('api.chapter.paginated');
-        
+
     Route::get('/api/{libro}/{cap}/{vers}', [BibleController::class, 'apiVerse'])
         ->where('libro', '[a-z0-9\-]+')
         ->where('cap', '\d+')
@@ -266,7 +262,7 @@ Route::get('/programacion', function() {
         ->orderBy('start')
         ->get()
         ->groupBy('day');
-    
+
     return view('public.schedule', compact('schedules'));
 })->name('public.schedule');
 
