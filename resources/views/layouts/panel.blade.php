@@ -22,6 +22,20 @@
     <div class="panel-shell">
         {{-- Sidebar --}}
         <aside id="sidebar" class="panel-sidebar transition-all duration-300 ease-in-out">
+            @php
+                $panelUser = auth()->user();
+                $panelUserName = $panelUser?->name ?? '';
+                $panelAvatar = $panelUser?->avatar_url ?? asset('images/logo/logo.png');
+                $panelRoleName = $panelUser?->roles->first()?->name ?? 'Sin rol';
+                $isSuperAdmin = (int) ($panelUser->role_id ?? 0) === 1;
+                if (!$isSuperAdmin) {
+                    $roleNames = collect(optional($panelUser)->roles ?? [])
+                        ->pluck('name')
+                        ->map(fn ($name) => mb_strtolower((string) $name));
+                    $isSuperAdmin = $roleNames->contains('superadministrador') || $roleNames->contains('super-admin') || $roleNames->contains('super admin');
+                }
+            @endphp
+
             {{-- Logo y Perfil --}}
             <div class="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div class="flex items-center gap-3">
@@ -55,19 +69,6 @@
             </div>
 
             {{-- Navegación --}}
-            @php
-                $panelUser = auth()->user();
-                $panelUserName = $panelUser?->name ?? '';
-                $panelAvatar = $panelUser?->avatar_url ?? asset('images/logo/logo.png');
-                $panelRoleName = $panelUser?->roles->first()?->name ?? 'Sin rol';
-                $isSuperAdmin = (int) ($panelUser->role_id ?? 0) === 1;
-                if (!$isSuperAdmin) {
-                    $roleNames = collect(optional($panelUser)->roles ?? [])
-                        ->pluck('name')
-                        ->map(fn ($name) => mb_strtolower((string) $name));
-                    $isSuperAdmin = $roleNames->contains('superadministrador') || $roleNames->contains('super-admin') || $roleNames->contains('super admin');
-                }
-            @endphp
             <nav class="flex-1 overflow-y-auto px-2 pb-4">
                 <div class="space-y-1">
                     {{-- Panel principal --}}
