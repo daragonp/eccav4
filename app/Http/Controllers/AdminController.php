@@ -393,6 +393,74 @@ class AdminController extends Controller
         return view('admin.settings');
     }
 
+    /**
+     * Retorna el HTML del modal universal de edición para un elemento específico.
+     */
+    public function getEditModal($type, $id)
+    {
+        $model = null;
+        $title = '';
+
+        switch ($type) {
+            case 'user':
+                $model = User::findOrFail($id);
+                $title = 'Usuario';
+                break;
+            case 'role':
+                $model = Role::findOrFail($id);
+                $title = 'Rol';
+                break;
+            case 'worship':
+                $model = \App\Models\Worship::withTrashed()->findOrFail($id);
+                $title = 'Culto Dominical';
+                break;
+            case 'verse':
+                $model = Verse::findOrFail($id);
+                $title = 'Palabra de vida';
+                break;
+            case 'slider':
+                $model = Banner::findOrFail($id);
+                $title = 'Banner Carrusel';
+                break;
+            case 'news':
+                $model = News::findOrFail($id);
+                $title = 'Mensaje de la semana';
+                break;
+            case 'podcast':
+                $model = \App\Models\Podcast::findOrFail($id);
+                $title = 'PodCast';
+                break;
+            case 'schedule':
+                $model = Schedule::withTrashed()->findOrFail($id);
+                $title = 'Programación';
+                break;
+        }
+
+        if (!$model) {
+            return response('No se encontró el elemento', 404);
+        }
+
+        $formAction = '';
+        switch ($type) {
+            case 'user': $formAction = url("update-user/{$id}"); break;
+            case 'role': $formAction = url("updaterole/{$id}"); break;
+            case 'worship': $formAction = url("update-worship/{$id}"); break;
+            case 'verse': $formAction = url("update-quote/{$id}"); break;
+            case 'slider': $formAction = url("update-slider/{$id}"); break;
+            case 'news': $formAction = url("update-news/{$id}"); break;
+            case 'podcast': $formAction = url("updatepodcast/{$id}"); break;
+            case 'schedule': $formAction = url("update-schedule/{$id}"); break;
+        }
+
+        return view('admin.partials.universal-edit-modal', [
+            'modalId' => 'EditModal_' . $id,
+            'formAction' => $formAction,
+            'tableM' => $model,
+            'sectionType' => $type,
+            'sectionTitle' => $title,
+        ]);
+    }
+
     private function isSuperAdminUser(User $user): bool
     {
         if (isset($user->role_id) && (int) $user->role_id === 1) {

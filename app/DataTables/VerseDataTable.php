@@ -59,15 +59,16 @@ class VerseDataTable extends DataTable
     protected function renderActionColumn($quote)
     {
         $html = view('admin.partials.actions', [
-            'id'         => $quote->id,
-            'view'       => url("view-quote", $quote->id),
-            'activate'   => url("activate-quote", $quote->id),
-            'softdelete' => url("delete-quote", $quote->id),
-            'realdelete' => url("realdelete-quote", $quote->id),
-            'modalId'    => 'EditModal_'.$quote->id,
-            'formAction' => url("update-quote", $quote->id),
-            'tableM'     => $quote,
-            'editPartial'=> 'admin.quote.editmodal',
+            'id'           => $quote->id,
+            'view'         => url("view-quote", $quote->id),
+            'activate'     => url("activate-quote", $quote->id),
+            'softdelete'   => url("delete-quote", $quote->id),
+            'realdelete'   => url("realdelete-quote", $quote->id),
+            'modalId'      => 'EditModal_'.$quote->id,
+            'formAction'   => url("update-quote", $quote->id),
+            'tableM'       => $quote,
+            'sectionType'  => 'verse',
+            'sectionTitle' => 'Palabra de vida',
         ])->render();
 
         return $html ?? '';

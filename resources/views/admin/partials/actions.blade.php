@@ -5,8 +5,16 @@
   $editPartial= $editPartial?? null;
   $sectionType = $sectionType ?? 'news';
   $sectionTitle = $sectionTitle ?? 'Elemento';
-  // Usar la columna 'active' para determinar si está activo
-  $isActive = isset($tableM) && ($tableM->active ?? false);
+
+  // Lógica inteligente para determinar si está activo (soporta active de DB y SoftDeletes)
+  $isActive = true;
+  if (isset($tableM)) {
+      if (isset($tableM->active)) {
+          $isActive = (bool)$tableM->active;
+      } elseif (array_key_exists('deleted_at', $tableM->getAttributes()) || isset($tableM->deleted_at)) {
+          $isActive = is_null($tableM->deleted_at);
+      }
+  }
 @endphp
 
 <div class="flex items-center justify-center gap-1.5">
@@ -17,7 +25,19 @@
      title="Ver detalles">
     <i class="fa-solid fa-eye text-sm group-hover:scale-110 transition-transform"></i>
   </a>
-<p>|</p>
+
+  <span class="text-slate-300 dark:text-slate-700">|</span>
+
+  {{-- Editar (Carga Dinámica y Bajo Demanda) --}}
+  <button type="button"
+          onclick="openDynamicEditModal('{{ $sectionType }}', '{{ $id }}')"
+          class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all duration-200 group"
+          title="Editar">
+    <i class="fa-solid fa-pen-to-square text-sm group-hover:scale-110 transition-transform"></i>
+  </button>
+
+  <span class="text-slate-300 dark:text-slate-700">|</span>
+
   {{-- Activar / Desactivar --}}
   @if (!$isActive)
     <form action="{{ $activate ?? '#' }}" method="POST" onsubmit="return confirm('¿Desea activar este elemento?');" class="inline">
@@ -38,19 +58,14 @@
       </button>
     </form>
   @endif
-  {{-- Botón de reprocesar con IA --}}
-@if(isset($reprocess) && $tableM->audio && !$tableM->ai_processed)
-<a href="{{ $reprocess }}" class="btn btn-sm btn-action btn-action-secondary" title="Procesar con IA">
-    <i class="fas fa-robot"></i>
-</a>
-@endif
-</div>
 
-{{-- ===== Modal de edición por fila (Universal) ===== --}}
-@include('admin.partials.universal-edit-modal', [
-    'modalId' => $modalId,
-    'formAction' => $formAction,
-    'tableM' => $tableM ?? null,
-    'sectionType' => $sectionType,
-    'sectionTitle' => $sectionTitle,
-])
+  {{-- Botón de reprocesar con IA --}}
+  @if(isset($reprocess) && isset($tableM->audio) && $tableM->audio && !$tableM->ai_processed)
+    <span class="text-slate-300 dark:text-slate-700">|</span>
+    <a href="{{ $reprocess }}" 
+       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-900/20 dark:text-indigo-400 dark:hover:bg-indigo-900/30 transition-all duration-200 group" 
+       title="Procesar con IA">
+        <i class="fas fa-robot text-sm group-hover:scale-110 transition-transform"></i>
+    </a>
+  @endif
+</div>

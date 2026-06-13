@@ -67,16 +67,17 @@ class WorshipDataTable extends DataTable
     protected function renderActionColumn($worship)
     {
         $html = view('admin.partials.actions', [
-            'id'         => $worship->id,
-            'view'       => url("view-worship", $worship->id),
-            'activate'   => url("activate-worship", $worship->id),
-            'softdelete' => url("delete-worship", $worship->id),
-            'realdelete' => url("realdelete-worship", $worship->id),
-            'reprocess'  => url("reprocess-worship-ai", $worship->id),
-            'modalId'    => 'EditModal_'.$worship->id,
-            'formAction' => url("update-worship", $worship->id),
-            'tableM'     => $worship,
-            'editPartial'=> 'admin.worship.editmodal',
+            'id'           => $worship->id,
+            'view'         => url("view-worship", $worship->id),
+            'activate'     => url("activate-worship", $worship->id),
+            'softdelete'   => url("delete-worship", $worship->id),
+            'realdelete'   => url("realdelete-worship", $worship->id),
+            'reprocess'    => url("reprocess-worship-ai", $worship->id),
+            'modalId'      => 'EditModal_'.$worship->id,
+            'formAction'   => url("update-worship", $worship->id),
+            'tableM'       => $worship,
+            'sectionType'  => 'worship',
+            'sectionTitle' => 'Culto Dominical',
         ])->render();
 
         return $html ?? '';

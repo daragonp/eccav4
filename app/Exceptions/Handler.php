@@ -37,5 +37,11 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        $this->renderable(function (\Illuminate\Http\Exceptions\PostTooLargeException $e, $request) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'El archivo que intentas subir supera el límite máximo permitido por el servidor. Por favor, sube un archivo más pequeño o aumenta post_max_size en tu configuración de PHP (php.ini).');
+        });
     }
 }

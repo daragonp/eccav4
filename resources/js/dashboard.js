@@ -261,6 +261,51 @@ function bindDelegatedEvents() {
     });
 }
 
+function scrollActiveMenuItemIntoView() {
+    const activeItem = document.querySelector('.nav-item.active, .nav-item-collapsed.active');
+    if (activeItem) {
+        activeItem.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+    }
+}
+
+function openDynamicEditModal(type, id) {
+    const container = document.getElementById('dynamic-modal-container');
+    if (!container) return;
+
+    // Mostrar cursor de carga
+    document.body.style.cursor = 'wait';
+
+    fetch(`/admin/edit-modal/${type}/${id}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al cargar el modal de edición.');
+            }
+            return response.text();
+        })
+        .then(html => {
+            document.body.style.cursor = '';
+            container.innerHTML = html;
+            const modal = container.querySelector('.tw-modal, [data-modal-container]');
+            if (modal) {
+                // Recrear y ejecutar scripts que vengan en el modal para que se ejecuten
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+
+                openModal(modal.id);
+            }
+        })
+        .catch(error => {
+            document.body.style.cursor = '';
+            console.error('Error:', error);
+            alert('No se pudo cargar el modal: ' + error.message);
+        });
+}
+
 function initDashboard() {
     initTheme();
     bindSidebarToggle();
@@ -268,6 +313,7 @@ function initDashboard() {
     bindUserMenuToggle();
     bindDelegatedEvents();
     initDataTables();
+    scrollActiveMenuItemIntoView();
 }
 
 document.addEventListener('DOMContentLoaded', initDashboard);
@@ -275,3 +321,4 @@ document.addEventListener('turbo:load', initDashboard);
 
 window.openModal = openModal;
 window.closeModal = closeModal;
+window.openDynamicEditModal = openDynamicEditModal;

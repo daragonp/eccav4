@@ -8,7 +8,6 @@
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-visit-control" content="reload">
     {{-- Favicons / manifest --}}
     <link rel="icon" href="{{ asset('images/fav/favicon.svg') }}" type="image/svg+xml" />
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/fav/apple-touch-icon.png') }}" />
@@ -494,5 +493,8 @@
     <form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
     </form>
+
+    {{-- Contenedor para inyección dinámica de modales de edición --}}
+    <div id="dynamic-modal-container"></div>
 </body>
 </html>

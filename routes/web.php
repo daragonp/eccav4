@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
     Route::get('/dashboard', [AdminController::class, 'index']);
     Route::get('/profile', [AdminController::class, 'profile']);
     Route::put('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/admin/edit-modal/{type}/{id}', [AdminController::class, 'getEditModal'])->name('admin.edit-modal');
 
     //Rutas para administrador: Programación
 
@@ -231,6 +232,7 @@ Route::prefix('biblia')->name('biblia.')->group(function () {
     Route::get('/api/libros', [BibleController::class, 'apiBooks'])->name('api.books');
     Route::get('/api/libros/organizados', [BibleController::class, 'apiBooksOrganized'])->name('api.books.organized');
     Route::get('/api/inicio', [BibleController::class, 'apiStart'])->name('api.start');
+    Route::get('/api/exportar', [BibleController::class, 'apiExport'])->name('api.export');
 
     // Luego las dinámicas, con restricciones
     Route::get('/api/{libro}/{cap}/page/{page}', [BibleController::class, 'apiChapterPaginated'])

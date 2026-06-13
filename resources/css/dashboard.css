@@ -4,6 +4,9 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 
+/* Configurar modo oscuro por clase para Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* FontAwesome */
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
@@ -52,34 +55,16 @@
    2) BASE GLOBAL Y OPTIMIZACIONES
    ========================================================================== */
 
-/* Optimizaciones de rendimiento */
-.card-stats-users,
-.card-stats-verses,
-.card-stats-schedules,
-.card-stats-banners,
-.card-stats-news {
-    will-change: transform, opacity;
-}
-
-/* Reducir reflow/repaint */
+/* Reducir reflow/repaint de forma segura sin saturar la GPU */
 .quick-action-btn,
 .nav-item,
 .menu-item {
-    transform: translateZ(0);
-    backface-visibility: hidden;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 /* Optimizar transiciones */
 .transition-all {
-    transition: all 0.2s ease-out;
-}
-
-/* Optimizar renders */
-.card,
-.panel-sidebar,
-.panel-main {
-    transform: translateZ(0);
-    will-change: transform;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 
 /* Prevenir flash de tema al cargar */
@@ -97,24 +82,36 @@ body {
   @apply text-slate-800 min-h-svh antialiased;
   color-scheme: light dark;
   background-color: #ffffff;
+  position: relative;
+  transition: background-color .3s ease, color .3s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
     radial-gradient(1200px 800px at -10% -10%, color-mix(in oklab, var(--bg-grad-1) 18%, white) 0%, transparent 60%),
     radial-gradient(1200px 800px at 110% 0%,  color-mix(in oklab, var(--bg-grad-2) 16%, white) 0%, transparent 60%),
     radial-gradient(800px 600px  at 50% 120%, color-mix(in oklab, var(--bg-grad-3) 12%, white) 0%, transparent 60%),
     linear-gradient(180deg, #f8fafc, #ffffff);
-  transition: background-color .3s ease, color .3s ease;
-  will-change: background-color, color;
+  transition: background-color .3s ease;
 }
 
 .dark body {
   @apply text-slate-100;
   background-color: var(--dark-surface);
+  color: var(--dark-text-primary);
+}
+
+.dark body::before {
   background:
     radial-gradient(1200px 800px at -10% -10%, color-mix(in oklab, var(--bg-grad-1) 8%, var(--dark-surface)) 0%, transparent 60%),
     radial-gradient(1200px 800px at 110% 0%,  color-mix(in oklab, var(--bg-grad-2) 6%, var(--dark-surface)) 0%, transparent 60%),
     radial-gradient(800px 600px  at 50% 120%, color-mix(in oklab, var(--bg-grad-3) 6%, var(--dark-surface)) 0%, transparent 60%),
     linear-gradient(180deg, #0f172a, var(--dark-surface));
-  color: var(--dark-text-primary);
 }
 
 /* ==========================================================================

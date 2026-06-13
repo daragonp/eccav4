@@ -1024,6 +1024,37 @@
       .single-verse-content {
         font-size: 1.25rem;
       }
+    /* Estilos de subrayados personalizados */
+    .hl-yellow { background-color: rgba(254, 240, 138, 0.5); color: #111827; border-bottom: 2px solid #eab308; padding: 2px 4px; border-radius: 4px; display: inline; }
+    .hl-green { background-color: rgba(220, 252, 231, 0.5); color: #111827; border-bottom: 2px solid #22c55e; padding: 2px 4px; border-radius: 4px; display: inline; }
+    .hl-blue { background-color: rgba(219, 234, 254, 0.5); color: #111827; border-bottom: 2px solid #3b82f6; padding: 2px 4px; border-radius: 4px; display: inline; }
+    .hl-red { background-color: rgba(254, 226, 226, 0.5); color: #111827; border-bottom: 2px solid #ef4444; padding: 2px 4px; border-radius: 4px; display: inline; }
+    .hl-orange { background-color: rgba(255, 237, 213, 0.5); color: #111827; border-bottom: 2px solid #f97316; padding: 2px 4px; border-radius: 4px; display: inline; }
+
+    .dark .hl-yellow { background-color: rgba(234, 179, 8, 0.25); color: #fef08a; border-bottom: 2px solid #facc15; }
+    .dark .hl-green { background-color: rgba(34, 197, 94, 0.25); color: #bbf7d0; border-bottom: 2px solid #4ade80; }
+    .dark .hl-blue { background-color: rgba(59, 130, 246, 0.25); color: #bfdbfe; border-bottom: 2px solid #60a5fa; }
+    .dark .hl-red { background-color: rgba(239, 68, 68, 0.25); color: #fecaca; border-bottom: 2px solid #f87171; }
+    .dark .hl-orange { background-color: rgba(249, 115, 22, 0.25); color: #fed7aa; border-bottom: 2px solid #fb923c; }
+    
+    /* Círculos de selección de colores */
+    .color-dot {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .color-dot:hover {
+      transform: scale(1.25);
+      box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    }
+    .color-dot-lg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+      }
     }
   </style>
 @endpush
@@ -1169,11 +1200,33 @@
         <span class="text-brand-dark dark:text-brand-light" x-show="cargandoBusqueda">Cargando…</span>
         <span class="text-red-600 dark:text-red-400" x-show="errorBusqueda" x-text="errorBusqueda"></span>
       </div>
+      
+      <!-- Búsquedas Frecuentes -->
+      <div class="mt-3" x-show="searchHistory.length > 0">
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            Búsquedas frecuentes:
+          </span>
+          <button class="text-[10px] text-red-500 hover:underline" @click="clearSearchHistory()">Limpiar</button>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <template x-for="item in searchHistory" :key="item.term">
+            <button class="chip text-xs bg-gray-100 hover:bg-brand-light dark:bg-gray-800 dark:hover:bg-brand-dark flex items-center gap-1.5"
+                    @click="q = item.term; buscar()">
+              <span x-text="item.term"></span>
+              <span class="badge bg-brand-dark dark:bg-brand-light text-white text-[9px] px-1.5 rounded-full" x-text="item.count"></span>
+            </button>
+          </template>
+        </div>
+      </div>
     </div>
 
     {{-- Opciones de visualización --}}
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 flex-wrap">
         <button class="chip" @click="toggleReadingMode" :class="{ 'bg-brand-dark text-white': readingMode }">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -1185,6 +1238,35 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V2" />
           </svg>
           Paginación
+        </button>
+        
+        <!-- Botón de descarga offline -->
+        <button class="chip flex items-center gap-1.5" @click="preloadBible()" :disabled="preloadStatus === 'loading'" :class="{ 'bg-blue-600 text-white': preloadStatus === 'success', 'bg-yellow-500 text-black': preloadStatus === 'loading' }">
+          <template x-if="preloadStatus === 'idle'">
+            <span class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+              Descargar Biblia Offline
+            </span>
+          </template>
+          <template x-if="preloadStatus === 'loading'">
+            <span class="flex items-center gap-1">
+              <svg class="animate-spin h-3 w-3 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              Descargando... <span x-text="preloadPercentage + '%'"></span>
+            </span>
+          </template>
+          <template x-if="preloadStatus === 'success'">
+            <span class="flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Biblia Descargada
+            </span>
+          </template>
         </button>
       </div>
       <div class="flex items-center gap-2">
@@ -1215,9 +1297,9 @@
           <li :id="'v-' + v.n" class="verse-item scroll-mt-24">
             <div class="flex items-start">
               <span class="verse-number" x-text="v.n + '.'"></span>
-              <div class="verse-content" x-html="v.t"></div>
+              <div class="verse-content" x-html="formatVerse(v.t, libro + '-' + cap + '-' + v.n)"></div>
             </div>
-            <div class="flex gap-2 mt-2">
+            <div class="flex flex-wrap items-center gap-2 mt-2">
               <button class="chip text-xs" @click="enterFocusByNumber(v.n)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1237,6 +1319,16 @@
                 </svg>
                 Copiar
               </button>
+              
+              <!-- Paleta de colores para subrayar -->
+              <div class="flex items-center gap-1.5 sm:ml-auto border-l pl-2 border-gray-200 dark:border-gray-700">
+                <button class="color-dot bg-yellow-400" title="Cuando Dios habla (Amarillo)" @click="setHighlight(libro, cap, v.n, 'yellow')"></button>
+                <button class="color-dot bg-green-400" title="Promesa (Verde)" @click="setHighlight(libro, cap, v.n, 'green')"></button>
+                <button class="color-dot bg-blue-400" title="Pueblo de tez brillante (Azul)" @click="setHighlight(libro, cap, v.n, 'blue')"></button>
+                <button class="color-dot bg-red-400" title="Mandato (Rojo)" @click="setHighlight(libro, cap, v.n, 'red')"></button>
+                <button class="color-dot bg-orange-400" title="Se refiere al Mesías (Naranja)" @click="setHighlight(libro, cap, v.n, 'orange')"></button>
+                <button class="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-600 border border-gray-400 flex items-center justify-center text-[10px] hover:scale-125 transition cursor-pointer" title="Quitar subrayado" @click="setHighlight(libro, cap, v.n, null)">×</button>
+              </div>
             </div>
           </li>
         </template>
@@ -1299,7 +1391,23 @@
         </div>
       </div>
       
-      <template x-if="resultado.results.length === 0">
+      <!-- Coincidencia exacta -->
+      <div x-show="resultado.exact_match" class="mb-4 p-4 border border-brand-light bg-brand-light/10 dark:bg-brand-dark/20 rounded-lg">
+        <h4 class="text-md font-bold text-brand-dark dark:text-brand-light flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+          </svg>
+          Coincidencia Exacta: <span x-text="resultado.exact_match?.pretty"></span>
+        </h4>
+        <div class="mt-2 text-md italic" x-html="formatVerse(resultado.exact_match?.text, resultado.exact_match?.book + '-' + resultado.exact_match?.chapter + '-' + resultado.exact_match?.verse)"></div>
+        <div class="mt-3 flex gap-2">
+          <button class="chip text-xs" @click="abrir(resultado.exact_match, true)">Ir a la lectura</button>
+          <button class="chip text-xs" @click="showSingleVerse(resultado.exact_match?.book, resultado.exact_match?.chapter, resultado.exact_match?.verse || 1)">Ver solo</button>
+          <button class="chip text-xs" @click="copiar(resultado.exact_match?.pretty + ' ' + resultado.exact_match?.text)">Copiar</button>
+        </div>
+      </div>
+
+      <template x-if="resultado.results.length === 0 && !resultado.exact_match">
         <p class="text-sm text-gray-500 dark:text-gray-400">No se encontraron resultados para "<span x-text="resultado.q"></span>".</p>
       </template>
       
@@ -1311,7 +1419,7 @@
               <span x-text="r.ref"></span>
               <span class="ml-2 text-xs text-gray-500">Resultado #<span x-text="(resultado.pagination.current_page - 1) * resultado.pagination.per_page + index + 1"></span></span>
             </div>
-            <div class="result-text" x-html="r.highlighted"></div>
+            <div class="result-text" x-html="formatSearchVerse(r.highlighted, r.book + '-' + r.chapter + '-' + r.verse)"></div>
             <div class="result-context" x-text="r.snippet"></div>
             <div class="result-actions">
               <a class="content-link" :href="`#v-${r.verse}`"
@@ -1365,9 +1473,19 @@
         <button class="nav-arrow nav-right" @click="nextVerse()" :disabled="!hasNextAll()"
                 :aria-disabled="!hasNextAll()" title="Siguiente">›</button>
 
-        <div class="flex items-center justify-between mb-3 gap-3">
+        <div class="flex items-center justify-between mb-3 gap-3 flex-wrap">
           <div class="ref-chip" x-text="focusRef()"></div>
-          <div class="flex gap-2">
+          <div class="flex gap-2 flex-wrap items-center">
+            <!-- Paleta de colores para subrayar en visor centrado -->
+            <div class="flex items-center gap-1 border-r pr-2 border-gray-200 dark:border-gray-700">
+              <button class="color-dot bg-yellow-400 color-dot-lg" title="Cuando Dios habla (Amarillo)" @click="setHighlight(libro, cap, focusVerse()?.n, 'yellow')"></button>
+              <button class="color-dot bg-green-400 color-dot-lg" title="Promesa (Verde)" @click="setHighlight(libro, cap, focusVerse()?.n, 'green')"></button>
+              <button class="color-dot bg-blue-400 color-dot-lg" title="Pueblo de tez brillante (Azul)" @click="setHighlight(libro, cap, focusVerse()?.n, 'blue')"></button>
+              <button class="color-dot bg-red-400 color-dot-lg" title="Mandato (Rojo)" @click="setHighlight(libro, cap, focusVerse()?.n, 'red')"></button>
+              <button class="color-dot bg-orange-400 color-dot-lg" title="Se refiere al Mesías (Naranja)" @click="setHighlight(libro, cap, focusVerse()?.n, 'orange')"></button>
+              <button class="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-600 border border-gray-400 flex items-center justify-center text-xs hover:scale-125 transition cursor-pointer" title="Quitar subrayado" @click="setHighlight(libro, cap, focusVerse()?.n, null)">×</button>
+            </div>
+
             <button class="chip" @click="copiar(focusRef() + ' ' + focusVerse()?.t)">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -1391,7 +1509,7 @@
           </div>
         </div>
 
-        <div class="verse-text" x-html="focusVerse()?.t"></div>
+        <div class="verse-text" x-html="formatVerse(focusVerse()?.t, libro + '-' + cap + '-' + focusVerse()?.n)"></div>
         
         {{-- Copyright en visor centrado --}}
         <div class="verse-copyright">
@@ -1418,7 +1536,7 @@
         <template x-for="v in versiculos" :key="v.n">
           <div class="immersive-verse" :id="'immersive-v-' + v.n">
             <span class="immersive-verse-number" x-text="v.n + '.'"></span>
-            <span x-html="v.t"></span>
+            <span x-html="formatVerse(v.t, libro + '-' + cap + '-' + v.n)"></span>
           </div>
         </template>
       </div>
@@ -1444,7 +1562,7 @@
           </button>
         </div>
         
-        <div class="single-verse-content" x-html="currentSingleVerse?.text"></div>
+        <div class="single-verse-content" x-html="formatVerse(currentSingleVerse?.text, currentSingleVerse?.book + '-' + currentSingleVerse?.chapter + '-' + currentSingleVerse?.verse)"></div>
         
         <div class="single-verse-footer">
           <div class="single-verse-navigation">
@@ -1464,7 +1582,17 @@
             </button>
           </div>
           
-          <div class="single-verse-actions">
+          <div class="single-verse-actions flex items-center">
+            <!-- Paleta de colores para subrayar en visor individual -->
+            <div class="flex items-center gap-1 border-r pr-2 border-gray-200 dark:border-gray-700 mr-2">
+              <button class="color-dot bg-yellow-400 color-dot-lg" title="Cuando Dios habla (Amarillo)" @click="setHighlight(currentSingleVerse?.book, currentSingleVerse?.chapter, currentSingleVerse?.verse, 'yellow')"></button>
+              <button class="color-dot bg-green-400 color-dot-lg" title="Promesa (Verde)" @click="setHighlight(currentSingleVerse?.book, currentSingleVerse?.chapter, currentSingleVerse?.verse, 'green')"></button>
+              <button class="color-dot bg-blue-400 color-dot-lg" title="Pueblo de tez brillante (Azul)" @click="setHighlight(currentSingleVerse?.book, currentSingleVerse?.chapter, currentSingleVerse?.verse, 'blue')"></button>
+              <button class="color-dot bg-red-400 color-dot-lg" title="Mandato (Rojo)" @click="setHighlight(currentSingleVerse?.book, currentSingleVerse?.chapter, currentSingleVerse?.verse, 'red')"></button>
+              <button class="color-dot bg-orange-400 color-dot-lg" title="Se refiere al Mesías (Naranja)" @click="setHighlight(currentSingleVerse?.book, currentSingleVerse?.chapter, currentSingleVerse?.verse, 'orange')"></button>
+              <button class="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-600 border border-gray-400 flex items-center justify-center text-xs hover:scale-125 transition cursor-pointer" title="Quitar subrayado" @click="setHighlight(currentSingleVerse?.book, currentSingleVerse?.chapter, currentSingleVerse?.verse, null)">×</button>
+            </div>
+
             <button class="chip" @click="copiar(`${currentSingleVerse?.pretty} ${currentSingleVerse?.text}`)">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -1587,11 +1715,17 @@ function biblia() {
     startVerses: [],
     startPretty: '',
     
-    // Versículos a mostrar (con paginación si está activa)
+    // Subrayados y estadísticas
+    highlights: {},      // {"libro-cap-vers": "color"}
+    searchHistory: [],   // [{term: "palabra", count: 1}]
+    
+    // Estado de precarga offline
+    preloadStatus: 'idle', // 'idle' | 'loading' | 'success'
+    preloadPercentage: 0,
+    fullBibleData: null,   // Toda la biblia descargada
+    
+    // Versículos a mostrar
     get displayVerses() {
-      if (this.usePagination) {
-        return this.versiculos;
-      }
       return this.versiculos;
     },
     
@@ -1599,7 +1733,7 @@ function biblia() {
     get paginationPages() {
       const current = this.pagination.current_page;
       const total = this.pagination.total_pages;
-      const delta = 2; // Número de páginas a mostrar antes y después de la actual
+      const delta = 2;
       
       let range = [];
       let rangeWithDots = [];
@@ -1630,7 +1764,7 @@ function biblia() {
     get searchPaginationPages() {
       const current = this.resultado.pagination.current_page;
       const total = this.resultado.pagination.total_pages;
-      const delta = 2; // Número de páginas a mostrar antes y después de la actual
+      const delta = 2;
       
       let range = [];
       let rangeWithDots = [];
@@ -1666,37 +1800,224 @@ function biblia() {
     // Debouncer
     _searchTimer: null,
     onSearchInput(e){
-  // NO hacer trim aquí - permite escribir espacios
-  const v = e.target.value || '';
-  
-  this.q = v;
-  this.errorBusqueda = '';
-  
-  clearTimeout(this._searchTimer);
-  
-  // Validar con trim solo para verificar longitud
-  if (v.trim().length < 2) { 
-    this.resultado = {q:v, total:0, results:[]}; 
-    return; 
-  }
-  
-  this.cargandoBusqueda = true;
-  this._searchTimer = setTimeout(() => this.buscar(), 400);
-},
+      const v = e.target.value || '';
+      this.q = v;
+      this.errorBusqueda = '';
+      
+      clearTimeout(this._searchTimer);
+      
+      if (v.trim().length < 2) { 
+        this.resultado = {q:v, total:0, results:[]}; 
+        return; 
+      }
+      
+      this.cargandoBusqueda = true;
+      this._searchTimer = setTimeout(() => this.buscar(), 400);
+    },
 
     async init() {
+      this.loadHighlights();
+      this.loadSearchHistory();
       await this.cargarLibros();
       await this.cargarInicio();
       this.parseHash();
       this.loadSettings();
-      this.applySettings(); // Asegúrate de llamar a esto para aplicar la configuración inicial
+      this.applySettings();
+      
+      // Escuchar cambios de hash para navegación fluida
+      window.addEventListener('hashchange', () => {
+        this.parseHash();
+      });
+      
+      // Inicializar caché local
+      if ('caches' in window) {
+        try {
+          const cache = await caches.open('biblia-api-cache');
+          const cachedFull = await cache.match('/biblia/api/exportar');
+          if (cachedFull) {
+            this.fullBibleData = await cachedFull.json();
+            this.preloadStatus = 'success';
+          }
+        } catch(e) {
+          console.warn('Cache no disponible:', e);
+        }
+      }
+    },
+    
+    // Wrapper de fetch con soporte offline
+    async customFetch(url) {
+      if (!('caches' in window)) {
+        const res = await fetch(url);
+        return await res.json();
+      }
+      
+      const cacheName = 'biblia-api-cache';
+      const cache = await caches.open(cacheName);
+      
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          cache.put(url, response.clone());
+          return await response.json();
+        }
+      } catch (err) {
+        console.warn('Fallo de red, buscando en copia local...', err);
+      }
+      
+      // Intentar recuperar el endpoint exacto en cache
+      const cachedResponse = await cache.match(url);
+      if (cachedResponse) {
+        return await cachedResponse.json();
+      }
+      
+      // Si no existe, extraer de la Biblia completa precargada
+      if (this.fullBibleData) {
+        const localData = this.emulateApiResponse(url);
+        if (localData) {
+          this.showNotification('Modo sin conexión: cargado localmente', 'info');
+          return localData;
+        }
+      }
+      
+      throw new Error('Conexión perdida y recurso no guardado offline.');
+    },
+    
+    // Emulador local de API de Biblia
+    emulateApiResponse(url) {
+      const decodedUrl = decodeURIComponent(url);
+      
+      // 1. Capítulos de un libro: /biblia/api/{libro}
+      const chaptersMatch = decodedUrl.match(/\/api\/([a-z0-9\-]+)$/);
+      if (chaptersMatch) {
+        const libro = chaptersMatch[1];
+        if (this.fullBibleData[libro]) {
+          return Object.keys(this.fullBibleData[libro]);
+        }
+      }
+      
+      // 2. Versículos de un capítulo: /biblia/api/{libro}/{cap}
+      const versesMatch = decodedUrl.match(/\/api\/([a-z0-9\-]+)\/(\d+)$/);
+      if (versesMatch) {
+        const libro = versesMatch[1];
+        const cap = versesMatch[2];
+        if (this.fullBibleData[libro] && this.fullBibleData[libro][cap]) {
+          const rawVerses = this.fullBibleData[libro][cap];
+          const verses = [];
+          for (const num in rawVerses) {
+            verses.push({ n: parseInt(num), t: rawVerses[num] });
+          }
+          return {
+            book: libro,
+            chapter: parseInt(cap),
+            pretty: this.pretty(libro) + ' ' + cap,
+            verses: verses
+          };
+        }
+      }
+      
+      // 3. Versículos de un capítulo paginado: /biblia/api/{libro}/{cap}/page/{page}
+      const pageMatch = decodedUrl.match(/\/api\/([a-z0-9\-]+)\/(\d+)\/page\/(\d+)$/);
+      if (pageMatch) {
+        const libro = pageMatch[1];
+        const cap = pageMatch[2];
+        const page = parseInt(pageMatch[3]);
+        if (this.fullBibleData[libro] && this.fullBibleData[libro][cap]) {
+          const rawVerses = this.fullBibleData[libro][cap];
+          const allVerses = [];
+          for (const num in rawVerses) {
+            allVerses.push({ n: parseInt(num), t: rawVerses[num] });
+          }
+          const perPage = 20;
+          const totalVerses = allVerses.length;
+          const totalPages = Math.ceil(totalVerses / perPage);
+          const offset = (page - 1) * perPage;
+          const slice = allVerses.slice(offset, offset + perPage);
+          return {
+            book: libro,
+            chapter: parseInt(cap),
+            pretty: this.pretty(libro) + ' ' + cap,
+            verses: slice,
+            pagination: {
+              current_page: page,
+              total_pages: totalPages,
+              total_verses: totalVerses,
+              per_page: perPage,
+              has_prev: page > 1,
+              has_next: page < totalPages,
+              prev_page: page > 1 ? page - 1 : null,
+              next_page: page < totalPages ? page + 1 : null
+            }
+          };
+        }
+      }
+      
+      // 4. Versículo individual: /biblia/api/{libro}/{cap}/{vers}
+      const singleVerseMatch = decodedUrl.match(/\/api\/([a-z0-9\-]+)\/(\d+)\/(\d+)$/);
+      if (singleVerseMatch) {
+        const libro = singleVerseMatch[1];
+        const cap = singleVerseMatch[2];
+        const vers = singleVerseMatch[3];
+        if (this.fullBibleData[libro] && this.fullBibleData[libro][cap] && this.fullBibleData[libro][cap][vers]) {
+          return {
+            book: libro,
+            chapter: parseInt(cap),
+            verse: parseInt(vers),
+            text: this.fullBibleData[libro][cap][vers],
+            pretty: this.pretty(libro) + ' ' + cap + ':' + vers,
+            navigation: {
+              prev_verse: parseInt(vers) > 1 ? { verse: parseInt(vers) - 1 } : null,
+              next_verse: this.fullBibleData[libro][cap][parseInt(vers) + 1] ? { verse: parseInt(vers) + 1 } : null
+            }
+          };
+        }
+      }
+      
+      return null;
+    },
+    
+    // Descargar Biblia completa
+    async preloadBible() {
+      this.preloadStatus = 'loading';
+      this.preloadPercentage = 0;
+      this.showNotification('Iniciando descarga de la Biblia para uso offline...', 'info');
+      
+      try {
+        const progressInterval = setInterval(() => {
+          if (this.preloadPercentage < 90) {
+            this.preloadPercentage += Math.floor(Math.random() * 8) + 2;
+            if (this.preloadPercentage > 90) this.preloadPercentage = 90;
+          }
+        }, 250);
+
+        const res = await fetch('/biblia/api/exportar');
+        if (!res.ok) throw new Error('Error de red');
+        const data = await res.json();
+        
+        clearInterval(progressInterval);
+        this.preloadPercentage = 100;
+        
+        if ('caches' in window) {
+          const cache = await caches.open('biblia-api-cache');
+          const response = new Response(JSON.stringify(data), {
+            headers: { 'Content-Type': 'application/json' }
+          });
+          await cache.put('/biblia/api/exportar', response);
+        }
+        
+        this.fullBibleData = data;
+        this.preloadStatus = 'success';
+        this.showNotification('¡Biblia descargada! Ya está disponible 100% sin conexión.');
+      } catch (err) {
+        console.error(err);
+        this.preloadStatus = 'idle';
+        this.showNotification('Error al descargar la Biblia completa.', 'error');
+      }
     },
     
     // Cargar los versículos iniciales
     async cargarInicio() {
       try {
-        const res = await fetch('{{ route("biblia.api.start") }}');
-        const data = await res.json();
+        const data = await this.customFetch('{{ route("biblia.api.start") }}');
         this.startVerses = data.verses || [];
         this.startPretty = data.pretty || '';
       } catch (err) {
@@ -1715,7 +2036,6 @@ function biblia() {
           this.lineHeight = parsed.lineHeight || 'leading-relaxed';
           this.readingMode = parsed.readingMode || false;
           this.usePagination = parsed.usePagination || false;
-          
           this.applySettings();
         } catch (err) {
           console.error('Error al cargar configuración', err);
@@ -1735,51 +2055,42 @@ function biblia() {
       localStorage.setItem('biblia-settings', JSON.stringify(settings));
     },
     
-    // ----- Funciones de configuración corregidas -----
-    
-// Actualizar tamaño de fuente
-updateFontSize() {
-  document.documentElement.style.setProperty('--verse-font-size', `${this.fontSize}px`);
-  this.saveSettings();
-},
+    updateFontSize() {
+      document.documentElement.style.setProperty('--verse-font-size', `${this.fontSize}px`);
+      this.saveSettings();
+    },
 
-// Actualizar tipo de fuente
-updateFontFamily() {
-  // Mapear los valores de Tailwind a familias de fuentes reales
-  const fontMap = {
-    'font-sans': 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
-    'font-serif': 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
-    'font-mono': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
-  };
-  document.documentElement.style.setProperty('--verse-font-family', fontMap[this.fontFamily] || fontMap['font-sans']);
-  this.saveSettings();
-},
+    updateFontFamily() {
+      const fontMap = {
+        'font-sans': 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+        'font-serif': 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
+        'font-mono': 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace'
+      };
+      document.documentElement.style.setProperty('--verse-font-family', fontMap[this.fontFamily] || fontMap['font-sans']);
+      this.saveSettings();
+    },
 
-// Actualizar espaciado de línea
-updateLineHeight() {
-  // Mapear los valores de Tailwind a valores de line-height reales
-  const lineHeightMap = {
-    'leading-snug': '1.25',
-    'leading-normal': '1.5',
-    'leading-relaxed': '1.75'
-  };
-  document.documentElement.style.setProperty('--verse-line-height', lineHeightMap[this.lineHeight] || lineHeightMap['leading-normal']);
-  this.saveSettings();
-},
+    updateLineHeight() {
+      const lineHeightMap = {
+        'leading-snug': '1.25',
+        'leading-normal': '1.5',
+        'leading-relaxed': '1.75'
+      };
+      document.documentElement.style.setProperty('--verse-line-height', lineHeightMap[this.lineHeight] || lineHeightMap['leading-normal']);
+      this.saveSettings();
+    },
 
-// Aplicar configuración
-applySettings() {
-  this.updateFontSize();
-  this.updateFontFamily();
-  this.updateLineHeight();
-},
-    // Toggle modo de lectura
+    applySettings() {
+      this.updateFontSize();
+      this.updateFontFamily();
+      this.updateLineHeight();
+    },
+
     toggleReadingMode() {
       this.readingMode = !this.readingMode;
       this.saveSettings();
     },
     
-    // Toggle paginación
     togglePagination() {
       this.usePagination = !this.usePagination;
       if (this.usePagination && this.versiculos.length > 20) {
@@ -1788,7 +2099,6 @@ applySettings() {
       this.saveSettings();
     },
     
-    // Toggle modo inmersivo
     toggleImmersiveMode() {
       this.immersiveMode = !this.immersiveMode;
       if (this.immersiveMode) {
@@ -1796,7 +2106,6 @@ applySettings() {
       }
     },
     
-    // Seleccionar libro
     selectBook(slug) {
       this.libro = slug;
       this.showBookSelector = false;
@@ -1805,7 +2114,6 @@ applySettings() {
       });
     },
     
-    // Seleccionar capítulo
     selectChapter(chapter) {
       this.cap = chapter;
       this.showChapterSelector = false;
@@ -1814,30 +2122,53 @@ applySettings() {
 
     // ----- Hash tipo #Juan-3:16 -----
     parseHash() {
-      if (!location.hash) return;
+      if (!location.hash) {
+        this.exitFocus();
+        this.exitSingleVerseMode();
+        return;
+      }
       const h = decodeURIComponent(location.hash.slice(1));
       const m = h.match(/^(.+?)-(\d+)(?::(\d+))?$/);
       if (!m) return;
+      
       const nombre = m[1].toLowerCase().replaceAll(' ', '-');
       const cap = m[2];
       const ver = m[3] || null;
+      
       const book = this.libros.find(b => b.slug === nombre || b.name.toLowerCase() === m[1].toLowerCase());
       if (book) {
+        const needLoadBook = this.libro !== book.slug;
+        const needLoadCap = String(this.cap) !== String(cap);
+        
         this.libro = book.slug;
-        this.cargarCapitulos().then(() => {
+        
+        const proceed = () => {
           if (ver) {
-            // Si hay un versículo específico, mostrarlo en modo individual
-            this.showSingleVerse(this.libro, cap, ver);
+            if (this.singleVerseMode) {
+              this.showSingleVerse(this.libro, cap, ver);
+            } else {
+              this.enterFocusByNumber(ver);
+            }
           } else {
-            // Si no hay versículo, cargar el capítulo completo
-            this.cap = cap;
-            this.cargarCapitulo();
+            this.exitFocus();
+            this.exitSingleVerseMode();
           }
-        });
+        };
+        
+        if (needLoadBook) {
+          this.cargarCapitulos().then(() => {
+            this.cap = cap;
+            this.cargarCapitulo().then(proceed);
+          });
+        } else if (needLoadCap) {
+          this.cap = cap;
+          this.cargarCapitulo().then(proceed);
+        } else {
+          proceed();
+        }
       }
     },
 
-    // ----- Scroll utilidades -----
     scrollToVerse(v) {
       requestAnimationFrame(() => {
         const el = document.getElementById('v-' + v);
@@ -1851,14 +2182,10 @@ applySettings() {
       this.scrollToVerse(v.n);
     },
 
-    // ----- Carga de datos -----
     async cargarLibros() {
       try {
-        // Cargar libros organizados por testamento
-        const res = await fetch('{{ route("biblia.api.books.organized") }}');
-        const data = await res.json();
+        const data = await this.customFetch('{{ route("biblia.api.books.organized") }}');
         
-        // Organizar para el selector de libros
         this.testamentBooks = [
           {
             name: data.old_testament.name,
@@ -1870,7 +2197,6 @@ applySettings() {
           }
         ];
         
-        // Mantener lista plana para selectores
         this.libros = [
           ...data.old_testament.books,
           ...data.new_testament.books
@@ -1886,8 +2212,7 @@ applySettings() {
       this.versiculos = [];
       this.exitFocus();
       if (!this.libro) return;
-      const res = await fetch(`{{ url('/biblia/api') }}/${this.libro}`);
-      this.caps = await res.json();
+      this.caps = await this.customFetch(`{{ url('/biblia/api') }}/${this.libro}`);
     },
     
     async cargarCapitulo() {
@@ -1898,43 +2223,36 @@ applySettings() {
       if (this.usePagination) {
         await this.loadPaginatedChapter(1);
       } else {
-        const res = await fetch(`{{ url('/biblia/api') }}/${this.libro}/${this.cap}`);
-        const data = await res.json();
+        const data = await this.customFetch(`{{ url('/biblia/api') }}/${this.libro}/${this.cap}`);
         this.versiculos = data.verses ?? [];
         this.tituloCap  = data.pretty ?? '';
       }
       
-      // Actualiza hash legible: #Juan-3
       const libroObj = this.libros.find(b => b.slug === this.libro);
       const hash = (libroObj?.name || this.libro).replaceAll(' ', '-') + '-' + this.cap;
       history.replaceState({}, '', '#' + encodeURIComponent(hash));
     },
     
-    // Cargar capítulo con paginación
     async loadPaginatedChapter(page = 1) {
       if (!this.libro || !this.cap) return;
       
-      const res = await fetch(`{{ url('/biblia/api') }}/${this.libro}/${this.cap}/page/${page}`);
-      const data = await res.json();
+      const data = await this.customFetch(`{{ url('/biblia/api') }}/${this.libro}/${this.cap}/page/${page}`);
       
       this.versiculos = data.verses ?? [];
       this.tituloCap = data.pretty ?? '';
       this.pagination = data.pagination ?? this.pagination;
     },
     
-    // Ir a una página específica (capítulos)
     goToPage(page) {
       if (page === '...' || page === this.pagination.current_page) return;
       this.loadPaginatedChapter(page);
     },
     
-    // Ir a una página específica (resultados de búsqueda)
     goToSearchPage(page) {
       if (page === '...' || page === this.resultado.pagination.current_page) return;
       this.buscar(page);
     },
 
-    // ----- Buscador (con manejo de errores) -----
     async buscar(page = 1) {
       try {
         const q = this.q.trim();
@@ -1944,21 +2262,22 @@ applySettings() {
           return; 
         }
         
+        // Guardar en historial
+        this.recordSearch(q);
+        
         let url = `{{ route('biblia.api.search') }}?q=${encodeURIComponent(q)}`;
         if (page > 1) {
           url += `&page=${page}`;
         }
         
-        const res = await fetch(url, { headers: { 'Accept': 'application/json' }});
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        const data = await this.customFetch(url);
         
-        // Validar estructura
         this.resultado = {
           q: data.q ?? q,
           total: Array.isArray(data.results) ? data.results.length : (data.total ?? 0),
           results: Array.isArray(data.results) ? data.results : [],
           stats: data.stats ?? null,
+          exact_match: data.exact_match ?? null,
           pagination: data.pagination ?? {
             current_page: 1,
             total_pages: 1,
@@ -1974,7 +2293,7 @@ applySettings() {
         this.errorBusqueda = '';
       } catch (err) {
         console.error('Buscar error', err);
-        this.errorBusqueda = 'No se pudo buscar. Revisa la consola (F12) y las rutas.';
+        this.errorBusqueda = 'No se pudo realizar la búsqueda.';
         this.resultado = { q:this.q, total:0, results:[] };
       } finally {
         this.cargandoBusqueda = false;
@@ -1982,7 +2301,6 @@ applySettings() {
     },
 
     async abrir(r, focus=false) {
-      // Carga capítulo si es distinto y posiciona/enfoca
       const needLoadBook = this.libro !== r.book;
       const needLoadCap  = +this.cap !== +r.chapter;
       this.libro = r.book;
@@ -1999,23 +2317,33 @@ applySettings() {
       }
     },
 
-    // ====== Visor centrado y navegación ======
-    focusMode: false,
-    focusIndex: -1,
-
     enterFocus(index){
       if (index < 0 || index >= this.versiculos.length) return;
       this.focusIndex = index;
       this.focusMode = true;
+      
+      // Actualizar hash
+      const libroObj = this.libros.find(b => b.slug === this.libro);
+      const hash = `${(libroObj?.name || this.libro).replaceAll(' ', '-')}-${this.cap}:${this.versiculos[index].n}`;
+      location.hash = encodeURIComponent(hash);
     },
     enterFocusByNumber(n){
       const idx = this.versiculos.findIndex(v => +v.n === +n);
-      if (idx >= 0) this.enterFocus(idx);
+      if (idx >= 0) {
+        this.focusIndex = idx;
+        this.focusMode = true;
+      }
       this.scrollToVerse(n);
     },
     exitFocus(){
       this.focusMode = false;
       this.focusIndex = -1;
+      
+      if (this.libro && this.cap) {
+        const libroObj = this.libros.find(b => b.slug === this.libro);
+        const hash = `${(libroObj?.name || this.libro).replaceAll(' ', '-')}-${this.cap}`;
+        location.hash = encodeURIComponent(hash);
+      }
     },
 
     hasPrevLocal(){ return this.focusIndex > 0; },
@@ -2103,7 +2431,7 @@ applySettings() {
         const prevBook = this.libros[bidx - 1];
         this.libro = prevBook.slug;
         await this.cargarCapitulos();
-        this.cap = String(this.caps[this.caps.length - 1]); // último capítulo
+        this.cap = String(this.caps[this.caps.length - 1]);
         await this.cargarCapitulo();
         return true;
       }
@@ -2115,65 +2443,42 @@ applySettings() {
         const nextBook = this.libros[bidx + 1];
         this.libro = nextBook.slug;
         await this.cargarCapitulos();
-        this.cap = String(this.caps[0]); // primer capítulo
+        this.cap = String(this.caps[0]);
         await this.cargarCapitulo();
         return true;
       }
       return false;
     },
 
-    // ====== Funciones para el visor de versículo individual ======
-    
-    /**
-     * Muestra un solo versículo en una vista aislada.
-     * @param {string} libro - El slug del libro (ej: 'juan')
-     * @param {string|number} cap - El número del capítulo
-     * @param {string|number} vers - El número del versículo
-     */
     async showSingleVerse(libro, cap, vers) {
       this.loadingSingleVerse = true;
-      this.singleVerseMode = true; // Mostrar el contenedor inmediatamente
+      this.singleVerseMode = true; 
 
       try {
-        const response = await fetch(`/biblia/api/${libro}/${cap}/${vers}`);
-        if (!response.ok) {
-          throw new Error('Versículo no encontrado');
-        }
-        const data = await response.json();
+        const data = await this.customFetch(`/biblia/api/${libro}/${cap}/${vers}`);
         this.currentSingleVerse = data;
-        
-        // Actualizar el hash de la URL para que se pueda compartir
         const bookName = this.libros.find(b => b.slug === libro)?.name || libro;
         history.replaceState({}, '', `#${encodeURIComponent(bookName.replaceAll(' ', '-'))}-${cap}:${vers}`);
-
       } catch (error) {
         console.error('Error al cargar versículo:', error);
         this.showNotification('No se pudo cargar el versículo', 'error');
-        this.exitSingleVerseMode(); // Salir del modo si hay un error
+        this.exitSingleVerseMode();
       } finally {
         this.loadingSingleVerse = false;
       }
     },
 
-    /**
-     * Cierra la vista de versículo individual.
-     */
     exitSingleVerseMode() {
       this.singleVerseMode = false;
       this.currentSingleVerse = null;
-      // Revertir el hash al capítulo, o limpiarlo si no hay capítulo cargado
       if (this.libro && this.cap) {
         const bookName = this.libros.find(b => b.slug === this.libro)?.name || this.libro;
         history.replaceState({}, '', `#${encodeURIComponent(bookName.replaceAll(' ', '-'))}-${this.cap}`);
       } else {
-        history.replaceState({}, '', window.location.pathname); // Limpiar hash
+        history.replaceState({}, '', window.location.pathname);
       }
     },
 
-    /**
-     * Navega al versículo anterior o siguiente.
-     * @param {string} direction - 'prev' o 'next'
-     */
     navigateSingleVerse(direction) {
       if (!this.currentSingleVerse || !this.currentSingleVerse.navigation) return;
 
@@ -2193,7 +2498,7 @@ applySettings() {
           nextCap = nav.prev_book.last_chapter;
           nextVers = nav.prev_book.last_verse;
         }
-      } else { // direction === 'next'
+      } else {
         if (nav.next_verse) {
           nextVers = nav.next_verse.verse;
         } else if (nav.next_chapter) {
@@ -2211,7 +2516,178 @@ applySettings() {
       }
     },
 
-    // ----- Utilidades -----
+    // Subrayado de versículos
+    loadHighlights() {
+      const saved = localStorage.getItem('biblia-highlights');
+      if (saved) {
+        try {
+          this.highlights = JSON.parse(saved);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    },
+    setHighlight(libro, cap, vers, color) {
+      if (!libro || !cap || !vers) return;
+      const key = `${libro}-${cap}-${vers}`;
+      if (color) {
+        this.highlights[key] = color;
+      } else {
+        delete this.highlights[key];
+      }
+      this.highlights = { ...this.highlights };
+      localStorage.setItem('biblia-highlights', JSON.stringify(this.highlights));
+      
+      this.showNotification(color ? `Subrayado guardado` : `Subrayado eliminado`);
+    },
+    
+    // Formateador de versículos para subrayados
+    formatVerse(text, key) {
+      if (!text) return '';
+      
+      const customColor = this.highlights[key];
+      let isAutoBlue = false;
+      const blueKeywords = [
+        'etíope', 'etíopes', 'etiopía',
+        'cusita', 'cusitas', 'cuseo', 'cuseos',
+        'sabeos', 'sabá',
+        'tez brillante', 'elevada estatura y tez brillante'
+      ];
+      
+      if (!customColor) {
+        const textLower = this.removeAccents(text.toLowerCase());
+        for (const kw of blueKeywords) {
+          if (textLower.includes(this.removeAccents(kw.toLowerCase()))) {
+            isAutoBlue = true;
+            break;
+          }
+        }
+        if (key && (key.startsWith('isaias-18-2') || key.startsWith('isaias-18-7') || key.startsWith('cantares-1-5') || key.startsWith('cantares-1-6'))) {
+          isAutoBlue = true;
+        }
+      }
+      
+      if (customColor) {
+        return `<span class="hl-${customColor}">${text}</span>`;
+      } else if (isAutoBlue) {
+        let formattedText = text;
+        const blueKeywordsToHighlight = [
+          'etíope', 'etíopes', 'etiopía', 'etiopia', 'etiope', 'etiopes',
+          'cusita', 'cusitas', 'cuseo', 'cuseos', 'cus',
+          'sabeos', 'sabá', 'saba',
+          'morena', 'negra', 'negro',
+          'tez brillante'
+        ];
+        
+        for (const kw of blueKeywordsToHighlight) {
+          const pattern = this.getAccentInsensitivePattern(kw);
+          formattedText = formattedText.replace(pattern, '<mark class="bg-blue-300 dark:bg-blue-800 text-blue-900 dark:text-blue-100 px-1 rounded font-semibold">$0</mark>');
+        }
+        return `<span class="hl-blue">${formattedText}</span>`;
+      }
+      
+      return text;
+    },
+    
+    formatSearchVerse(highlightedText, key) {
+      if (!highlightedText) return '';
+      const customColor = this.highlights[key];
+      if (customColor) {
+        return `<span class="hl-${customColor}">${highlightedText}</span>`;
+      }
+      
+      let isAutoBlue = false;
+      const blueKeywords = [
+        'etíope', 'etíopes', 'etiopía',
+        'cusita', 'cusitas', 'cuseo', 'cuseos',
+        'sabeos', 'sabá',
+        'tez brillante', 'elevada estatura y tez brillante'
+      ];
+      
+      const textLower = this.removeAccents(highlightedText.toLowerCase());
+      for (const kw of blueKeywords) {
+        if (textLower.includes(this.removeAccents(kw.toLowerCase()))) {
+          isAutoBlue = true;
+          break;
+        }
+      }
+      
+      if (isAutoBlue) {
+        return `<span class="hl-blue">${highlightedText}</span>`;
+      }
+      
+      return highlightedText;
+    },
+    
+    removeAccents(str) {
+      const unwanted = {
+        'á':'a', 'é':'e', 'í':'i', 'ó':'o', 'ú':'u',
+        'à':'a', 'è':'e', 'ì':'i', 'ò':'o', 'ù':'u',
+        'ä':'a', 'ë':'e', 'ï':'i', 'ö':'o', 'ü':'u',
+        'Á':'a', 'É':'e', 'Í':'i', 'Ó':'o', 'Ú':'u',
+        'À':'a', 'È':'e', 'Í':'i', 'Ó':'o', 'Ú':'u',
+        'Ä':'a', 'Ë':'e', 'Ï':'i', 'Ö':'o', 'Ü':'u',
+        'ñ':'n', 'Ñ':'n'
+      };
+      return str.split('').map(char => unwanted[char] || char).join('');
+    },
+    
+    getAccentInsensitivePattern(term) {
+      const normalized = this.removeAccents(term.toLowerCase());
+      const escaped = normalized.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      
+      const map = {
+        'a': '[aáàäâ]',
+        'e': '[eéèëê]',
+        'i': '[iíìïî]',
+        'o': '[oóòöô]',
+        'u': '[uúùüû]',
+        'n': '[nñ]',
+      };
+      
+      let pattern = '';
+      for (let i = 0; i < escaped.length; i++) {
+        const char = escaped[i];
+        pattern += map[char] || char;
+      }
+      
+      return new RegExp('(?<![a-zA-ZáéíóúÁÉÍÓÚñÑüÜ])' + pattern + '(?![a-zA-ZáéíóúÁÉÍÓÚñÑüÜ])', 'gi');
+    },
+
+    // Estadísticas de palabras buscadas
+    loadSearchHistory() {
+      const saved = localStorage.getItem('biblia-search-history');
+      if (saved) {
+        try {
+          this.searchHistory = JSON.parse(saved);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    },
+    recordSearch(q) {
+      if (!q || q.trim().length < 2) return;
+      const termClean = q.trim().toLowerCase();
+      
+      let history = [...this.searchHistory];
+      const index = history.findIndex(item => item.term === termClean);
+      
+      if (index !== -1) {
+        history[index].count++;
+      } else {
+        history.push({ term: termClean, count: 1 });
+      }
+      
+      history.sort((a, b) => b.count - a.count);
+      this.searchHistory = history.slice(0, 10);
+      localStorage.setItem('biblia-search-history', JSON.stringify(this.searchHistory));
+    },
+    clearSearchHistory() {
+      this.searchHistory = [];
+      localStorage.removeItem('biblia-search-history');
+      this.showNotification('Historial de búsquedas limpiado');
+    },
+
     copiarRefActual() {
       if (!this.libro || !this.cap) return;
       const libroObj = this.libros.find(b => b.slug === this.libro);
@@ -2219,31 +2695,26 @@ applySettings() {
     },
     copiar(texto) {
       navigator.clipboard.writeText(texto).then(() => {
-        // Mostrar notificación en lugar de alerta
         this.showNotification('Copiado al portapapeles');
       });
     },
     
-    // Mostrar notificación
     showNotification(message, type = 'success') {
-      // Crear elemento de notificación
       const notification = document.createElement('div');
       notification.className = `notification ${type}`;
       notification.textContent = message;
-      
-      // Añadir al DOM
       document.body.appendChild(notification);
       
-      // Animación de entrada
       setTimeout(() => {
         notification.classList.add('show');
       }, 10);
       
-      // Eliminar después de 3 segundos
       setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
-          document.body.removeChild(notification);
+          if (notification.parentNode) {
+            document.body.removeChild(notification);
+          }
         }, 300);
       }, 3000);
     },
