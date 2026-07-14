@@ -173,35 +173,113 @@
         </div>
     </div>
 
+    {{-- Buscador y controles --}}
+    <form method="GET" action="{{ url()->current() }}" class="flex gap-2 mb-4">
+        <div class="relative flex-1">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ request('search') }}" 
+                placeholder="Buscar programas por nombre o director..." 
+                class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-10 py-2 text-sm text-slate-900 dark:text-white"
+            >
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-secondary">Buscar</button>
+        @if(request('search'))
+            <a href="{{ url()->current() }}" class="btn btn-ghost">Limpiar</a>
+        @endif
+    </form>
+
     {{-- Tarjeta de la tabla --}}
     <div class="card">
         <div class="card-body p-0">
             <div class="table-wrap">
-                {!! $dataTable->table() !!}
+                <table class="w-full">
+                    <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Programa</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Inicio</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Fin</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Estado</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-slate-900 dark:text-white">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                        @forelse ($schedules as $schedule)
+                            @php
+                                $daysSelected = \App\Models\Schedule::where('emission_key', $schedule->emission_key)->pluck('day')->toArray();
+                                $dayNames = [1 => 'Lu', 2 => 'Ma', 3 => 'Mi', 4 => 'Ju', 5 => 'Vi', 6 => 'Sa', 7 => 'Do'];
+                                $dayBadges = '';
+                                foreach ($daysSelected as $day) {
+                                    if (isset($dayNames[$day])) {
+                                        $dayBadges .= '<span class="inline-block px-1.5 py-0.5 text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded mr-1">' . $dayNames[$day] . '</span>';
+                                    }
+                                }
+                            @endphp
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-4 py-3 text-sm">
+                                    <div class="flex items-center">
+                                        @if ($schedule->image)
+                                            <img src="{{ asset('images/schedule/' . $schedule->image) }}" alt="{{ $schedule->name }}" class="w-8 h-8 rounded-full object-cover mr-2">
+                                        @else
+                                            <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-2">
+                                                <i class="fas fa-calendar-alt text-slate-500 dark:text-slate-400 text-xs"></i>
+                                            </div>
+                                        @endif
+                                        <div class="min-w-0 flex-1">
+                                            <div class="font-medium text-slate-900 dark:text-white text-sm truncate">{{ $schedule->name }}</div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400 truncate">{{ $schedule->host }}</div>
+                                            <div class="flex flex-wrap gap-0.5 mt-1">{!! $dayBadges !!}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                                    {{ is_object($schedule->start) ? $schedule->start->format('H:i') : substr($schedule->start, 0, 5) }}
+                                </td>
+                                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                                    {{ is_object($schedule->end) ? $schedule->end->format('H:i') : substr($schedule->end, 0, 5) }}
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    @if ($schedule->deleted_at)
+                                        <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-trash-alt mr-1"></i> Inactivo</span>
+                                    @else
+                                        <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fas fa-check-circle mr-1"></i> Activo</span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-sm text-center">
+                                    @include('admin.partials.actions', [
+                                        'id'         => $schedule->id,
+                                        'view'       => url("view-schedule", $schedule->id),
+                                        'activate'   => url("activate-schedule", $schedule->id),
+                                        'softdelete' => url("delete-schedule", $schedule->id),
+                                        'realdelete' => url("realdelete-schedule", $schedule->id),
+                                        'formAction' => url("update-schedule", $schedule->id),
+                                        'tableM'     => $schedule,
+                                        'sectionType' => 'schedule',
+                                        'sectionTitle' => 'Programa',
+                                        'daysSelected' => $daysSelected,
+                                    ])
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
+                                    <i class="fas fa-calendar-times text-5xl mb-4 opacity-50 block"></i>
+                                    <p class="font-medium">No se encontraron programas</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-@endsection
 
-@push('scripts')
-    {!! $dataTable->scripts() !!}
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Aplicar estilos a los controles de DataTables después de que se cargue
-            setTimeout(function() {
-                const lengthSelect = document.querySelector('#schedule-table_length select');
-                const filterInput = document.querySelector('#schedule-table_filter input');
-                
-                if (lengthSelect) {
-                    lengthSelect.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-sm';
-                }
-                
-                if (filterInput) {
-                    filterInput.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm';
-                    filterInput.placeholder = 'Buscar...';
-                }
-            }, 100);
-        });
-    </script>
-@endpush
+    @if ($schedules->hasPages())
+        <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+            {{ $schedules->links() }}
+        </div>
+    @endif

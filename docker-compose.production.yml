@@ -37,6 +37,7 @@ services:
   laravel_app:
     image: webdevops/php-apache:8.4
     container_name: laravel_app
+    working_dir: /app
     restart: unless-stopped
     depends_on:
       laravel_db:

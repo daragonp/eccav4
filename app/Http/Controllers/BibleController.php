@@ -13,9 +13,9 @@ class BibleController extends Controller
     {
         return Cache::rememberForever('biblia_json', function () {
             // Ajusta la ruta si lo ubicas en otro sitio
-            $path = storage_path('app/biblia.json');
+            $path = storage_path('app/data/biblia.json');
             if (!is_readable($path)) {
-                abort(500, 'No se encontró biblia.json en storage/app');
+                abort(500, 'No se encontró biblia.json en storage/app/data');
             }
             $raw = json_decode(file_get_contents($path), true) ?: [];
 
@@ -254,12 +254,13 @@ public function apiStart()
         
         // ========== NUEVA LÓGICA: Búsqueda exacta de referencia bíblica ==========
         if ($q !== '') {
-            // Regex para detectar referencias tipo: "Juan 3:16", "1 Juan 5:7", "Genesis 1", "1 Corintios 13"
-            if (preg_match('/^(?:(\d+)\s+)?([\p{L}\s\-\.]+?)\s+(\d+)(?:\s*:\s*(\d+))?$/ui', $q, $refMatches)) {
+            // Regex para detectar referencias tipo: "Juan 3:16", "Juan 3:16-18", "1 Juan 5:7", "Genesis 1", "1 Corintios 13"
+            if (preg_match('/^(?:(\d+)\s+)?([\p{L}\s\-\.]+?)\s+(\d+)(?:\s*:\s*(\d+)(?:\s*-\s*(\d+))?)?$/ui', $q, $refMatches)) {
                 $numPrefix = !empty($refMatches[1]) ? trim($refMatches[1]) : '';
                 $bookName = !empty($refMatches[2]) ? trim($refMatches[2]) : '';
                 $chapter = !empty($refMatches[3]) ? trim($refMatches[3]) : '';
                 $verse = !empty($refMatches[4]) ? trim($refMatches[4]) : null;
+                $verseEnd = !empty($refMatches[5]) ? trim($refMatches[5]) : null;
                 
                 $fullBookName = $numPrefix ? "$numPrefix $bookName" : $bookName;
                 $book = $this->findBookByName($fullBookName);
@@ -270,14 +271,33 @@ public function apiStart()
                     
                     if (isset($data[$bookSlug][$chapter])) {
                         if ($verse !== null) {
-                            if (isset($data[$bookSlug][$chapter][$verse])) {
-                                $exactMatch = [
-                                    'book'    => $bookSlug,
-                                    'chapter' => (int)$chapter,
-                                    'verse'   => (int)$verse,
-                                    'pretty'  => $book['name'] . " $chapter:$verse",
-                                    'text'    => $data[$bookSlug][$chapter][$verse]
-                                ];
+                            if ($verseEnd !== null) {
+                                $versesText = [];
+                                for ($v = (int)$verse; $v <= (int)$verseEnd; $v++) {
+                                    if (isset($data[$bookSlug][$chapter][$v])) {
+                                        $versesText[] = "<strong>$v</strong> " . $data[$bookSlug][$chapter][$v];
+                                    }
+                                }
+                                if (!empty($versesText)) {
+                                    $exactMatch = [
+                                        'book'      => $bookSlug,
+                                        'chapter'   => (int)$chapter,
+                                        'verse'     => (int)$verse,
+                                        'verse_end' => (int)$verseEnd,
+                                        'pretty'    => $book['name'] . " $chapter:$verse-$verseEnd",
+                                        'text'      => implode(' ', $versesText)
+                                    ];
+                                }
+                            } else {
+                                if (isset($data[$bookSlug][$chapter][$verse])) {
+                                    $exactMatch = [
+                                        'book'    => $bookSlug,
+                                        'chapter' => (int)$chapter,
+                                        'verse'   => (int)$verse,
+                                        'pretty'  => $book['name'] . " $chapter:$verse",
+                                        'text'    => $data[$bookSlug][$chapter][$verse]
+                                    ];
+                                }
                             }
                         } else {
                             // Si solo se especificó libro y capítulo

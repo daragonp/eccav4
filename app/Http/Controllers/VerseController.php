@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Verse;
 use Illuminate\Http\Request;
-use App\DataTables\VerseDataTable;
 
 class VerseController extends Controller
 {
@@ -53,9 +52,27 @@ class VerseController extends Controller
         return view('admin.quote.view-quote', compact('quote'));
     }
 
-    public function show(VerseDataTable $dataTable)
+    public function show(Request $request)
     {
-        return $dataTable->render('admin.quote.show-quote');
+        $query = Verse::query();
+
+        $user = auth()->user();
+        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
+
+        if ($isSuperAdmin) {
+            $query->withTrashed();
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('date', 'like', "%{$search}%")
+                  ->orWhere('image', 'like', "%{$search}%");
+            });
+        }
+
+        $verses = $query->orderBy('date', 'desc')->paginate(10)->withQueryString();
+
+        return view('admin.quote.show-quote', compact('verses'));
     }
 
     public function edit($id, Request $request)

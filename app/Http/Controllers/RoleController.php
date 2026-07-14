@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Role;
 use Illuminate\Http\Request;
-use App\DataTables\RoleDataTable;
 use App\Http\Controllers\Controller;
 
 class RoleController extends Controller
@@ -64,15 +63,25 @@ class RoleController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Role  $role
-     * @return \Illuminate\Http\Response
      */
-    public function show(RoleDataTable $role)
+    public function show(Request $request)
     {
-        //
-        return $role->render('admin.role.show-role');
+        $query = Role::query();
 
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Cargar la relación con usuarios si existe para el conteo
+        try {
+            $query->withCount('users');
+        } catch (\Exception $e) {
+            // Si no existe, continuar
+        }
+
+        $roles = $query->orderBy('id', 'asc')->paginate(10)->withQueryString();
+
+        return view('admin.role.show-role', compact('roles'));
     }
 
 

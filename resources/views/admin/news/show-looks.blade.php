@@ -68,36 +68,112 @@
     </div>
   </div>
 
+  {{-- Buscador --}}
+  <form method="GET" action="{{ url()->current() }}" class="flex gap-2 mb-4">
+    <div class="relative flex-1">
+      <input 
+        type="text" 
+        name="search" 
+        value="{{ request('search') }}" 
+        placeholder="Buscar temas de opinión por título o autor..." 
+        class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-10 py-2 text-sm text-slate-900 dark:text-white"
+      >
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-secondary">Buscar</button>
+    @if(request('search'))
+      <a href="{{ url()->current() }}" class="btn btn-ghost">Limpiar</a>
+    @endif
+  </form>
+
   {{-- Tarjeta de la tabla --}}
   <div class="card">
     <div class="card-body p-0">
       <div class="table-wrap">
-        {!! $dataTable->table(['class' => 'w-full'], true) !!}
+        <table class="w-full">
+          <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+            <tr>
+              <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Título</th>
+              <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Autor</th>
+              <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Estado</th>
+              <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Documento</th>
+              <th class="px-4 py-3 text-center text-sm font-semibold text-slate-900 dark:text-white">Imagen</th>
+              <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Audio</th>
+              <th class="px-4 py-3 text-center text-sm font-semibold text-slate-900 dark:text-white">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+            @forelse ($news as $item)
+              <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $item->title }}</td>
+                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $item->autor ?? '-' }}</td>
+                <td class="px-4 py-3 text-sm">
+                  @if ($item->deleted_at)
+                    <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-trash-alt mr-1"></i> Inactivo</span>
+                  @else
+                    <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fas fa-check-circle mr-1"></i> Publicado</span>
+                  @endif
+                </td>
+                <td class="px-4 py-3 text-sm">
+                  @if ($item->pdfdoc)
+                    <a href="{{ asset('documents/news/' . $item->pdfdoc) }}" target="_blank" class="btn btn-sm btn-ghost text-red-600">
+                      <i class="fas fa-file-pdf me-1"></i> Ver PDF
+                    </a>
+                  @else
+                    <span class="text-slate-400"><i class="fas fa-file-pdf"></i> Sin PDF</span>
+                  @endif
+                </td>
+                <td class="px-4 py-3 text-sm text-center">
+                  @if ($item->image)
+                    <a href="{{ asset('images/news/' . $item->image) }}" target="_blank" class="inline-flex">
+                      <img src="{{ asset('images/news/' . $item->image) }}" alt="{{ $item->title }}" class="h-10 w-10 object-cover rounded-md ring-1 ring-slate-200 dark:ring-slate-800">
+                    </a>
+                  @else
+                    <span class="text-slate-400"><i class="fas fa-image-slash"></i></span>
+                  @endif
+                </td>
+                <td class="px-4 py-3 text-sm">
+                  @if ($item->audio)
+                    <audio controls class="w-40 h-8">
+                      <source src="{{ asset('audio/news/' . $item->audio) }}">
+                    </audio>
+                  @else
+                    <span class="text-slate-400"><i class="fas fa-volume-mute"></i></span>
+                  @endif
+                </td>
+                <td class="px-4 py-3 text-sm text-center">
+                  @include('admin.partials.actions', [
+                      'id'           => $item->id,
+                      'view'         => url("view-news", $item->id),
+                      'activate'     => url("activate-news", $item->id),
+                      'softdelete'   => url("delete-news", $item->id),
+                      'realdelete'   => url("realdelete-news", $item->id),
+                      'formAction'   => url("update-news", $item->id),
+                      'tableM'       => $item,
+                      'sectionType'  => 'news',
+                      'sectionTitle' => 'Mirada afro',
+                  ])
+                </td>
+              </tr>
+            @empty
+              <tr>
+                <td colspan="7" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
+                  <i class="fas fa-comment-dots text-5xl mb-4 opacity-50 block"></i>
+                  <p class="font-medium">No se encontraron temas de opinión</p>
+                </td>
+              </tr>
+            @endforelse
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
-@endsection
 
-@push('scripts')
-  {{-- Carga los scripts del DataTable generado por Yajra --}}
-  {!! $dataTable->scripts() !!}
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Aplicar estilos a los controles de DataTables después de que se cargue
-      setTimeout(function() {
-        const lengthSelect = document.querySelector('#news-table_length select');
-        const filterInput = document.querySelector('#news-table_filter input');
-        
-        if (lengthSelect) {
-          lengthSelect.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-sm';
-        }
-        
-        if (filterInput) {
-          filterInput.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm';
-          filterInput.placeholder = 'Buscar...';
-        }
-      }, 100);
-    });
-  </script>
-@endpush
+  @if ($news->hasPages())
+    <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+      {{ $news->links() }}
+    </div>
+  @endif
+@endsection

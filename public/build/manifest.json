@@ -1,8 +1,4 @@
 {
-  "_jquery-CeL_IsWr.js": {
-    "file": "assets/jquery-CeL_IsWr.js",
-    "name": "jquery"
-  },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2": {
     "file": "assets/fa-brands-400-BP5tdqmh.woff2",
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.woff2"
@@ -29,7 +25,7 @@
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-CSZDLYiZ.css",
+    "file": "assets/dashboard-DIjdVfQC.css",
     "name": "dashboard",
     "names": [
       "dashboard.css"
@@ -62,7 +58,7 @@
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-CdX60QLD.css",
+    "file": "assets/tw-BV00Ozgo.css",
     "name": "tw",
     "names": [
       "tw.css"
@@ -71,27 +67,23 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-CzdQEAep.js",
+    "file": "assets/app-DNN3ps2S.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_jquery-CeL_IsWr.js",
       "resources/js/privacy-notice.js",
       "resources/js/privacy-notice.js"
     ]
   },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-va6S5_Ue.js",
+    "file": "assets/dashboard-BASGaifi.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
-    "isEntry": true,
-    "imports": [
-      "_jquery-CeL_IsWr.js"
-    ]
+    "isEntry": true
   },
   "resources/js/privacy-notice.js": {
-    "file": "assets/privacy-notice-CpBh3iAI.js",
+    "file": "assets/privacy-notice-Bk7T8dx6.js",
     "name": "privacy-notice",
     "src": "resources/js/privacy-notice.js",
     "isEntry": true

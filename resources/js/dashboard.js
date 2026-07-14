@@ -1,14 +1,4 @@
-import jQuery from 'jquery'
-import DataTable from 'datatables.net'
-import 'datatables.net-dt'
-import 'datatables.net-responsive'
-import 'datatables.net-responsive-dt'
 
-window.jQuery = jQuery
-window.$ = jQuery
-window.jQuery.fn.DataTable = DataTable
-
-DataTable.$.fn.dataTable = DataTable
 
 function applyTheme(theme) {
     const root = document.documentElement;
@@ -125,22 +115,6 @@ function bindUserMenuToggle() {
     userMenuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         userMenu.classList.toggle('hidden');
-    });
-}
-
-function initDataTables() {
-    if (!window.jQuery || typeof window.jQuery.fn?.DataTable === 'undefined') return;
-
-    const tables = document.querySelectorAll('.datatable');
-    tables.forEach((table) => {
-        if (window.jQuery.fn.DataTable.isDataTable(table)) return;
-
-        window.jQuery(table).DataTable({
-            responsive: true,
-            language: {
-                url: '/js/datatables-es.json',
-            },
-        });
     });
 }
 
@@ -312,7 +286,6 @@ function initDashboard() {
     bindThemeToggle();
     bindUserMenuToggle();
     bindDelegatedEvents();
-    initDataTables();
     scrollActiveMenuItemIntoView();
 }
 

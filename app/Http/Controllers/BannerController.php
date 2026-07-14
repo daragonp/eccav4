@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\DataTables\BannerDataTable;
 use App\Models\Banner;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -10,19 +9,34 @@ use Illuminate\Http\Request;
 class BannerController extends Controller
 {
     /**
-     * Muestra la lista de banners
+     * Muestra la lista de banners con tablas nativas
      */
-    public function index(BannerDataTable $dataTable)
+    public function index(Request $request)
     {
-        return $dataTable->render('admin.slider.show-slider');
+        $query = Banner::query();
+
+        $user = auth()->user();
+        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
+
+        if (!$isSuperAdmin) {
+            $query->where('active', true);
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where('id', $search);
+        }
+
+        $sliders = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
+        return view('admin.slider.show-slider', compact('sliders'));
     }
 
     /**
      * Alias del método index para compatibilidad con rutas existentes
      */
-    public function show(BannerDataTable $dataTable)
+    public function show(Request $request)
     {
-        return $this->index($dataTable);
+        return $this->index($request);
     }
 
     /**

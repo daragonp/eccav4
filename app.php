@@ -164,7 +164,6 @@ return [
         Stevebauman\Location\LocationServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
         Davcpas1234\LaravelPdfViewer\LaravelPdfViewerServiceProvider::class,
-        \Yajra\DataTables\DataTablesServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -235,7 +234,6 @@ return [
         'Helper' => App\Helper\Helper::class,
         'Location' => 'Stevebauman\Location\Facades\Location',
         'PDF' => Barryvdh\DomPDF\Facade::class,
-        'DataTables' => \Yajra\DataTables\Facades\DataTables::class,
     ],
 
 ];

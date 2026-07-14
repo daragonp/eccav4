@@ -1219,8 +1219,20 @@
               <span x-text="item.term"></span>
               <span class="badge bg-brand-dark dark:bg-brand-light text-white text-[9px] px-1.5 rounded-full" x-text="item.count"></span>
             </button>
-          </template>
         </div>
+      </div>
+      
+      <!-- Bloque de anuncios Adsense -->
+      <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-center">
+        <ins class="adsbygoogle"
+             style="display:block; width:100%; min-height:90px;"
+             data-ad-format="fluid"
+             data-ad-layout-key="-fb+5w+4e-db+86"
+             data-ad-client="ca-pub-2633231257763494"
+             data-ad-slot="9876543210"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
       </div>
     </div>
 
@@ -1645,6 +1657,33 @@
       </select>
     </div>
     
+    <!-- Leyenda de colores de subrayado -->
+    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
+      <h4 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Significado de colores</h4>
+      <div class="space-y-3">
+        <div class="flex items-center gap-3">
+          <div class="w-3.5 h-3.5 rounded-full bg-yellow-400 flex-shrink-0"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Cuando Dios habla</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-3.5 h-3.5 rounded-full bg-green-400 flex-shrink-0"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Promesa</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-3.5 h-3.5 rounded-full bg-blue-400 flex-shrink-0"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Relacionado al pueblo negro (tez brillante)</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-3.5 h-3.5 rounded-full bg-red-400 flex-shrink-0"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Mandato</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-3.5 h-3.5 rounded-full bg-orange-400 flex-shrink-0"></div>
+          <span class="text-xs text-gray-600 dark:text-gray-300">Se refiere al Mesías</span>
+        </div>
+      </div>
+    </div>
+    
     {{-- Copyright en panel de configuración --}}
     <div class="copyright-notice mt-4">
       <span class="bible-version">Biblia Reina-Valera 1960</span> - 
@@ -1971,6 +2010,252 @@ function biblia() {
           };
         }
       }
+      }
+      
+      // 5. Búsqueda offline: /biblia/api/buscar?q=...
+      if (decodedUrl.includes('/api/buscar')) {
+        const searchParams = new URL(url, window.location.origin).searchParams;
+        const q = (searchParams.get('q') || '').trim();
+        const page = parseInt(searchParams.get('page') || '1');
+        const perPage = 10;
+        
+        let exactMatch = null;
+        
+        // Regex de coincidencia de referencia exacta tipo Juan 3:16 o Juan 3:16-18
+        const refMatch = q.match(/^(?:(\d+)\s+)?([a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s\-\.]+?)\s+(\d+)(?:\s*:\s*(\d+)(?:\s*-\s*(\d+))?)?$/i);
+        if (refMatch) {
+          const numPrefix = refMatch[1] ? refMatch[1].trim() : '';
+          const bookNamePart = refMatch[2] ? refMatch[2].trim() : '';
+          const chapter = refMatch[3] ? refMatch[3].trim() : '';
+          const verse = refMatch[4] ? refMatch[4].trim() : null;
+          const verseEnd = refMatch[5] ? refMatch[5].trim() : null;
+          
+          const fullBookName = numPrefix ? `${numPrefix} ${bookNamePart}` : bookNamePart;
+          
+          const nameClean = this.removeAccents(fullBookName.toLowerCase().replace(/[^a-z0-9]/g, ''));
+          let book = this.libros.find(b => {
+            const bName = this.removeAccents(b.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+            const bSlug = this.removeAccents(b.slug.toLowerCase().replace(/[^a-z0-9]/g, ''));
+            return bName === nameClean || bSlug === nameClean;
+          });
+          
+          if (!book) {
+            book = this.libros.find(b => {
+              const bName = this.removeAccents(b.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+              return bName.startsWith(nameClean);
+            });
+          }
+          
+          if (book && this.fullBibleData[book.slug] && this.fullBibleData[book.slug][chapter]) {
+            const bookSlug = book.slug;
+            if (verse !== null) {
+              if (verseEnd !== null) {
+                const versesText = [];
+                for (let v = parseInt(verse); v <= parseInt(verseEnd); v++) {
+                  if (this.fullBibleData[bookSlug][chapter][v]) {
+                    versesText.push(`<strong>${v}</strong> ${this.fullBibleData[bookSlug][chapter][v]}`);
+                  }
+                }
+                if (versesText.length > 0) {
+                  exactMatch = {
+                    book: bookSlug,
+                    chapter: parseInt(chapter),
+                    verse: parseInt(verse),
+                    verse_end: parseInt(verseEnd),
+                    pretty: `${book.name} ${chapter}:${verse}-${verseEnd}`,
+                    text: versesText.join(' ')
+                  };
+                }
+              } else {
+                if (this.fullBibleData[bookSlug][chapter][verse]) {
+                  exactMatch = {
+                    book: bookSlug,
+                    chapter: parseInt(chapter),
+                    verse: parseInt(verse),
+                    pretty: `${book.name} ${chapter}:${verse}`,
+                    text: this.fullBibleData[bookSlug][chapter][verse]
+                  };
+                }
+              }
+            } else {
+              exactMatch = {
+                book: bookSlug,
+                chapter: parseInt(chapter),
+                verse: null,
+                pretty: `${book.name} ${chapter}`,
+                text: "Capítulo completo. Haz clic para leer."
+              };
+            }
+          }
+        }
+        
+        if (q === '' || q.length < 2) {
+          return {
+            q, total: 0, results: [], stats: null, exact_match: exactMatch,
+            pagination: { current_page: 1, total_pages: 0, total_results: 0, per_page: perPage, has_prev: false, has_next: false, prev_page: null, next_page: null }
+          };
+        }
+        
+        const termsMatches = q.match(/"([^"]+)"|'([^']+)'|(\S+)/g) || [];
+        const terms = [];
+        for (const m of termsMatches) {
+          let term = m;
+          if (term.startsWith('"') && term.endsWith('"')) {
+            term = term.slice(1, -1);
+          } else if (term.startsWith("'") && term.endsWith("'")) {
+            term = term.slice(1, -1);
+          }
+          term = term.trim().toLowerCase();
+          if (term !== '') {
+            terms.push(term);
+          }
+        }
+        
+        const stopWords = [
+          'y', 'o', 'de', 'la', 'el', 'en', 'que', 'los', 'las', 'un', 'una',
+          'es', 'al', 'del', 'se', 'por', 'con', 'para', 'como', 'no', 'su',
+          'sus', 'le', 'lo', 'me', 'te', 'si', 'más', 'ya', 'fue', 'son', 'ser'
+        ];
+        
+        const filteredTerms = [];
+        for (const term of terms) {
+          if (term.includes(' ')) {
+            filteredTerms.push(term);
+          } else {
+            if (term.length >= 2 && !stopWords.includes(term) && !term.match(/^\d+$/)) {
+              filteredTerms.push(term);
+            }
+          }
+        }
+        
+        if (filteredTerms.length === 0) {
+          return {
+            q, total: 0, results: [], stats: null, exact_match: exactMatch,
+            pagination: { current_page: 1, total_pages: 0, total_results: 0, per_page: perPage, has_prev: false, has_next: false, prev_page: null, next_page: null }
+          };
+        }
+        
+        const allResults = [];
+        const stats = {
+          total_results: 0,
+          books_count: 0,
+          old_testament: 0,
+          new_testament: 0
+        };
+        const foundBooks = new Set();
+        
+        const oldTestamentSlugs = [
+          'genesis', 'exodo', 'levitico', 'numeros', 'deuteronomio', 'josue', 'jueces', 'rut',
+          '1-samuel', '2-samuel', '1-reyes', '2-reyes', '1-cronicas', '2-cronicas', 'esdras',
+          'nehemias', 'ester', 'job', 'salmos', 'proverbios', 'eclesiastes', 'cantares',
+          'isaias', 'jeremias', 'lamentaciones', 'ezequiel', 'daniel', 'oseas', 'joel',
+          'amos', 'abdias', 'jonas', 'miqueas', 'nahum', 'habacuc', 'sofonias', 'hageo',
+          'zacarias', 'malaquias'
+        ];
+        
+        const normalizedTerms = filteredTerms.map(t => this.removeAccents(t));
+        const patterns = filteredTerms.map(t => this.getAccentInsensitivePattern(t));
+        
+        for (const bookSlug in this.fullBibleData) {
+          const bookObj = this.libros.find(b => b.slug === bookSlug);
+          const bookName = bookObj ? bookObj.name : bookSlug;
+          const isOld = oldTestamentSlugs.includes(bookSlug);
+          
+          for (const cap in this.fullBibleData[bookSlug]) {
+            for (const verse in this.fullBibleData[bookSlug][cap]) {
+              const text = this.fullBibleData[bookSlug][cap][verse];
+              const textLowerNorm = this.removeAccents(text.toLowerCase());
+              
+              let matchCount = 0;
+              for (let i = 0; i < normalizedTerms.length; i++) {
+                if (textLowerNorm.includes(normalizedTerms[i])) {
+                  patterns[i].lastIndex = 0;
+                  if (patterns[i].test(text)) {
+                    matchCount++;
+                  } else {
+                    break;
+                  }
+                } else {
+                  break;
+                }
+              }
+              
+              if (matchCount === filteredTerms.length) {
+                let highlighted = text;
+                for (const pattern of patterns) {
+                  pattern.lastIndex = 0;
+                  highlighted = highlighted.replace(pattern, '<mark>$&</mark>');
+                }
+                
+                const firstTerm = filteredTerms[0];
+                const pos = textLowerNorm.indexOf(this.removeAccents(firstTerm));
+                const start = Math.max(0, pos - 40);
+                const len = 80 + firstTerm.length;
+                let snippet = text.substring(start, start + len);
+                if (start > 0) snippet = '…' + snippet;
+                if (text.length > start + len) snippet = snippet + '…';
+                
+                const testament = isOld ? 'old' : 'new';
+                
+                allResults.push({
+                  book: bookSlug,
+                  chapter: parseInt(cap),
+                  verse: parseInt(verse),
+                  ref: `${bookName} ${cap}:${verse}`,
+                  text: text,
+                  highlighted: highlighted,
+                  snippet: snippet,
+                  testament: testament
+                });
+                
+                stats.total_results++;
+                if (!foundBooks.has(bookSlug)) {
+                  foundBooks.add(bookSlug);
+                  stats.books_count++;
+                  if (testament === 'old') {
+                    stats.old_testament++;
+                  } else {
+                    stats.new_testament++;
+                  }
+                }
+              }
+            }
+          }
+        }
+        
+        const bookSlugOrder = this.libros.map(b => b.slug);
+        allResults.sort((a, b) => {
+          const aIdx = bookSlugOrder.indexOf(a.book);
+          const bIdx = bookSlugOrder.indexOf(b.book);
+          if (aIdx !== bIdx) return aIdx - bIdx;
+          if (a.chapter !== b.chapter) return a.chapter - b.chapter;
+          return a.verse - b.verse;
+        });
+        
+        const totalResults = allResults.length;
+        const totalPages = Math.max(1, Math.ceil(totalResults / perPage));
+        const currentPage = Math.max(1, Math.min(page, totalPages));
+        const offset = (currentPage - 1) * perPage;
+        const resultsSlice = allResults.slice(offset, offset + perPage);
+        
+        return {
+          q: q,
+          total: totalResults,
+          results: resultsSlice,
+          stats: stats,
+          exact_match: exactMatch,
+          pagination: {
+            current_page: currentPage,
+            total_pages: totalPages,
+            total_results: totalResults,
+            per_page: perPage,
+            has_prev: currentPage > 1,
+            has_next: currentPage < totalPages,
+            prev_page: currentPage > 1 ? currentPage - 1 : null,
+            next_page: currentPage < totalPages ? currentPage + 1 : null
+          }
+        };
+      }
       
       return null;
     },
@@ -2274,7 +2559,7 @@ function biblia() {
         
         this.resultado = {
           q: data.q ?? q,
-          total: Array.isArray(data.results) ? data.results.length : (data.total ?? 0),
+          total: data.total ?? (Array.isArray(data.results) ? data.results.length : 0),
           results: Array.isArray(data.results) ? data.results : [],
           stats: data.stats ?? null,
           exact_match: data.exact_match ?? null,
@@ -2322,10 +2607,10 @@ function biblia() {
       this.focusIndex = index;
       this.focusMode = true;
       
-      // Actualizar hash
+      // Actualizar hash sin empujar una nueva entrada de historial
       const libroObj = this.libros.find(b => b.slug === this.libro);
       const hash = `${(libroObj?.name || this.libro).replaceAll(' ', '-')}-${this.cap}:${this.versiculos[index].n}`;
-      location.hash = encodeURIComponent(hash);
+      history.replaceState({}, '', `#${encodeURIComponent(hash)}`);
     },
     enterFocusByNumber(n){
       const idx = this.versiculos.findIndex(v => +v.n === +n);
@@ -2342,7 +2627,9 @@ function biblia() {
       if (this.libro && this.cap) {
         const libroObj = this.libros.find(b => b.slug === this.libro);
         const hash = `${(libroObj?.name || this.libro).replaceAll(' ', '-')}-${this.cap}`;
-        location.hash = encodeURIComponent(hash);
+        history.replaceState({}, '', `#${encodeURIComponent(hash)}`);
+      } else {
+        history.replaceState({}, '', window.location.pathname);
       }
     },
 
@@ -2550,16 +2837,25 @@ function biblia() {
       const blueKeywords = [
         'etíope', 'etíopes', 'etiopía',
         'cusita', 'cusitas', 'cuseo', 'cuseos',
-        'sabeos', 'sabá',
+        'sabeos', 'sabá', 'seba', 'cus',
+        'ebed-melec', 'candace', 'morena', 'negra', 'negro',
         'tez brillante', 'elevada estatura y tez brillante'
       ];
       
       if (!customColor) {
         const textLower = this.removeAccents(text.toLowerCase());
         for (const kw of blueKeywords) {
-          if (textLower.includes(this.removeAccents(kw.toLowerCase()))) {
-            isAutoBlue = true;
-            break;
+          if (kw === 'cus' || kw === 'seba' || kw === 'negro' || kw === 'negra') {
+            const pattern = this.getAccentInsensitivePattern(kw);
+            if (pattern.test(text)) {
+              isAutoBlue = true;
+              break;
+            }
+          } else {
+            if (textLower.includes(this.removeAccents(kw.toLowerCase()))) {
+              isAutoBlue = true;
+              break;
+            }
           }
         }
         if (key && (key.startsWith('isaias-18-2') || key.startsWith('isaias-18-7') || key.startsWith('cantares-1-5') || key.startsWith('cantares-1-6'))) {
@@ -2574,9 +2870,9 @@ function biblia() {
         const blueKeywordsToHighlight = [
           'etíope', 'etíopes', 'etiopía', 'etiopia', 'etiope', 'etiopes',
           'cusita', 'cusitas', 'cuseo', 'cuseos', 'cus',
-          'sabeos', 'sabá', 'saba',
+          'sabeos', 'sabá', 'saba', 'seba',
           'morena', 'negra', 'negro',
-          'tez brillante'
+          'tez brillante', 'ebed-melec', 'candace'
         ];
         
         for (const kw of blueKeywordsToHighlight) {
@@ -2600,20 +2896,50 @@ function biblia() {
       const blueKeywords = [
         'etíope', 'etíopes', 'etiopía',
         'cusita', 'cusitas', 'cuseo', 'cuseos',
-        'sabeos', 'sabá',
+        'sabeos', 'sabá', 'seba', 'cus',
+        'ebed-melec', 'candace', 'morena', 'negra', 'negro',
         'tez brillante', 'elevada estatura y tez brillante'
       ];
       
-      const textLower = this.removeAccents(highlightedText.toLowerCase());
+      // Limpiar etiquetas HTML de los resultados resaltados del servidor para validar palabras clave de manera correcta
+      const textClean = this.removeAccents(highlightedText.replace(/<[^>]*>/g, '').toLowerCase());
       for (const kw of blueKeywords) {
-        if (textLower.includes(this.removeAccents(kw.toLowerCase()))) {
-          isAutoBlue = true;
-          break;
+        if (kw === 'cus' || kw === 'seba' || kw === 'negro' || kw === 'negra') {
+          const pattern = this.getAccentInsensitivePattern(kw);
+          const plainText = highlightedText.replace(/<[^>]*>/g, '');
+          if (pattern.test(plainText)) {
+            isAutoBlue = true;
+            break;
+          }
+        } else {
+          if (textClean.includes(this.removeAccents(kw.toLowerCase()))) {
+            isAutoBlue = true;
+            break;
+          }
         }
       }
       
       if (isAutoBlue) {
-        return `<span class="hl-blue">${highlightedText}</span>`;
+        let formattedText = highlightedText;
+        const blueKeywordsToHighlight = [
+          'etíope', 'etíopes', 'etiopía', 'etiopia', 'etiope', 'etiopes',
+          'cusita', 'cusitas', 'cuseo', 'cuseos', 'cus',
+          'sabeos', 'sabá', 'saba', 'seba',
+          'morena', 'negra', 'negro',
+          'tez brillante', 'ebed-melec', 'candace'
+        ];
+        // Aplicar la marca de resaltado del pueblo negro sobre el texto ya resaltado
+        for (const kw of blueKeywordsToHighlight) {
+          const pattern = this.getAccentInsensitivePattern(kw);
+          formattedText = formattedText.replace(pattern, (match, offset, string) => {
+            // Evitar re-resaltar si la coincidencia está dentro de una etiqueta HTML
+            const before = string.substring(0, offset);
+            const openTags = (before.match(/<[^>]*$/g) || []).length;
+            if (openTags > 0) return match; // Estamos dentro de una etiqueta, no hacer nada
+            return `<mark class="bg-blue-300 dark:bg-blue-800 text-blue-900 dark:text-blue-100 px-1 rounded font-semibold">${match}</mark>`;
+          });
+        }
+        return `<span class="hl-blue">${formattedText}</span>`;
       }
       
       return highlightedText;

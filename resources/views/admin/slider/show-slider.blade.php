@@ -158,21 +158,145 @@
         </div>
     </div>
 
+    {{-- Buscador por ID --}}
+    <form method="GET" action="{{ url()->current() }}" class="flex gap-2 mb-4">
+        <div class="relative flex-1">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ request('search') }}" 
+                placeholder="Buscar carrusel por ID..." 
+                class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-10 py-2 text-sm text-slate-900 dark:text-white"
+            >
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-secondary">Buscar</button>
+        @if(request('search'))
+            <a href="{{ url()->current() }}" class="btn btn-ghost">Limpiar</a>
+        @endif
+    </form>
+
     {{-- Tarjeta de la tabla --}}
     <div class="card">
         <div class="card-body p-0">
             <div class="table-wrap">
-                <table id="slider-table" class="display w-full">
-                    {{-- La tabla se generará automáticamente --}}
+                <table class="w-full">
+                    <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Carrusel</th>
+                            <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Estado</th>
+                            <th class="px-4 py-3 text-center text-sm font-semibold text-slate-900 dark:text-white">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                        @forelse ($sliders as $slider)
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td class="px-4 py-3 text-sm">
+                                    <div class="flex items-center">
+                                        <div class="flex mr-2">
+                                            {{-- Lado Izquierdo --}}
+                                            @if ($slider->left_media_src)
+                                                @if ($slider->left_media_type === 'video')
+                                                    <div class="w-16 h-16 rounded-lg overflow-hidden bg-slate-900 mr-2">
+                                                        <video muted playsinline class="w-full h-full object-cover">
+                                                            <source src="{{ $slider->left_media_src }}" type="{{ $slider->left_media_mime ?? 'video/mp4' }}">
+                                                        </video>
+                                                    </div>
+                                                @elseif ($slider->left_media_type === 'youtube')
+                                                    <div class="w-16 h-16 rounded-lg bg-black text-white flex items-center justify-center mr-2">
+                                                        <i class="fab fa-youtube text-lg"></i>
+                                                    </div>
+                                                @else
+                                                    <img src="{{ $slider->left_media_src }}" alt="Imagen izquierda" class="w-16 h-16 rounded-lg object-cover mr-2">
+                                                @endif
+                                            @else
+                                                <div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-2">
+                                                    <i class="fas fa-image text-slate-500 dark:text-slate-400"></i>
+                                                </div>
+                                            @endif
+
+                                            {{-- Lado Derecho --}}
+                                            @if ($slider->right_media_src)
+                                                @if ($slider->right_media_type === 'video')
+                                                    <div class="w-16 h-16 rounded-lg overflow-hidden bg-slate-900 mr-2">
+                                                        <video muted playsinline class="w-full h-full object-cover">
+                                                            <source src="{{ $slider->right_media_src }}" type="{{ $slider->right_media_mime ?? 'video/mp4' }}">
+                                                        </video>
+                                                    </div>
+                                                @elseif ($slider->right_media_type === 'youtube')
+                                                    <div class="w-16 h-16 rounded-lg bg-black text-white flex items-center justify-center mr-2">
+                                                        <i class="fab fa-youtube text-lg"></i>
+                                                    </div>
+                                                @else
+                                                    <img src="{{ $slider->right_media_src }}" alt="Imagen derecha" class="w-16 h-16 rounded-lg object-cover mr-2">
+                                                @endif
+                                            @else
+                                                <div class="w-16 h-16 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-2">
+                                                    <i class="fas fa-image text-slate-500 dark:text-slate-400"></i>
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="font-medium text-slate-900 dark:text-white text-sm truncate">Carrusel #{{ $slider->id }}</div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400 truncate">ID: {{ $slider->id }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 text-sm">
+                                    @if ($slider->active)
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700 shadow-sm">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Activo
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300 border border-rose-200 dark:border-rose-700 shadow-sm">
+                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                            </svg>
+                                            Inactivo
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-4 py-3 text-sm text-center">
+                                    @include('admin.partials.actions', [
+                                        'id'         => $slider->id,
+                                        'view'       => url("view-slider", $slider->id),
+                                        'activate'   => url("activate-slider", $slider->id),
+                                        'softdelete' => url("delete-slider", $slider->id),
+                                        'realdelete' => url("realdelete-slider", $slider->id),
+                                        'formAction' => url("update-slider", $slider->id),
+                                        'tableM'     => $slider,
+                                        'sectionType'=> 'slider',
+                                        'sectionTitle' => 'Carrusel',
+                                    ])
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
+                                    <i class="fas fa-images text-5xl mb-4 opacity-50 block"></i>
+                                    <p class="font-medium">No se encontraron imágenes del carrusel</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
                 </table>
             </div>
         </div>
     </div>
+
+    @if ($sliders->hasPages())
+        <div class="p-4 border-t border-slate-200 dark:border-slate-700">
+            {{ $sliders->links() }}
+        </div>
+    @endif
 @endsection
 
 @push('scripts')
-    {!! $dataTable->scripts() !!}
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const leftType = document.getElementById('left_type');
@@ -200,6 +324,14 @@
                 target.innerHTML = `<video controls class="w-full h-full object-cover"><source src="${src}"></video>`;
             }
 
+            // URL Parser helper
+            function parseYouTubeId(url) {
+                if (!url) return null;
+                const regExp = /(?:youtube(?:-nocookie)?\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|embed|shorts)\/|.*[?&]v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+                const match = url.match(regExp);
+                return match ? match[1] : null;
+            }
+
             function showAsYouTube(target, url) {
                 const id = parseYouTubeId(url);
                 if (!id) {
@@ -208,13 +340,6 @@
                 }
                 const embed = `https://www.youtube.com/embed/${id}`;
                 target.innerHTML = `<iframe src="${embed}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>`;
-            }
-
-            function parseYouTubeId(url) {
-                if (!url) return null;
-                const regExp = /(?:youtube(?:-nocookie)?\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|embed|shorts)\/|.*[?&]v=)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
-                const match = url.match(regExp);
-                return match ? match[1] : null;
             }
 
             function updateVisibility(side) {
@@ -300,21 +425,6 @@
                 }
                 showAsYouTube(previewRight, url);
             });
-
-            // Aplicar estilos DataTables (después de un pequeño delay)
-            setTimeout(function() {
-                const lengthSelect = document.querySelector('#slider-table_length select');
-                const filterInput = document.querySelector('#slider-table_filter input');
-
-                if (lengthSelect) {
-                    lengthSelect.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-sm';
-                }
-
-                if (filterInput) {
-                    filterInput.className = 'rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm';
-                    filterInput.placeholder = 'Buscar...';
-                }
-            }, 500);
         });
     </script>
 @endpush

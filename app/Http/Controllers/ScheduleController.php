@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Schedule;
 use App\Models\ScheduleOverride;
-use App\DataTables\ScheduleDataTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -113,11 +112,37 @@ class ScheduleController extends Controller
     }
 
     /**
-     * Mostrar la lista de programas con DataTables
+     * Mostrar la lista de programas con tablas nativas
      */
-    public function show(ScheduleDataTable $dataTable)
+    public function show(Request $request)
     {
-        return $dataTable->render('admin.schedule.show-schedule');
+        $query = Schedule::query()
+            ->select([
+                'emission_key',
+                \Illuminate\Support\Facades\DB::raw('MAX(id) as id'),
+                \Illuminate\Support\Facades\DB::raw('MAX(name) as name'),
+                \Illuminate\Support\Facades\DB::raw('MAX(slug) as slug'),
+                \Illuminate\Support\Facades\DB::raw('MAX(start) as start'),
+                \Illuminate\Support\Facades\DB::raw('MAX(end) as end'),
+                \Illuminate\Support\Facades\DB::raw('MAX(host) as host'),
+                \Illuminate\Support\Facades\DB::raw('MAX(duration) as duration'),
+                \Illuminate\Support\Facades\DB::raw('MAX(image) as image'),
+                \Illuminate\Support\Facades\DB::raw('MAX(about) as about'),
+                \Illuminate\Support\Facades\DB::raw('MAX(deleted_at) as deleted_at'),
+            ])
+            ->groupBy('emission_key')
+            ->withTrashed(); // Incluir inactivos en el listado del panel
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('host', 'like', "%{$search}%");
+            });
+        }
+
+        $schedules = $query->orderBy('start', 'asc')->paginate(10)->withQueryString();
+
+        return view('admin.schedule.show-schedule', compact('schedules'));
     }
 
     /**

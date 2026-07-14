@@ -5,7 +5,7 @@
   class="privacy-notice-wrapper"
   style="display: none;"
 >
-  <div class="privacy-notice-overlay"></div>
+  <div class="privacy-notice-overlay" @click="closePrivacyNotice()"></div>
   
   <div class="privacy-notice-modal">
     {{-- Encabezado --}}

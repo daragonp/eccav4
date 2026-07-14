@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use App\Models\Worship;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\DataTables\WorshipDataTable;
 use App\Http\Controllers\Controller;
 use App\Services\AudioProcessingService;
 use Illuminate\Support\Facades\Log;
@@ -31,14 +30,28 @@ class WorshipController extends Controller
         return view('showworship', compact('worship'));
     }
 
-    /**
-     * Show the admin panel with worship DataTable.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show(WorshipDataTable $dataTable)
+    public function show(Request $request)
     {
-        return $dataTable->render('admin.worship.show-worship');
+        $query = Worship::query();
+
+        $user = auth()->user();
+        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
+
+        if ($isSuperAdmin) {
+            $query->withTrashed();
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('autor', 'like', "%{$search}%")
+                  ->orWhere('badge', 'like', "%{$search}%");
+            });
+        }
+
+        $worships = $query->orderBy('broadcast', 'desc')->paginate(10)->withQueryString();
+
+        return view('admin.worship.show-worship', compact('worships'));
     }
 
     /**

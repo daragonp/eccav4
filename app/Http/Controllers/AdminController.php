@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-use App\DataTables\UserDataTable;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Schedule;
 use App\Models\Verse;
 use App\Models\Banner;
 use App\Models\News;
+use App\Models\Worship;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Permission\Models\Permission;
@@ -61,6 +61,7 @@ class AdminController extends Controller
                     'schedules' => Schedule::count(),
                     'banners'   => Banner::count(),
                     'news'      => News::count(),
+                    'worships'  => Worship::count(),
                 ],
                 'latestVerses'  => Verse::orderByDesc('date')
                     ->take(5)
@@ -68,6 +69,9 @@ class AdminController extends Controller
                 'latestNews'    => News::orderByDesc('created_at')
                     ->take(5)
                     ->get(['id', 'title', 'created_at']),
+                'latestWorships'=> Worship::orderByDesc('broadcast')
+                    ->take(5)
+                    ->get(['id', 'title', 'broadcast', 'audio', 'video', 'pdfdoc', 'ai_processed']),
                 'currentProgram'=> $this->getCurrentProgram(),
             ];
         });
@@ -190,12 +194,22 @@ class AdminController extends Controller
     }
 
     /**
-     * DataTable de usuarios
+     * Tabla nativa de usuarios
      */
-    public function ushow(UserDataTable $userDataTable)
+    public function ushow(Request $request)
     {
-        // Nota: el nombre de la variable $userDataTable evita pisar App\Models\User
-        return $userDataTable->render('admin.user.show-user');
+        $query = User::query()->with('roles');
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
+
+        return view('admin.user.show-user', compact('users'));
     }
 
     /**

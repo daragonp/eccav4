@@ -6,8 +6,6 @@ use Carbon\Carbon;
 use App\Models\News;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use App\DataTables\NewsDataTable;
-use App\DataTables\LookDataTable;
 
 class NewsController extends Controller
 {
@@ -171,21 +169,56 @@ class NewsController extends Controller
 
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\News  $news
-     * @return \Illuminate\Http\Response
+     * Display the specified resource with native tables.
      */
-    public function show(NewsDataTable $dataTable)
+    public function show(Request $request)
     {
+        $query = News::query()->where('category', 1);
 
-        return $dataTable->render('admin.news.show-news');
+        $user = auth()->user();
+        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
+
+        if ($isSuperAdmin) {
+            $query->withTrashed();
+        } else {
+            $query->whereNull('deleted_at');
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('autor', 'like', "%{$search}%");
+            });
+        }
+
+        $news = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('admin.news.show-news', compact('news'));
     }
 
-    public function look(LookDataTable $dataTable)
+    public function look(Request $request)
     {
+        $query = News::query()->where('category', 2);
 
-        return $dataTable->render('admin.news.show-looks');
+        $user = auth()->user();
+        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
+
+        if ($isSuperAdmin) {
+            $query->withTrashed();
+        } else {
+            $query->whereNull('deleted_at');
+        }
+
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('autor', 'like', "%{$search}%");
+            });
+        }
+
+        $news = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+
+        return view('admin.news.show-looks', compact('news'));
     }
 
     public function destroy($id)
@@ -221,9 +254,9 @@ class NewsController extends Controller
         return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
     }
 
-    public function adminindex(NewsDataTable $dataTable)
+    public function adminindex(Request $request)
     {
-        return $dataTable->render('admin.news.show-news');
+        return $this->show($request);
     }
 
     public function opinion()

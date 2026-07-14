@@ -30,11 +30,12 @@ const privacyNoticeApp = () => ({
   checkAndShow() {
     console.log('🔍 [PRIVACY] Verificando...')
     
-    if (!this.hasAcceptedPrivacy()) {
-      console.log('✋ [PRIVACY] Mostrando aviso (no aceptado)')
-      this.show()
+    // Si ya aceptó la política (cookie persistente) o la descartó en esta sesión (sessionStorage)
+    if (this.hasAcceptedPrivacy() || sessionStorage.getItem('privacy_notice_dismissed') === 'true') {
+      console.log('✅ [PRIVACY] Ocultando aviso (ya aceptado o descartado en esta sesión)')
     } else {
-      console.log('✅ [PRIVACY] Ocultando aviso (ya aceptado)')
+      console.log('✋ [PRIVACY] Mostrando aviso (no aceptado ni descartado)')
+      this.show()
     }
   },
 
@@ -116,6 +117,11 @@ const privacyNoticeApp = () => ({
    */
   closePrivacyNotice() {
     console.log('🚪 [PRIVACY] Cerrando')
+    try {
+      sessionStorage.setItem('privacy_notice_dismissed', 'true')
+    } catch (_) {
+      console.warn('⚠️ [PRIVACY] No se pudo guardar en sessionStorage')
+    }
     this.privacyNoticeVisible = false
     document.body.style.overflow = 'auto'
   },
