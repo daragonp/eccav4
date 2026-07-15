@@ -55,8 +55,8 @@
             {{-- Derecha: Acciones --}}
             <div class="flex items-center space-x-3">
                 {{-- Toggle tema --}}
-                <button id="toggleTheme" aria-label="Cambiar tema" class="p-2 rounded-lg bg-gray-100/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
-                    <span id="themeIcon" class="text-xl">🌙</span>
+                <button id="publicThemeToggle" aria-label="Cambiar tema" class="p-2 rounded-lg bg-gray-100/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200">
+                    <span id="publicThemeIcon" class="text-xl">🌙</span>
                 </button>
 
                 {{-- Botón móvil --}}
@@ -110,7 +110,7 @@
     <script data-turbo-eval="true">
         (function() {
             const root = document.documentElement;
-            const icon = document.getElementById('themeIcon');
+            const icon = document.getElementById('publicThemeIcon');
 
             function syncIcon() {
                 if (icon) icon.textContent = root.classList.contains('dark') ? '☀️' : '🌙';
@@ -125,7 +125,7 @@
             syncIcon();
 
             // Toggle
-            const btn = document.getElementById('toggleTheme');
+            const btn = document.getElementById('publicThemeToggle');
             if (btn) {
                 btn.onclick = () => {
                     root.classList.toggle('dark');

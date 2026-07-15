@@ -429,7 +429,7 @@ class AdminController extends Controller
                 $title = 'Culto Dominical';
                 break;
             case 'verse':
-                $model = Verse::findOrFail($id);
+                $model = Verse::withTrashed()->findOrFail($id);
                 $title = 'Palabra de vida';
                 break;
             case 'slider':
@@ -437,7 +437,7 @@ class AdminController extends Controller
                 $title = 'Banner Carrusel';
                 break;
             case 'news':
-                $model = News::findOrFail($id);
+                $model = News::withTrashed()->findOrFail($id);
                 $title = 'Mensaje de la semana';
                 break;
             case 'podcast':
@@ -488,5 +488,36 @@ class AdminController extends Controller
         return $roleNames->contains('superadministrador')
             || $roleNames->contains('super-admin')
             || $roleNames->contains('super admin');
+    }
+
+    /**
+     * Muestra la vista de sugerencias.
+     */
+    public function suggestions()
+    {
+        return view('admin.suggestions');
+    }
+
+    /**
+     * Guarda la sugerencia recibida (simulada por log y redirigida con éxito).
+     */
+    public function storeSuggestion(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => ['required', 'string', 'in:sugerencia,error,comentario,otro'],
+            'message' => ['required', 'string', 'max:5000'],
+        ]);
+
+        // Registrar la sugerencia en los logs del sistema para auditoría
+        \Illuminate\Support\Facades\Log::info('Nueva sugerencia recibida', [
+            'user_id' => \Illuminate\Support\Facades\Auth::id(),
+            'user_email' => \Illuminate\Support\Facades\Auth::user()->email,
+            'type' => $validated['type'],
+            'message' => $validated['message'],
+        ]);
+
+        return redirect()
+            ->back()
+            ->with('success', '¡Gracias por su sugerencia! Ha sido recibida correctamente por el equipo de administración.');
     }
 }

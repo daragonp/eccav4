@@ -84,13 +84,13 @@ function applySavedTheme() {
 }
 
 function syncThemeIcon() {
-  const icon = document.getElementById('themeIcon')
+  const icon = document.getElementById('publicThemeIcon')
   if (!icon) return
   icon.textContent = root.classList.contains('dark') ? '☀️' : '🌙'
 }
 
 function bindThemeToggle() {
-  const btn = document.getElementById('toggleTheme')
+  const btn = document.getElementById('publicThemeToggle')
   if (!btn) return
 
   // Limpiar handler previo (para evitar duplicados con Turbo)

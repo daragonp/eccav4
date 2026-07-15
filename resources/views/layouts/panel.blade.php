@@ -14,6 +14,16 @@
     <link rel="manifest" href="{{ asset('images/fav/site.webmanifest') }}" />
     <title>@yield('title', 'Panel') — Emancipación Cristiana Afro</title>
 
+    {{-- Pre-set dark antes del CSS (evita FOUC) --}}
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+
     @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'])
 </head>
 
@@ -423,36 +433,7 @@
                 </div>
                 @endif
 
-                @hasSection('noCard')
-                    @yield('datatable')
-                @else
-                <!-- Tarjeta mejorada con mejor tipografía y diseño -->
-                <div class="card">
-                    @hasSection('cardTitle')
-                    <div class="card-header bg-linear-to-r from-blue-500 to-indigo-600 text-white">
-                        <h2 class="text-xl font-semibold">@yield('cardTitle')</h2>
-                    </div>
-                    @endif
-
-                    <div class="card-body">
-                        @hasSection('cardDescription')
-                        <div class="card-text">
-                            @yield('cardDescription')
-                        </div>
-                        @endif
-
-                        <div class="mt-4">
-                            @yield('datatable')
-                        </div>
-                    </div>
-
-                    @hasSection('cardFooter')
-                    <div class="card-footer">
-                        @yield('cardFooter')
-                    </div>
-                    @endif
-                </div>
-                @endif
+                @yield('datatable')
             </div>
         </main>
     </div>

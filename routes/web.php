@@ -140,6 +140,8 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     //Rutas para administrador: Centro de notificaciones
     Route::get('/topbar', [AdminController::class, 'center']);
     Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
+    Route::get('/suggestions', [AdminController::class, 'suggestions'])->name('suggestions');
+    Route::post('/suggestions', [AdminController::class, 'storeSuggestion'])->name('suggestions.store');
 
     //Rutas para administrador: Categorías de audios
     Route::get('/new-category', [CategoryController::class, 'category']);
