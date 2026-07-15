@@ -80,18 +80,58 @@ function closeModal(modalId) {
     }
 }
 
+function toggleSidebarBackdrop() {
+    let backdrop = document.getElementById('sidebar-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'sidebar-backdrop';
+        document.body.appendChild(backdrop);
+        backdrop.addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) {
+                sidebar.classList.remove('open');
+                backdrop.classList.remove('active');
+            }
+        });
+    }
+    
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+        backdrop.classList.add('active');
+    } else {
+        backdrop.classList.remove('active');
+    }
+}
+
 function bindSidebarToggle() {
     const toggleBtn = document.getElementById('toggleSidebar');
+    const closeBtn = document.getElementById('closeSidebar');
     const sidebar = document.getElementById('sidebar');
     const sidebarCollapsed = document.getElementById('sidebar-collapsed');
 
-    if (!toggleBtn || !sidebar || !sidebarCollapsed || toggleBtn.dataset.bound === '1') return;
+    if (!sidebar) return;
 
-    toggleBtn.dataset.bound = '1';
-    toggleBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('hidden');
-        sidebarCollapsed.classList.toggle('hidden');
-    });
+    if (toggleBtn && toggleBtn.dataset.bound !== '1') {
+        toggleBtn.dataset.bound = '1';
+        toggleBtn.addEventListener('click', () => {
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                sidebar.classList.toggle('open');
+                toggleSidebarBackdrop();
+            } else {
+                sidebar.classList.toggle('collapsed');
+                if (sidebarCollapsed) sidebarCollapsed.classList.toggle('open');
+            }
+        });
+    }
+
+    if (closeBtn && closeBtn.dataset.bound !== '1') {
+        closeBtn.dataset.bound = '1';
+        closeBtn.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            toggleSidebarBackdrop();
+        });
+    }
 }
 
 function bindThemeToggle() {
@@ -287,6 +327,16 @@ function initDashboard() {
     bindUserMenuToggle();
     bindDelegatedEvents();
     scrollActiveMenuItemIntoView();
+
+    // Reset sidebar mobile open state on page transitions
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+        sidebar.classList.remove('open');
+    }
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (backdrop) {
+        backdrop.classList.remove('active');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initDashboard);

@@ -37,14 +37,19 @@
 
             {{-- Logo y Perfil --}}
             <div class="p-4 border-b border-slate-200 dark:border-slate-700">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-linear-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold shadow-lg">
-                        ECA
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-linear-to-br from-green-600 to-green-700 flex items-center justify-center text-white font-bold shadow-lg">
+                            ECA
+                        </div>
+                        <div>
+                            <div class="text-lg font-bold text-slate-900 dark:text-white">Dashboard</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Panel de Administración</div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="text-lg font-bold text-slate-900 dark:text-white">Dashboard</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400">Panel de Administración</div>
-                    </div>
+                    <button id="closeSidebar" class="btn btn-ghost sm:hidden p-2" aria-label="Cerrar menú">
+                        <i class="fas fa-times text-slate-600 dark:text-slate-350"></i>
+                    </button>
                 </div>
             </div>
 
@@ -418,6 +423,9 @@
                 </div>
                 @endif
 
+                @hasSection('noCard')
+                    @yield('datatable')
+                @else
                 <!-- Tarjeta mejorada con mejor tipografía y diseño -->
                 <div class="card">
                     @hasSection('cardTitle')
@@ -444,6 +452,7 @@
                     </div>
                     @endif
                 </div>
+                @endif
             </div>
         </main>
     </div>

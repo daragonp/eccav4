@@ -25,7 +25,7 @@
     "isEntry": true
   },
   "resources/css/dashboard.css": {
-    "file": "assets/dashboard-DIjdVfQC.css",
+    "file": "assets/dashboard-iugZpvtP.css",
     "name": "dashboard",
     "names": [
       "dashboard.css"
@@ -58,7 +58,7 @@
     "isEntry": true
   },
   "resources/css/tw.css": {
-    "file": "assets/tw-BV00Ozgo.css",
+    "file": "assets/tw-C01YCDxr.css",
     "name": "tw",
     "names": [
       "tw.css"
@@ -77,7 +77,7 @@
     ]
   },
   "resources/js/dashboard.js": {
-    "file": "assets/dashboard-BASGaifi.js",
+    "file": "assets/dashboard-h12I6B8N.js",
     "name": "dashboard",
     "src": "resources/js/dashboard.js",
     "isEntry": true

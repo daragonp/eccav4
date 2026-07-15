@@ -1219,6 +1219,7 @@
               <span x-text="item.term"></span>
               <span class="badge bg-brand-dark dark:bg-brand-light text-white text-[9px] px-1.5 rounded-full" x-text="item.count"></span>
             </button>
+          </template>
         </div>
       </div>
       
@@ -2009,7 +2010,6 @@ function biblia() {
             }
           };
         }
-      }
       }
       
       // 5. Búsqueda offline: /biblia/api/buscar?q=...
