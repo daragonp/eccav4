@@ -283,3 +283,4 @@
             {{ $schedules->links() }}
         </div>
     @endif
+@endsection
