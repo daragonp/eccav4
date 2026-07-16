@@ -8,7 +8,7 @@
          onclick="event.stopPropagation()">
         
         {{-- Modal Header --}}
-        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-200 dark:border-slate-700 bg-linear-to-r from-amber-400 to-yellow-500">
+        <div class="flex items-center justify-between px-4 md:px-6 py-4 md:py-5 border-b border-slate-200 dark:border-slate-700 bg-linear-to-r from-amber-400 to-yellow-500">
             <div>
                 <h3 class="text-xl font-bold text-slate-900">Editar {{ $sectionTitle ?? 'Elemento' }}</h3>
                 <p class="text-sm text-slate-800 mt-1">Actualiza la información del {{ strtolower($sectionTitle ?? 'elemento') }}</p>
@@ -24,7 +24,7 @@
         {{-- Modal Body --}}
         <form action="{{ $formAction }}" method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col overflow-hidden">
             @csrf
-            <div class="overflow-y-auto flex-1 px-6 py-4">
+            <div class="overflow-y-auto flex-1 px-4 md:px-6 py-4">
                 {{-- Indicador de sección (solo si existe) --}}
                 @if($sectionType)
                 <div class="mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
@@ -55,7 +55,7 @@
                             <select id="role_id" name="role_id" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                                 <option value="">Seleccionar rol</option>
                                 @foreach($roles as $role)
-                                <option value="{{ $role->id }}" {{ isset($tableM->roles) && $tableM->roles->contains($role->id) ? 'selected' : '' }}>{{ $role->name }}</option>
+                                <option value="{{ $role->id }}" {{ (($tableM->role_id ?? null) == $role->id) || (isset($tableM->roles) && $tableM->roles->contains($role->id)) ? 'selected' : '' }}>{{ $role->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -213,7 +213,7 @@
         </div>
         <div>
             <label for="broadcast" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha de emisión</label>
-            <input id="broadcast" type="date" name="broadcast" value="{{ $tableM->broadcast ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+            <input id="broadcast" type="date" name="broadcast" value="{{ !empty($tableM->broadcast) ? (\Carbon\Carbon::parse($tableM->broadcast)->format('Y-m-d')) : '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
         </div>
         <div>
             <label for="badge" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Etiqueta</label>
@@ -390,7 +390,7 @@
                         </div>
                         <div>
                             <label for="broadcast" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha de emisión</label>
-                            <input id="broadcast" type="date" name="broadcast" value="{{ $tableM->broadcast ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <input id="broadcast" type="date" name="broadcast" value="{{ !empty($tableM->broadcast) ? (\Carbon\Carbon::parse($tableM->broadcast)->format('Y-m-d')) : '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                         </div>
                     </div>
 
@@ -493,7 +493,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="date" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha</label>
-                            <input id="date" type="date" name="date" value="{{ $tableM->date ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            <input id="date" type="date" name="date" value="{{ !empty($tableM->date) ? (\Carbon\Carbon::parse($tableM->date)->format('Y-m-d')) : '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                         </div>
                     </div>
                     {{-- Sección de archivos --}}
@@ -598,11 +598,11 @@
                         </div>
                         <div>
                             <label for="start" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Hora de inicio</label>
-                            <input id="start" type="time" name="start" value="{{ $tableM->start ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            <input id="start" type="time" name="start" value="{{ !empty($tableM->start) ? (\Carbon\Carbon::parse($tableM->start)->format('H:i')) : '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                         </div>
                         <div>
                             <label for="end" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Hora de finalización</label>
-                            <input id="end" type="time" name="end" value="{{ $tableM->end ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            <input id="end" type="time" name="end" value="{{ !empty($tableM->end) ? (\Carbon\Carbon::parse($tableM->end)->format('H:i')) : '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                         </div>
                         <div class="md:col-span-2">
                             <label for="about" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Descripción</label>
@@ -635,10 +635,10 @@
                             @endphp
                             @foreach ($dias as $num => $nombre)
                             <div class="flex items-center">
-                                <input id="day{{ $num }}" type="checkbox" name="day[]" value="{{ $num }}" ...>
+                                <input id="day{{ $num }}" type="checkbox" name="day[]" value="{{ $num }}"
                                     class="rounded-lg border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-green-600 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-500"
                                     @if (in_array($num, $daysSelected)) checked @endif>
-                                <label for="day_{{ $num }}" class="ml-2 text-sm text-slate-700 dark:text-slate-300">{{ $nombre }}</label>
+                                <label for="day{{ $num }}" class="ml-2 text-sm text-slate-700 dark:text-slate-300">{{ $nombre }}</label>
                             </div>
                             @endforeach
                         </div>

@@ -36,7 +36,7 @@
 
 @section('datatable')
   {{-- Buscador --}}
-  <form method="GET" action="{{ url()->current() }}" class="flex gap-2 mb-4">
+  <form method="GET" action="{{ url()->current() }}" class="flex flex-col sm:flex-row gap-2 mb-4">
     <div class="relative flex-1">
       <input 
         type="text" 

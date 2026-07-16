@@ -108,15 +108,17 @@
                     <i class="fas fa-image mr-2 text-brand-green"></i> Imagen del culto
                 </h2>
                 @if($worship->image)
-                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group" id="worshipImage">
-                    <img src="{{ asset('images/worship/' . $worship->image) }}"
-                        alt="Imagen del culto"
-                        class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="flex justify-center">
+                    <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group max-w-md w-full" id="worshipImage">
+                        <img src="{{ asset('images/worship/' . $worship->image) }}"
+                            alt="Imagen del culto"
+                            class="max-h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 mx-auto">
+                    </div>
                 </div>
                 @if($worship->ai_image)
                 <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <p class="text-sm text-blue-800 dark:text-blue-300">
-                        <i class="fas fa-robot mr-1"></i> Esta imagen fue generada por IA basada en el contenido del audio
+                         <i class="fas fa-robot mr-1"></i> Esta imagen fue generada por IA basada en el contenido del audio
                     </p>
                 </div>
                 @endif

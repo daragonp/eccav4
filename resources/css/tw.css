@@ -827,11 +827,11 @@ audio, video {
   /* Estilos para enlaces de navegación móvil */
   .mobile-nav-link, .mobile-nav-dropdown-button {
     @apply block w-full text-left px-4 py-3 text-base font-medium rounded-lg transition-all duration-200;
-    color: var(--nav-link-color-dark); /* Por defecto más oscuro para contraste en el fondo claro */
+    color: var(--nav-link-color);
   }
 
   .dark .mobile-nav-link, .dark .mobile-nav-dropdown-button {
-    color: var(--nav-link-color);
+    color: var(--nav-link-color-dark);
   }
 
   .mobile-nav-link:hover, .mobile-nav-dropdown-button:hover {
@@ -847,12 +847,12 @@ audio, video {
 
   .mobile-sub-link {
     @apply block px-4 py-2 text-sm rounded-md transition-all duration-200;
-    color: var(--nav-link-color-dark);
+    color: var(--nav-link-color);
     opacity: 0.85;
   }
 
   .dark .mobile-sub-link {
-    color: var(--nav-link-color);
+    color: var(--nav-link-color-dark);
   }
 
   .mobile-sub-link:hover {

@@ -85,10 +85,12 @@ $textoFecha = ucfirst($nombreDia) . ', ' . $date->day . ' de ' . $nombreMes . ' 
                     <i class="fas fa-image mr-2 text-brand-green"></i> Imagen del versículo
                 </h2>
                 @if($quote->image)
-                <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group" id="quoteImage">
-                    <img src="{{ asset('images/bible/' . $quote->image) }}"
-                        alt="Versículo del día"
-                        class="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105">
+                <div class="flex justify-center">
+                    <div class="rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer group max-w-md w-full" id="quoteImage">
+                        <img src="{{ asset('images/bible/' . $quote->image) }}"
+                            alt="Versículo del día"
+                            class="max-h-80 w-auto object-contain transition-transform duration-300 group-hover:scale-105 mx-auto">
+                    </div>
                 </div>
                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 text-center">
                     <i class="fas fa-search-plus mr-1"></i> Haz clic en la imagen para verla en tamaño completo

@@ -85,7 +85,8 @@ function toggleSidebarBackdrop() {
     if (!backdrop) {
         backdrop = document.createElement('div');
         backdrop.id = 'sidebar-backdrop';
-        document.body.appendChild(backdrop);
+        const shell = document.querySelector('.panel-shell') || document.body;
+        shell.appendChild(backdrop);
         backdrop.addEventListener('click', () => {
             const sidebar = document.getElementById('sidebar');
             if (sidebar) {
