@@ -115,18 +115,18 @@
                   @endif
                 </td>
                 <td class="px-4 py-3 text-sm text-center">
-                  @if ($worship->image)
-                    <a href="{{ asset('images/worship/' . $worship->image) }}" target="_blank" class="inline-flex">
-                      <img src="{{ asset('images/worship/' . $worship->image) }}" alt="{{ $worship->title }}" class="h-10 w-10 object-cover rounded-md ring-1 ring-slate-200 dark:ring-slate-800">
+                  @if ($worship->image_url)
+                    <a href="{{ $worship->image_url }}" target="_blank" class="inline-flex">
+                      <img src="{{ $worship->image_url }}" alt="{{ $worship->title }}" class="h-10 w-10 object-cover rounded-md ring-1 ring-slate-200 dark:ring-slate-800">
                     </a>
                   @else
                     <span class="text-slate-400"><i class="fas fa-image-slash"></i></span>
                   @endif
                 </td>
                 <td class="px-4 py-3 text-sm">
-                  @if ($worship->audio)
+                  @if ($worship->audio_url)
                     <audio controls class="w-40 h-8">
-                      <source src="{{ asset('audio/worship/' . $worship->audio) }}">
+                      <source src="{{ $worship->audio_url }}">
                     </audio>
                   @else
                     <span class="text-slate-400"><i class="fas fa-volume-mute"></i></span>

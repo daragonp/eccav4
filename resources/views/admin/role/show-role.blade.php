@@ -98,11 +98,9 @@
                 <td class="px-4 py-3 text-sm text-center">
                   @include('admin.partials.actions', [
                       'id'           => $role->id,
-                      'view'         => url("view-role/{$role->id}"),
-                      'activate'     => url("activate-role/{$role->id}"),
-                      'softdelete'   => url("delete-role/{$role->id}"),
-                      'realdelete'   => url("realdelete-role/{$role->id}"),
-                      'formAction'   => url("update-role/{$role->id}"),
+                      'view'         => null,
+                      'delete'       => ((int)$role->id === 1 || mb_strtolower($role->name) === 'superadministrador') ? null : url("delete-role/{$role->id}"),
+                      'formAction'   => url("updaterole/{$role->id}"),
                       'tableM'       => $role,
                       'sectionType'  => 'role',
                       'sectionTitle' => 'Rol',
@@ -112,7 +110,7 @@
             @empty
               <tr>
                 <td colspan="5" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
-                  <i class="fas fa-user-shield text-5xl mb-4 opacity-50 block"></i>
+                  <i class="fa-solid fa-user-shield text-4xl mb-3 text-slate-300 dark:text-slate-600 block"></i>
                   <p class="font-medium">No se encontraron roles</p>
                 </td>
               </tr>

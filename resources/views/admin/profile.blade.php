@@ -43,7 +43,7 @@
           <p class="text-sm text-slate-600 dark:text-slate-400">Actualiza tu información personal, foto y contraseña.</p>
         </div>
 
-        @if ($errors->any())
+        @if (isset($errors) && $errors->any())
           <div class="alert alert-danger mb-6">
             <div class="flex items-start">
               <i class="fas fa-exclamation-triangle mt-0.5 mr-2"></i>

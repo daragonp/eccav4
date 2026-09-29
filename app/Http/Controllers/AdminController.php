@@ -353,7 +353,24 @@ class AdminController extends Controller
      */
     public function udelete($id)
     {
+        if ((int)$id === (int)auth()->id()) {
+            return redirect()->back()->with('error', 'No puedes eliminar tu propia cuenta.');
+        }
+
         $user = User::withTrashed()->findOrFail($id);
+
+        if ($this->isSuperAdminUser($user)) {
+            $superAdminsCount = User::whereHas('roles', function($q) {
+                $q->where('name', 'like', '%superadmin%')
+                  ->orWhere('name', 'like', '%super administrador%')
+                  ->orWhere('name', 'like', '%superadministrador%');
+            })->count();
+
+            if ($superAdminsCount <= 1) {
+                return redirect()->back()->with('error', 'No es posible eliminar al único Superadministrador del sistema.');
+            }
+        }
+
         $user->forceDelete();
 
         return redirect()
@@ -366,7 +383,24 @@ class AdminController extends Controller
      */
     public function udestroy($id)
     {
+        if ((int)$id === (int)auth()->id()) {
+            return redirect()->back()->with('error', 'No puedes desactivar tu propia cuenta en sesión.');
+        }
+
         $user = User::findOrFail($id);
+
+        if ($this->isSuperAdminUser($user)) {
+            $superAdminsCount = User::whereNull('deleted_at')->whereHas('roles', function($q) {
+                $q->where('name', 'like', '%superadmin%')
+                  ->orWhere('name', 'like', '%super administrador%')
+                  ->orWhere('name', 'like', '%superadministrador%');
+            })->count();
+
+            if ($superAdminsCount <= 1) {
+                return redirect()->back()->with('error', 'No es posible desactivar al único Superadministrador activo.');
+            }
+        }
+
         $user->delete();
 
         return redirect()
@@ -506,11 +540,26 @@ class AdminController extends Controller
     }
 
     /**
-     * Vista de configuración del panel (placeholder seguro).
+     * Vista de configuración del panel con diagnóstico del sistema.
      */
     public function settings()
     {
-        return view('admin.settings');
+        $systemInfo = [
+            'php_version' => PHP_VERSION,
+            'laravel_version' => app()->version(),
+            'app_env' => config('app.env'),
+            'app_debug' => config('app.debug'),
+            'app_url' => config('app.url'),
+            'db_connection' => config('database.default'),
+            'app_version' => config('app.version', 'v4.8.4'),
+            'station_url' => 'https://a12.asurahosting.com/station/199/',
+            'domains' => [
+                'www.tezbrillante.org',
+                'www.emancipacioncristianaafro.org',
+            ],
+        ];
+
+        return view('admin.settings', compact('systemInfo'));
     }
 
     /**
@@ -550,6 +599,10 @@ class AdminController extends Controller
                 $model = \App\Models\Podcast::findOrFail($id);
                 $title = 'PodCast';
                 break;
+            case 'category':
+                $model = \App\Models\Category::findOrFail($id);
+                $title = 'Categoría de Podcast';
+                break;
             case 'schedule':
                 $model = Schedule::withTrashed()->findOrFail($id);
                 $title = 'Programación';
@@ -569,6 +622,7 @@ class AdminController extends Controller
             case 'slider': $formAction = url("update-slider/{$id}"); break;
             case 'news': $formAction = url("update-news/{$id}"); break;
             case 'podcast': $formAction = url("updatepodcast/{$id}"); break;
+            case 'category': $formAction = url("updatecategory/{$id}"); break;
             case 'schedule': $formAction = url("update-schedule/{$id}"); break;
         }
 

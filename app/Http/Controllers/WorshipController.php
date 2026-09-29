@@ -32,14 +32,7 @@ class WorshipController extends Controller
 
     public function show(Request $request)
     {
-        $query = Worship::query();
-
-        $user = auth()->user();
-        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
-
-        if ($isSuperAdmin) {
-            $query->withTrashed();
-        }
+        $query = Worship::query()->withTrashed();
 
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {

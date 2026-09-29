@@ -20,7 +20,7 @@
     </div>
 </div>
 
-@if($errors->has('access_control'))
+@if(isset($errors) && $errors->has('access_control'))
 <div class="alert alert-danger mb-6">
     {{ $errors->first('access_control') }}
 </div>

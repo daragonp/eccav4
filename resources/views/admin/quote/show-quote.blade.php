@@ -84,37 +84,37 @@
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                 <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $formattedDate }}</td>
                 <td class="px-4 py-3 text-sm text-center">
-                  @if ($verse->image)
-                    <a href="{{ asset('images/bible/' . $verse->image) }}" target="_blank" class="inline-flex">
-                      <img src="{{ asset('images/bible/' . $verse->image) }}" alt="Versículo" class="h-10 w-10 object-cover rounded-md ring-1 ring-slate-200 dark:ring-slate-800">
+                  @if ($verse->image_url)
+                    <a href="{{ $verse->image_url }}" target="_blank" class="inline-flex">
+                      <img src="{{ $verse->image_url }}" alt="Versículo" class="h-10 w-10 object-cover rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-xs">
                     </a>
                   @else
-                    <span class="text-slate-400"><i class="fas fa-image-slash"></i></span>
+                    <span class="text-slate-400 text-xs"><i class="fa-solid fa-image-slash"></i></span>
                   @endif
                 </td>
                 <td class="px-4 py-3 text-sm">
-                  @if ($verse->video)
-                    <a href="{{ asset('documents/quote/' . $verse->video) }}" target="_blank" class="btn btn-sm btn-ghost text-red-600">
-                      <i class="fas fa-file-pdf me-1"></i> Ver PDF
+                  @if ($verse->pdf_url)
+                    <a href="{{ $verse->pdf_url }}" target="_blank" class="btn btn-sm btn-ghost text-red-600 dark:text-red-400 inline-flex items-center gap-1.5 font-medium">
+                      <i class="fa-solid fa-file-pdf text-red-500"></i> Ver PDF
                     </a>
                   @else
-                    <span class="text-slate-400"><i class="fas fa-file-pdf"></i> Sin documento</span>
+                    <span class="text-slate-400 text-xs inline-flex items-center gap-1"><i class="fa-solid fa-file-excel"></i> Sin doc</span>
                   @endif
                 </td>
                 <td class="px-4 py-3 text-sm">
-                  @if ($verse->audio)
-                    <audio controls class="w-40 h-8">
-                      <source src="{{ asset('audio/quote/' . $verse->audio) }}">
+                  @if ($verse->audio_url)
+                    <audio controls class="w-44 h-8">
+                      <source src="{{ $verse->audio_url }}">
                     </audio>
                   @else
-                    <span class="text-slate-400"><i class="fas fa-volume-mute"></i></span>
+                    <span class="text-slate-400 text-xs inline-flex items-center gap-1"><i class="fa-solid fa-volume-xmark"></i> Sin audio</span>
                   @endif
                 </td>
                 <td class="px-4 py-3 text-sm">
                   @if ($verse->deleted_at)
-                    <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-trash-alt mr-1"></i> Inactivo</span>
+                    <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fa-solid fa-ban mr-1"></i> Inactivo</span>
                   @else
-                    <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fas fa-check-circle mr-1"></i> Activo</span>
+                    <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fa-solid fa-check mr-1"></i> Activo</span>
                   @endif
                 </td>
                 <td class="px-4 py-3 text-sm text-center">
@@ -134,7 +134,7 @@
             @empty
               <tr>
                 <td colspan="6" class="px-4 py-12 text-center text-slate-500 dark:text-slate-400">
-                  <i class="fas fa-quote-left text-5xl mb-4 opacity-50 block"></i>
+                  <i class="fa-solid fa-book-bible text-4xl mb-3 text-slate-300 dark:text-slate-600 block"></i>
                   <p class="font-medium">No se encontraron versículos</p>
                 </td>
               </tr>

@@ -1,10 +1,10 @@
 @php
   // Requeridos para el modal de edición
-  $modalId    = $modalId    ?? ('EditModal_'.$id);
-  $formAction = $formAction ?? '#';
-  $editPartial= $editPartial?? null;
+  $modalId     = $modalId     ?? ('EditModal_'.$id);
+  $formAction  = $formAction  ?? '#';
+  $editPartial = $editPartial ?? null;
   $sectionType = $sectionType ?? 'news';
-  $sectionTitle = $sectionTitle ?? 'Elemento';
+  $sectionTitle= $sectionTitle?? 'Elemento';
 
   // Lógica inteligente para determinar si está activo (soporta active de DB y SoftDeletes)
   $isActive = true;
@@ -20,13 +20,14 @@
 <div class="flex items-center justify-center gap-1.5">
 
   {{-- Ver --}}
-  <a href="{{ $view ?? '#' }}"
+  @if(isset($view) && $view !== '#' && !empty($view))
+  <a href="{{ $view }}"
      class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30 transition-all duration-200 group"
      title="Ver detalles">
     <i class="fa-solid fa-eye text-sm group-hover:scale-110 transition-transform"></i>
   </a>
-
   <span class="text-slate-300 dark:text-slate-700">|</span>
+  @endif
 
   {{-- Editar (Carga Dinámica y Bajo Demanda) --}}
   <button type="button"
@@ -36,25 +37,51 @@
     <i class="fa-solid fa-pen-to-square text-sm group-hover:scale-110 transition-transform"></i>
   </button>
 
-  <span class="text-slate-300 dark:text-slate-700">|</span>
-
   {{-- Activar / Desactivar --}}
-  @if (!$isActive)
-    <form action="{{ $activate ?? '#' }}" method="POST" onsubmit="return confirm('¿Desea activar este elemento?');" class="inline">
+  @if(isset($activate) && isset($softdelete))
+    <span class="text-slate-300 dark:text-slate-700">|</span>
+    @if (!$isActive)
+      <form action="{{ $activate }}" method="POST" onsubmit="return confirm('¿Desea activar este elemento?');" class="inline">
+        @csrf
+        <button type="submit"
+           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-all duration-200 group"
+           title="Activar elemento">
+          <i class="fa-solid fa-toggle-off text-sm group-hover:scale-110 transition-transform"></i>
+        </button>
+      </form>
+    @else
+      <form action="{{ $softdelete }}" method="POST" onsubmit="return confirm('¿Desea desactivar este elemento?');" class="inline">
+        @csrf
+        <button type="submit"
+           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all duration-200 group"
+           title="Desactivar elemento">
+          <i class="fa-solid fa-toggle-on text-sm group-hover:scale-110 transition-transform"></i>
+        </button>
+      </form>
+    @endif
+  @endif
+
+  {{-- Eliminar Definitivo (para inactivos con realdelete) --}}
+  @if(isset($realdelete) && !$isActive)
+    <span class="text-slate-300 dark:text-slate-700">|</span>
+    <form action="{{ $realdelete }}" method="POST" onsubmit="return confirm('¿Está seguro de eliminar PERMANENTEMENTE este elemento? Esta acción no se puede deshacer.');" class="inline">
       @csrf
+      @method('DELETE')
       <button type="submit"
-         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/30 transition-all duration-200 group"
-         title="Activar elemento">
-        <i class="fa-solid fa-toggle-off text-sm group-hover:scale-110 transition-transform"></i>
+         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 transition-all duration-200 group"
+         title="Eliminar permanentemente">
+        <i class="fa-solid fa-trash-can text-sm group-hover:scale-110 transition-transform"></i>
       </button>
     </form>
-  @else
-    <form action="{{ $softdelete ?? '#' }}" method="POST" onsubmit="return confirm('¿Desea desactivar este elemento?');" class="inline">
+  {{-- Eliminar directo (para recursos estándar sin softdeletes) --}}
+  @elseif(isset($delete))
+    <span class="text-slate-300 dark:text-slate-700">|</span>
+    <form action="{{ $delete }}" method="POST" onsubmit="return confirm('¿Está seguro de eliminar este elemento?');" class="inline">
       @csrf
       <button type="submit"
-         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/30 transition-all duration-200 group"
-         title="Desactivar elemento">
-        <i class="fa-solid fa-toggle-on text-sm group-hover:scale-110 transition-transform"></i>
+         class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 transition-all duration-200 group"
+         title="Eliminar elemento">
+        <i class="fa-solid fa-trash text-sm group-hover:scale-110 transition-transform"></i>
       </button>
     </form>
   @endif

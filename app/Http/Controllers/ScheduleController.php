@@ -129,6 +129,7 @@ class ScheduleController extends Controller
                 \Illuminate\Support\Facades\DB::raw('MAX(image) as image'),
                 \Illuminate\Support\Facades\DB::raw('MAX(about) as about'),
                 \Illuminate\Support\Facades\DB::raw('MAX(deleted_at) as deleted_at'),
+                \Illuminate\Support\Facades\DB::raw('GROUP_CONCAT(DISTINCT day ORDER BY day ASC) as days_list'),
             ])
             ->groupBy('emission_key')
             ->withTrashed(); // Incluir inactivos en el listado del panel
@@ -140,9 +141,15 @@ class ScheduleController extends Controller
             });
         }
 
-        $schedules = $query->orderBy('start', 'asc')->paginate(10)->withQueryString();
+        if ($dayFilter = $request->input('day')) {
+            $matchingKeys = Schedule::where('day', $dayFilter)->pluck('emission_key');
+            $query->whereIn('emission_key', $matchingKeys);
+        }
 
-        return view('admin.schedule.show-schedule', compact('schedules'));
+        $schedules = $query->orderBy('start', 'asc')->paginate(12)->withQueryString();
+        $currentProgram = Schedule::getCurrentProgram();
+
+        return view('admin.schedule.show-schedule', compact('schedules', 'currentProgram'));
     }
 
     /**

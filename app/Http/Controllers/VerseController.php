@@ -54,14 +54,7 @@ class VerseController extends Controller
 
     public function show(Request $request)
     {
-        $query = Verse::query();
-
-        $user = auth()->user();
-        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
-
-        if ($isSuperAdmin) {
-            $query->withTrashed();
-        }
+        $query = Verse::query()->withTrashed();
 
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
@@ -83,28 +76,27 @@ class VerseController extends Controller
             'date.required' => 'El campo fecha es obligatorio.',
         ]);
 
-        $quote = Verse::findOrFail($id);
+        $quote = Verse::withTrashed()->findOrFail($id);
 
         if ($request->hasFile('image')) {
             $imgName = time().'.'.$request->file('image')->getClientOriginalExtension();
-            $request->file('image')->move('images/bible', $imgName);
+            $request->file('image')->move(public_path('images/bible'), $imgName);
             $quote->image = $imgName;
         }
 
         if ($request->hasFile('audio')) {
             $audioName = time().'.'.$request->file('audio')->getClientOriginalExtension();
-            $request->file('audio')->move('audio/quote', $audioName);
+            $request->file('audio')->move(public_path('audio/quote'), $audioName);
             $quote->audio = $audioName;
         }
 
         if ($request->hasFile('video')) {
             $videoName = time().'.'.$request->file('video')->getClientOriginalExtension();
-            $request->file('video')->move('documents/quote', $videoName);
+            $request->file('video')->move(public_path('documents/quote'), $videoName);
             $quote->video = $videoName;
         }
 
         $quote->date       = $request->input('date');
-        // NO tocar created_at en edición
         $quote->updated_at = Carbon::now();
         $quote->save();
 
@@ -113,32 +105,42 @@ class VerseController extends Controller
 
     public function update(Request $request, $id)
     {
-        $quote = Verse::find($id);
+        $quote = Verse::withTrashed()->findOrFail($id);
         return view('admin.quote.update-quote', compact('quote'));
     }
 
     public function destroy($id)
     {
         $quote = Verse::findOrFail($id);
-        $quote->deleted_at = Carbon::now();
-        $quote->save();
+        $quote->delete();
 
         return back()->with('success', 'La publicación no está disponible al público');
     }
 
     public function activate($id)
     {
-        $quote = Verse::findOrFail($id);
-        $quote->deleted_at = null;
-        $quote->save();
+        $quote = Verse::withTrashed()->findOrFail($id);
+        $quote->restore();
 
         return back()->with('success', 'La publicación ha sido activada al público');
     }
 
     public function delete($id)
     {
-        $quote = Verse::findOrFail($id);
-        $quote->delete();
+        $quote = Verse::withTrashed()->findOrFail($id);
+        
+        // Clean up files if exist
+        if ($quote->image && \Illuminate\Support\Facades\File::exists(public_path('images/bible/' . $quote->image))) {
+            \Illuminate\Support\Facades\File::delete(public_path('images/bible/' . $quote->image));
+        }
+        if ($quote->audio && \Illuminate\Support\Facades\File::exists(public_path('audio/quote/' . $quote->audio))) {
+            \Illuminate\Support\Facades\File::delete(public_path('audio/quote/' . $quote->audio));
+        }
+        if ($quote->video && \Illuminate\Support\Facades\File::exists(public_path('documents/quote/' . $quote->video))) {
+            \Illuminate\Support\Facades\File::delete(public_path('documents/quote/' . $quote->video));
+        }
+
+        $quote->forceDelete();
 
         return back()->with('success', 'La publicación ha sido eliminada definitivamente.');
     }

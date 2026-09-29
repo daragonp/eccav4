@@ -756,6 +756,70 @@
                     </div>
                 </div>
                 @endif
+
+                {{-- Campos específicos para Podcast --}}
+                @if($sectionType === 'podcast')
+                @php
+                    $allCategories = \App\Models\Category::all();
+                @endphp
+                <div class="px-6 py-4 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Título del Episodio</label>
+                            <input id="name" type="text" name="name" value="{{ $tableM->title ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                        </div>
+                        <div>
+                            <label for="category" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Serie / Categoría</label>
+                            <select id="category" name="category" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                                @foreach($allCategories as $cat)
+                                    <option value="{{ $cat->id }}" {{ (($tableM->category_id ?? null) == $cat->id) ? 'selected' : '' }}>
+                                        {{ $cat->name }} {{ $cat->subcategory ? '('.$cat->subcategory.')' : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="description" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Descripción del Episodio</label>
+                            <textarea id="description" name="description" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>{{ $tableM->description ?? '' }}</textarea>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="audio" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Archivo de Audio (Dejar vacío para conservar el actual)</label>
+                            <input id="audio" type="file" name="audio" accept="audio/*" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 dark:file:bg-emerald-950 file:text-emerald-700 dark:file:text-emerald-300 hover:file:bg-emerald-100 cursor-pointer">
+                            @if(!empty($tableM->audio_file))
+                            <div class="mt-3 p-3 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <i class="fa-solid fa-file-audio text-emerald-500 text-lg"></i>
+                                    <span class="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{{ $tableM->audio_file }}</span>
+                                </div>
+                                <audio controls class="h-8 max-w-full sm:max-w-xs">
+                                    <source src="{{ asset('audio/podcast/' . $tableM->audio_file) }}">
+                                </audio>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                {{-- Campos específicos para Category --}}
+                @if($sectionType === 'category')
+                <div class="px-6 py-4 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Nombre de la Categoría / Serie</label>
+                            <input id="name" type="text" name="name" value="{{ $tableM->name ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>
+                        </div>
+                        <div>
+                            <label for="subcategory" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Subcategoría / Etiqueta Corta</label>
+                            <input id="subcategory" type="text" name="subcategory" value="{{ $tableM->subcategory ?? '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="description" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Descripción</label>
+                            <textarea id="description" name="description" rows="3" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500" required>{{ $tableM->description ?? '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                @endif
             </div>
 
             {{-- Modal Footer --}}

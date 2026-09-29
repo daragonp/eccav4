@@ -129,11 +129,18 @@ class RoleController extends Controller
      */
     public function delete($id)
     {
-        //
-        $role = Role::find($id);
+        $role = Role::findOrFail($id);
+
+        if ((int)$role->id === 1 || mb_strtolower($role->name) === 'superadministrador') {
+            return redirect()->back()->with('error', 'El rol de Superadministrador es fundamental para el sistema y no puede ser eliminado.');
+        }
+
+        if (method_exists($role, 'users') && $role->users()->count() > 0) {
+            return redirect()->back()->with('error', 'No se puede eliminar el rol porque tiene ' . $role->users()->count() . ' usuario(s) asignado(s).');
+        }
 
         $role->delete();
 
-        return redirect()->back()->with('mensaje', 'El role ha sido eliminado');
+        return redirect()->back()->with('mensaje', 'El rol ha sido eliminado.');
     }
 }

@@ -173,16 +173,7 @@ class NewsController extends Controller
      */
     public function show(Request $request)
     {
-        $query = News::query()->where('category', 1);
-
-        $user = auth()->user();
-        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
-
-        if ($isSuperAdmin) {
-            $query->withTrashed();
-        } else {
-            $query->whereNull('deleted_at');
-        }
+        $query = News::query()->where('category', 1)->withTrashed();
 
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
@@ -198,16 +189,7 @@ class NewsController extends Controller
 
     public function look(Request $request)
     {
-        $query = News::query()->where('category', 2);
-
-        $user = auth()->user();
-        $isSuperAdmin = $user && $user->roles->pluck('name')->map(fn($n) => mb_strtolower($n))->contains('superadministrador');
-
-        if ($isSuperAdmin) {
-            $query->withTrashed();
-        } else {
-            $query->whereNull('deleted_at');
-        }
+        $query = News::query()->where('category', 2)->withTrashed();
 
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
@@ -223,33 +205,35 @@ class NewsController extends Controller
 
     public function destroy($id)
     {
-        //
-        $news = News::findorFail($id);
-
-        $news->deleted_at = Carbon::now();
-
-        $news->save();
+        $news = News::withTrashed()->findOrFail($id);
+        $news->delete();
 
         return redirect()->back()->with('success', 'La publicación no está disponible al público');
     }
 
     public function activate($id)
     {
-        //
-        $news = News::findorFail($id);
-
-        $news->deleted_at = NULL;
-
-        $news->save();
+        $news = News::withTrashed()->findOrFail($id);
+        $news->restore();
 
         return redirect()->back()->with('success', 'La publicación ha sido activada al público');
     }
 
     public function delete($id)
     {
-        $news = News::findOrFail($id);
+        $news = News::withTrashed()->findOrFail($id);
 
-        $news->delete();
+        if ($news->image && \Illuminate\Support\Facades\Storage::disk('public')->exists('images/news/' . $news->image)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete('images/news/' . $news->image);
+        }
+        if ($news->pdfdoc && \Illuminate\Support\Facades\Storage::disk('public')->exists('documents/news/' . $news->pdfdoc)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete('documents/news/' . $news->pdfdoc);
+        }
+        if ($news->audio && \Illuminate\Support\Facades\Storage::disk('public')->exists('audio/news/' . $news->audio)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete('audio/news/' . $news->audio);
+        }
+
+        $news->forceDelete();
 
         return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
     }

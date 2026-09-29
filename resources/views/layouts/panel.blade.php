@@ -395,7 +395,7 @@
 
             {{-- 5. Contenido Dinámico de la Vista --}}
             <div class="p-4 lg:p-6 space-y-4 flex-1">
-                @if ($errors->any())
+                @if (isset($errors) && $errors->any())
                 <div class="alert alert-danger shadow-xs">
                     <button class="close-btn" data-close aria-label="Cerrar">✕</button>
                     <ul class="list-disc list-inside space-y-1">
@@ -404,12 +404,22 @@
                 </div>
                 @endif
 
-                @if (session('success'))
+                @if (session('success') || session('mensaje'))
                 <div class="alert alert-success shadow-xs">
                     <button class="close-btn" data-close aria-label="Cerrar">✕</button>
                     <div class="flex items-center gap-2">
                         <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                        <span>{{ session('success') }}</span>
+                        <span>{{ session('success') ?? session('mensaje') }}</span>
+                    </div>
+                </div>
+                @endif
+
+                @if (session('error'))
+                <div class="alert alert-danger shadow-xs">
+                    <button class="close-btn" data-close aria-label="Cerrar">✕</button>
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-600"></i>
+                        <span>{{ session('error') }}</span>
                     </div>
                 </div>
                 @endif
