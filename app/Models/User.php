@@ -46,8 +46,14 @@ class User extends Authenticatable
         'deleted_at' => 'datetime',
     ];
 
-    public function role(){
-        return $this->belongsTo(Role::class,'role_id');
+    public function role()
+    {
+        return $this->roles()->one();
+    }
+
+    public function getRoleAttribute()
+    {
+        return $this->roles->first();
     }
 
     public function getAvatarUrlAttribute(): string

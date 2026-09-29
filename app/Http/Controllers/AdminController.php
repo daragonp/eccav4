@@ -268,25 +268,37 @@ class AdminController extends Controller
      */
     public function ustore(Request $request)
     {
-        // Validación básica
+        $roleId = $request->input('role_id') ?? $request->input('select');
+
         $validated = $request->validate([
-            'select'   => ['required', 'exists:roles,id'],
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
+            'role_id'  => ['nullable', 'exists:roles,id'],
+            'select'   => ['nullable', 'exists:roles,id'],
         ]);
 
         $user = new User();
-        $user->role_id    = $validated['select'];
-        $user->name       = $validated['name'];
-        $user->email      = $validated['email'];
-        $user->password   = Hash::make($validated['password']); // <- HASH!
-        // created_at / updated_at se setean solos si $timestamps = true (default)
+        $user->name     = $validated['name'];
+        $user->email    = $validated['email'];
+        $user->password = Hash::make($validated['password']);
+        $user->image    = 'human.png';
         $user->save();
+
+        if ($roleId) {
+            $role = Role::find($roleId);
+            if ($role) {
+                $user->syncRoles([$role->name]);
+            }
+        }
+
+        if ($request->input('status') === '0') {
+            $user->delete();
+        }
 
         return redirect()
             ->back()
-            ->with('mensaje', 'El usuario ha sido creado');
+            ->with('success', 'El usuario ha sido creado exitosamente.');
     }
 
     /**
@@ -304,8 +316,9 @@ class AdminController extends Controller
         }
 
         $users = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
+        $roles = Role::orderBy('name')->get();
 
-        return view('admin.user.show-user', compact('users'));
+        return view('admin.user.show-user', compact('users', 'roles'));
     }
 
     /**
@@ -324,28 +337,49 @@ class AdminController extends Controller
     {
         $user = User::withTrashed()->findOrFail($id);
 
-        // validamos. El email debe ser único excepto el del propio usuario
         $validated = $request->validate([
-            'role_id'  => ['required', 'exists:roles,id'],
+            'role_id'  => ['nullable', 'exists:roles,id'],
+            'select'   => ['nullable', 'exists:roles,id'],
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:8'],
         ]);
 
-        $user->role_id = $validated['role_id'];
-        $user->name    = $validated['name'];
-        $user->email   = $validated['email'];
+        $user->name  = $validated['name'];
+        $user->email = $validated['email'];
 
-        // Si se envió password, lo actualizamos hasheado
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
         }
 
         $user->save();
 
+        $roleId = $validated['role_id'] ?? $validated['select'] ?? null;
+        if (!empty($roleId)) {
+            $role = Role::find($roleId);
+            if ($role) {
+                $user->syncRoles([$role->name]);
+            }
+        }
+
+        // Manejo de estado activo / inactivo
+        if ($request->has('status')) {
+            $status = $request->input('status');
+            $shouldBeActive = ($status === '1' || $status === 1 || $status === 'on' || $status === true);
+
+            if ($shouldBeActive && $user->trashed()) {
+                $user->restore();
+            } elseif (!$shouldBeActive && !$user->trashed()) {
+                if ((int)$id === (int)auth()->id()) {
+                    return redirect()->back()->with('error', 'No puedes desactivar tu propia cuenta en sesión.');
+                }
+                $user->delete();
+            }
+        }
+
         return redirect()
             ->back()
-            ->with('mensaje', 'Los datos del usuario han sido actualizados');
+            ->with('success', 'Los datos del usuario han sido actualizados exitosamente.');
     }
 
     /**
