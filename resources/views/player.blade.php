@@ -2,7 +2,7 @@
      data-turbo-permanent
      class="radio-player-container"
      data-default-photo="{{ asset('images/genericprogramimage.png') }}"
-     data-stream-url="{{ env('RADIO_STREAM_URL', 'https://a12.asurahosting.com/listen/dilinger/radio.mp3') }}"
+     data-stream-url="{{ config('app.stream_url', 'https://widestream.app/radio.aac') }}"
      data-initialized="0"><!-- data-initialized evita re-inicializar -->
 
   <div class="player-controls">

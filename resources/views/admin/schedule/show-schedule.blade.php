@@ -189,9 +189,9 @@
         </div>
 
         <div class="flex items-center gap-3">
-            <a href="https://a12.asurahosting.com/station/199/" target="_blank" rel="noopener noreferrer" class="btn btn-primary text-xs py-2 px-3.5 inline-flex items-center gap-2 shadow-xs">
-                <i class="fa-solid fa-sliders"></i>
-                <span>Consola Asura</span>
+            <a href="{{ config('app.stream_station_url', 'https://widestream.app/') }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary text-xs py-2 px-3.5 inline-flex items-center gap-2 shadow-xs">
+                <i class="fa-solid fa-tower-broadcast"></i>
+                <span>Consola WideStream</span>
             </a>
             <a href="{{ url('/') }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary text-xs py-2 px-3.5 inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 border-white/10 text-white">
                 <i class="fa-solid fa-play"></i>

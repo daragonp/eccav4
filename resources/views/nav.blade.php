@@ -568,14 +568,9 @@
                         </span>
 
                     </div>
-                    <div class="d-flex ms-auto">
-                        <!-- Inicio. radio hosting USAstreams.com html5 player -->
-                        <!-- Licencia: GRATIS-XDF4543ERF -->
-                        <iframe name="contenedorPlayer" class="cuadroBordeado" allow="autoplay" width="250px"
-                            height="50px" marginwidth=5 marginheight=5 hspace=5 vspace=10 frameborder=10 scrolling=no
-                            src="https://cp.usastreams.com/pr2g/APPlayerRadioHTML5.aspx?stream=https://cast6.asurahosting.com/proxy/dilinger/;&fondo=05&formato=mp3&color=6&titulo=2&autoStart=1&vol=5&tipo=1&nombre=Radio+ECCA&botonPlay=4"></iframe>
-                        <!-- En players responsive puede modificar el weight a sus necesidades, Por favor no modifique el resto del codigo para poder seguir ofreciendo este servicio gratis  -->
-                        <!-- Fin. USAstreams.com html5 player -->
+                    <div class="d-flex ms-auto align-items-center">
+                        {{-- WideStream Player Widget --}}
+                        <x-radio-widget layout="button" theme="transparent" width="220px" height="48" />
                     </div>
                 </div>
             </div>

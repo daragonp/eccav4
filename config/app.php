@@ -27,7 +27,10 @@ return [
     */
 
     'env' => env('APP_ENV', 'production'),
-    'stream_url' => env('RADIO_STREAM_URL', ''),
+    'stream_url' => env('RADIO_STREAM_URL', 'https://widestream.app/radio.aac'),
+    'stream_hls_url' => env('RADIO_STREAM_HLS_URL', 'https://widestream.app/hls/live.m3u8'),
+    'stream_embed_url' => env('RADIO_STREAM_EMBED_URL', 'https://widestream.app/embed/main'),
+    'stream_station_url' => env('RADIO_STATION_URL', 'https://widestream.app/'),
 
 
     /*

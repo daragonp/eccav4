@@ -170,7 +170,9 @@ class AdminController extends Controller
             'remaining' => $remainingMinutes,
         ];
         $dashboardData['todaySchedule'] = $todaySchedule;
-        $dashboardData['streamUrl'] = config('app.stream_url') ?: 'https://a12.asurahosting.com/listen/dilinger/radio.mp3';
+        $dashboardData['streamUrl'] = config('app.stream_url') ?: 'https://widestream.app/radio.aac';
+        $dashboardData['streamHls'] = config('app.stream_hls_url') ?: 'https://widestream.app/hls/live.m3u8';
+        $dashboardData['streamEmbed'] = config('app.stream_embed_url') ?: 'https://widestream.app/embed/main';
 
         return view('admin.dashboard', $dashboardData);
     }
@@ -585,8 +587,12 @@ class AdminController extends Controller
             'app_debug' => config('app.debug'),
             'app_url' => config('app.url'),
             'db_connection' => config('database.default'),
-            'app_version' => config('app.version', 'v4.8.4'),
-            'station_url' => 'https://a12.asurahosting.com/station/199/',
+            'app_version' => app(\App\Services\VersionService::class)->getVersion(),
+            'provider' => 'WideStream (widestream.app)',
+            'station_url' => config('app.stream_station_url', 'https://widestream.app/'),
+            'stream_url' => config('app.stream_url', 'https://widestream.app/radio.aac'),
+            'stream_hls' => config('app.stream_hls_url', 'https://widestream.app/hls/live.m3u8'),
+            'stream_embed' => config('app.stream_embed_url', 'https://widestream.app/embed/main'),
             'domains' => [
                 'www.tezbrillante.org',
                 'www.emancipacioncristianaafro.org',

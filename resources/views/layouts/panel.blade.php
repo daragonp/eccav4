@@ -151,7 +151,7 @@
                         <span class="nav-text">Podcasts</span>
                     </a>
 
-                    <a href="https://a12.asurahosting.com/station/199/" target="_blank" rel="noopener noreferrer" class="nav-item group" title="Consola Asura Hosting (Transmisión 24/7)">
+                    <a href="{{ config('app.stream_station_url', 'https://widestream.app/') }}" target="_blank" rel="noopener noreferrer" class="nav-item group" title="Consola WideStream (Transmisión 24/7)">
                         <div class="nav-icon">
                             <i class="fa-solid fa-tower-broadcast"></i>
                         </div>
@@ -281,7 +281,7 @@
                     </div>
 
                     {{-- Indicador Radio En Vivo --}}
-                    <a href="https://a12.asurahosting.com/station/199/" target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition shadow-2xs" title="Emisora en vivo (Clic para abrir consola de streaming)">
+                    <a href="{{ config('app.stream_station_url', 'https://widestream.app/') }}" target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition shadow-2xs" title="Emisora en vivo (Clic para abrir consola de streaming WideStream)">
                         <span class="relative flex h-2 w-2">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -372,11 +372,11 @@
                                     </div>
                                 </a>
 
-                                <a href="https://a12.asurahosting.com/station/199/" target="_blank" rel="noopener noreferrer" class="menu-item" role="menuitem">
+                                <a href="{{ config('app.stream_station_url', 'https://widestream.app/') }}" target="_blank" rel="noopener noreferrer" class="menu-item" role="menuitem">
                                     <i class="fa-solid fa-tower-broadcast w-5 text-indigo-500 text-center"></i>
                                     <div>
                                         <div class="font-semibold text-slate-800 dark:text-slate-200">Dashboard Emisora</div>
-                                        <div class="text-[11px] text-slate-500 dark:text-slate-400">Panel streaming Asura</div>
+                                        <div class="text-[11px] text-slate-500 dark:text-slate-400">Servidor streaming WideStream</div>
                                     </div>
                                 </a>
                             </div>
