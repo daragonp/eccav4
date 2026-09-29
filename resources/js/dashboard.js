@@ -80,57 +80,84 @@ function closeModal(modalId) {
     }
 }
 
-function toggleSidebarBackdrop() {
-    let backdrop = document.getElementById('sidebar-backdrop');
-    if (!backdrop) {
-        backdrop = document.createElement('div');
-        backdrop.id = 'sidebar-backdrop';
-        const shell = document.querySelector('.panel-shell') || document.body;
-        shell.appendChild(backdrop);
-        backdrop.addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar) {
-                sidebar.classList.remove('open');
-                backdrop.classList.remove('active');
-            }
-        });
-    }
-    
+function closeMobileSidebar() {
     const sidebar = document.getElementById('sidebar');
-    if (sidebar && sidebar.classList.contains('open')) {
-        backdrop.classList.add('active');
-    } else {
-        backdrop.classList.remove('active');
-    }
+    const shell = document.querySelector('.panel-shell') || document.body;
+    const backdrop = document.getElementById('sidebar-backdrop');
+
+    if (sidebar) sidebar.classList.remove('open');
+    if (shell) shell.classList.remove('sidebar-mobile-open');
+    if (backdrop) backdrop.classList.remove('active');
+    document.body.classList.remove('overflow-hidden');
 }
 
 function bindSidebarToggle() {
     const toggleBtn = document.getElementById('toggleSidebar');
     const closeBtn = document.getElementById('closeSidebar');
     const sidebar = document.getElementById('sidebar');
-    const sidebarCollapsed = document.getElementById('sidebar-collapsed');
+    const shell = document.querySelector('.panel-shell') || document.body;
 
-    if (!sidebar) return;
+    let backdrop = document.getElementById('sidebar-backdrop');
+    if (!backdrop) {
+        backdrop = document.createElement('div');
+        backdrop.id = 'sidebar-backdrop';
+        backdrop.className = 'sidebar-backdrop';
+        document.body.appendChild(backdrop);
+    }
 
-    if (toggleBtn && toggleBtn.dataset.bound !== '1') {
-        toggleBtn.dataset.bound = '1';
-        toggleBtn.addEventListener('click', () => {
-            const isMobile = window.innerWidth <= 768;
-            if (isMobile) {
-                sidebar.classList.toggle('open');
-                toggleSidebarBackdrop();
-            } else {
-                sidebar.classList.toggle('collapsed');
-                if (sidebarCollapsed) sidebarCollapsed.classList.toggle('open');
-            }
-        });
+    if (backdrop && backdrop.dataset.bound !== '1') {
+        backdrop.dataset.bound = '1';
+        backdrop.addEventListener('click', closeMobileSidebar);
     }
 
     if (closeBtn && closeBtn.dataset.bound !== '1') {
         closeBtn.dataset.bound = '1';
-        closeBtn.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            toggleSidebarBackdrop();
+        closeBtn.addEventListener('click', closeMobileSidebar);
+    }
+
+    if (toggleBtn && toggleBtn.dataset.bound !== '1') {
+        toggleBtn.dataset.bound = '1';
+        toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isMobile = window.innerWidth < 1024;
+            if (isMobile) {
+                const isOpen = sidebar && sidebar.classList.toggle('open');
+                if (shell) shell.classList.toggle('sidebar-mobile-open', isOpen);
+                if (backdrop) backdrop.classList.toggle('active', isOpen);
+                if (isOpen) {
+                    document.body.classList.add('overflow-hidden');
+                } else {
+                    document.body.classList.remove('overflow-hidden');
+                }
+            } else {
+                // Desktop: alternar colapso compacto y guardar preferencia
+                const isCurrentlyCollapsed = document.documentElement.classList.contains('sidebar-collapsed');
+                const willCollapse = !isCurrentlyCollapsed;
+                document.documentElement.classList.toggle('sidebar-collapsed', willCollapse);
+                if (shell) shell.classList.toggle('sidebar-collapsed', willCollapse);
+                if (sidebar) sidebar.classList.toggle('collapsed', willCollapse);
+                localStorage.setItem('sidebar_collapsed', willCollapse ? '1' : '0');
+            }
+        });
+    }
+
+    // Atajo de teclado: Ctrl+B o Cmd+B para colapsar en desktop
+    if (!window._sidebarKeyboardBound) {
+        window._sidebarKeyboardBound = true;
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+                e.preventDefault();
+                if (toggleBtn) toggleBtn.click();
+            }
+            if (e.key === 'Escape') {
+                closeMobileSidebar();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                closeMobileSidebar();
+            }
         });
     }
 }
@@ -140,7 +167,8 @@ function bindThemeToggle() {
     if (!themeToggle || themeToggle.dataset.bound === '1') return;
 
     themeToggle.dataset.bound = '1';
-    themeToggle.addEventListener('click', () => {
+    themeToggle.addEventListener('click', (e) => {
+        e.preventDefault();
         const isDark = document.documentElement.classList.contains('dark');
         applyTheme(isDark ? 'light' : 'dark');
     });
@@ -155,7 +183,16 @@ function bindUserMenuToggle() {
     userMenuBtn.dataset.bound = '1';
     userMenuBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        userMenu.classList.toggle('hidden');
+        const isHidden = userMenu.classList.toggle('hidden');
+        userMenuBtn.setAttribute('aria-expanded', !isHidden ? 'true' : 'false');
+    });
+
+    // Cerrar al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!userMenu.contains(e.target) && !userMenuBtn.contains(e.target)) {
+            userMenu.classList.add('hidden');
+            userMenuBtn.setAttribute('aria-expanded', 'false');
+        }
     });
 }
 

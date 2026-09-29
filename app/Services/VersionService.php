@@ -324,6 +324,19 @@ class VersionService
     {
         return [
             [
+                'version' => 'v4.8.4',
+                'date'    => '2026-09-29',
+                'title'   => 'Rediseño de Sidebar Unificado, Topbar Profesional y Laravel 13.34.0',
+                'highlights' => [
+                    'Eliminación de duplicidad de DOM: unificación de la barra lateral en un solo componente responsivo.',
+                    'Reparación del colapso: transición fluida entre 272px y 80px sin solapamientos ni desajustes visuales.',
+                    'Persistencia del estado de colapso en localStorage con precarga en head para evitar parpadeos.',
+                    'Reorganización temática del menú en 5 bloques: General, Radio & Emisión, Contenidos, Administración y Sistema.',
+                    'Topbar renovado con migas de pan dinámicas, indicador de radio en vivo y menú de usuario optimizado.',
+                    'Actualización del núcleo de Laravel Framework a la versión 13.34.0 y dependencias de ecosistema.',
+                ],
+            ],
+            [
                 'version' => 'v4.8.3',
                 'date'    => '2026-09-29',
                 'title'   => 'Lanzamiento de Sistema SemVer, Página /about y Footers Dinámicos',
