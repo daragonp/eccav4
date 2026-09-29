@@ -18,6 +18,7 @@ use App\Http\Controllers\ScheduleOverrideController;
 use App\Http\Controllers\HomeContentController;
 use App\Http\Controllers\BibleController;
 use App\Http\Controllers\PrivacyController;
+use App\Http\Controllers\AboutController;
 
 
 require __DIR__ . '/auth.php';
@@ -220,9 +221,6 @@ Route::get('/ojos', [RutasController::class, 'ojos']);
 Route::get('/herencia', [RutasController::class, 'herencia']);
 Route::get('/worships', [RutasController::class, 'worship']);
 
-Route::fallback(function () {
-    return view('errors.404');
-});
 
 
 Route::prefix('biblia')->name('biblia.')->group(function () {
@@ -276,3 +274,11 @@ Route::get('/programa-actual', [ScheduleController::class, 'getCurrentProgram'])
 // Rutas para ver los registros de culto en la parte pública
 Route::get('/worship', [WorshipController::class, 'publicIndex'])->name('worship.public.index');
 Route::get('/worship/{slug}', [WorshipController::class, 'publicShow'])->name('worship.public.show');
+
+// Ruta sobre el sistema, versión SemVer y stack tecnológico
+Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+// Fallback al final de todas las rutas
+Route::fallback(function () {
+    return view('errors.404');
+});

@@ -57,10 +57,9 @@ Cualquier comando que involucre PHP o Laravel debe ser ejecutado dentro del cont
 Para conectarte al servidor y aplicar los cambios que has programado y subido a Git:
 
 ### 🔑 Conectarse al Servidor
-* **Acceso SSH**:
+* **Acceso SSH (usar llaves SSH autenticadas)**:
   ```bash
-  ssh -l root -p 22 2.59.156.25
-  # Contraseña: Jacobo2505*+
+  ssh -l root -p 22 <IP_DEL_VPS>
   ```
 
 ### 🚀 Despliegue de Cambios (Deploy)

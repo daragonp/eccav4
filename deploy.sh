@@ -32,6 +32,9 @@ $COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE php artisan migrate --force
 echo "==> Storage link"
 $COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE php artisan storage:link || true
 
+echo "==> Sincronizando metadatos de versión y Git (SemVer)"
+$COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE php artisan app:version sync-git || true
+
 echo "==> Saliendo de mantenimiento"
 $COMPOSE exec -T -w $APP_WORKDIR $APP_SERVICE php artisan up || true
 

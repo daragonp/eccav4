@@ -150,14 +150,17 @@ class Schedule extends Model
         $dayToCheck = $override ? $override->override_day : $currentDay;
         $previousDay = $currentDay === 1 ? 7 : $currentDay - 1;
 
-        if ($this->start <= $this->end) {
+        $startTime = $this->start instanceof \Carbon\CarbonInterface ? $this->start->format('H:i') : substr((string)$this->start, 0, 5);
+        $endTime = $this->end instanceof \Carbon\CarbonInterface ? $this->end->format('H:i') : substr((string)$this->end, 0, 5);
+
+        if ($startTime <= $endTime) {
             return $this->day == $dayToCheck
-                && $currentTime >= $this->start
-                && $currentTime < $this->end;
+                && $currentTime >= $startTime
+                && $currentTime < $endTime;
         }
 
-        return ($this->day == $dayToCheck && $currentTime >= $this->start)
-            || ($this->day == $previousDay && $currentTime < $this->end);
+        return ($this->day == $dayToCheck && $currentTime >= $startTime)
+            || ($this->day == $previousDay && $currentTime < $endTime);
     }
 
     /**

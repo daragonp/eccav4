@@ -24,22 +24,13 @@ class AdminController extends Controller
 {
     /**
      * Obtener el programa actualmente en emisión.
+     * Utiliza el modelo Schedule que soporta overrides festivos y horarios que cruzan medianoche.
      * Devuelve un Schedule o null si no hay ninguno.
      */
     private function getCurrentProgram(): ?Schedule
     {
         try {
-            $now = now();
-            $currentDay = $now->dayOfWeekIso; // 1=lunes ... 7=domingo
-            $currentTime = $now->format('H:i');
-
-            $program = Schedule::where('day', $currentDay)
-                ->whereNull('deleted_at')
-                ->where('start', '<=', $currentTime)
-                ->where('end', '>', $currentTime)
-                ->first();
-
-            return $program;
+            return Schedule::getCurrentProgram();
         } catch (\Throwable $e) {
             // Si algo falla no tumbes el dashboard
             return null;
@@ -51,17 +42,27 @@ class AdminController extends Controller
      */
     public function index()
     {
-        $cacheKey = 'dashboard:' . Auth::id();
+        $cacheKey = 'dashboard:stats:' . Auth::id();
 
-        $dashboardData = Cache::remember($cacheKey, now()->addMinutes(5), function () {
+        // Cacheamos estadísticas globales y listados pesados
+        $dashboardData = Cache::remember($cacheKey, now()->addMinutes(3), function () {
             return [
-                'stats'         => [
+                'stats' => [
                     'users'     => User::count(),
                     'verses'    => Verse::count(),
                     'schedules' => Schedule::count(),
                     'banners'   => Banner::count(),
                     'news'      => News::count(),
                     'worships'  => Worship::count(),
+                    'podcasts'  => \App\Models\Podcast::count(),
+                ],
+                'smartMetrics' => [
+                    'worships_pending_ai'  => Worship::where('ai_processed', false)->count(),
+                    'worships_processed_ai'=> Worship::where('ai_processed', true)->count(),
+                    'verses_this_month'    => Verse::whereMonth('date', now()->month)->whereYear('date', now()->year)->count(),
+                    'schedules_today'      => Schedule::where('day', now()->dayOfWeekIso)->whereNull('deleted_at')->count(),
+                    'php_version'          => PHP_VERSION,
+                    'laravel_version'      => app()->version(),
                 ],
                 'latestVerses'  => Verse::orderByDesc('date')
                     ->take(5)
@@ -71,10 +72,105 @@ class AdminController extends Controller
                     ->get(['id', 'title', 'created_at']),
                 'latestWorships'=> Worship::orderByDesc('broadcast')
                     ->take(5)
-                    ->get(['id', 'title', 'broadcast', 'audio', 'video', 'pdfdoc', 'ai_processed']),
-                'currentProgram'=> $this->getCurrentProgram(),
+                    ->get(['id', 'title', 'broadcast', 'audio', 'video', 'pdfdoc', 'ai_processed', 'autor']),
+                'latestPodcasts'=> \App\Models\Podcast::with('category')
+                    ->orderByDesc('id')
+                    ->take(5)
+                    ->get(['id', 'title', 'description', 'audio_file', 'category_id', 'created_at']),
             ];
         });
+
+        // 1. Programa al aire y progreso en tiempo real
+        $now = now();
+        $currentProgram = $this->getCurrentProgram();
+        $progressPercent = 0;
+        $elapsedMinutes = 0;
+        $remainingMinutes = 0;
+        $nextProgram = null;
+
+        if ($currentProgram) {
+            $startStr = $currentProgram->start instanceof \Carbon\CarbonInterface
+                ? $currentProgram->start->format('H:i')
+                : substr((string)$currentProgram->start, 0, 5);
+            $endStr = $currentProgram->end instanceof \Carbon\CarbonInterface
+                ? $currentProgram->end->format('H:i')
+                : substr((string)$currentProgram->end, 0, 5);
+
+            $currentProgram->start_formatted = $startStr;
+            $currentProgram->end_formatted = $endStr;
+
+            $startTime = Carbon::createFromFormat('H:i', $startStr);
+            $endTime = Carbon::createFromFormat('H:i', $endStr);
+            if ($endTime < $startTime) {
+                $endTime->addDay();
+            }
+            $currentTime = Carbon::createFromFormat('H:i', $now->format('H:i'));
+            if ($currentTime < $startTime) {
+                $currentTime->addDay();
+            }
+
+            $totalDuration = max(1, $startTime->diffInMinutes($endTime));
+            $elapsedMinutes = max(0, $startTime->diffInMinutes($currentTime));
+            $remainingMinutes = max(0, $totalDuration - $elapsedMinutes);
+            $progressPercent = min(100, round(($elapsedMinutes / $totalDuration) * 100));
+
+            // Siguiente programa
+            $nextProgram = Schedule::where('day', $now->dayOfWeekIso)
+                ->whereNull('deleted_at')
+                ->where('start', '>=', $endStr)
+                ->orderBy('start', 'asc')
+                ->first();
+
+            if (!$nextProgram) {
+                // Si no hay más programas hoy, buscar el primero de mañana
+                $nextDay = $now->dayOfWeekIso === 7 ? 1 : $now->dayOfWeekIso + 1;
+                $nextProgram = Schedule::where('day', $nextDay)
+                    ->whereNull('deleted_at')
+                    ->orderBy('start', 'asc')
+                    ->first();
+            }
+
+            if ($nextProgram) {
+                $nextProgram->start_formatted = $nextProgram->start instanceof \Carbon\CarbonInterface
+                    ? $nextProgram->start->format('H:i')
+                    : substr((string)$nextProgram->start, 0, 5);
+            }
+        }
+
+        // 2. Cronograma de hoy para la línea de tiempo interactiva
+        $todaySchedule = Schedule::where('day', $now->dayOfWeekIso)
+            ->whereNull('deleted_at')
+            ->orderBy('start', 'asc')
+            ->get()
+            ->map(function ($prog) use ($currentProgram, $now) {
+                $startStr = $prog->start instanceof \Carbon\CarbonInterface ? $prog->start->format('H:i') : substr((string)$prog->start, 0, 5);
+                $endStr = $prog->end instanceof \Carbon\CarbonInterface ? $prog->end->format('H:i') : substr((string)$prog->end, 0, 5);
+                $currentTime = $now->format('H:i');
+
+                $isCurrent = $currentProgram && (int)$currentProgram->id === (int)$prog->id;
+                $isPast = !$isCurrent && $endStr <= $currentTime;
+
+                return (object)[
+                    'id'          => $prog->id,
+                    'name'        => $prog->name,
+                    'host'        => $prog->host,
+                    'start'       => $startStr,
+                    'end'         => $endStr,
+                    'duration'    => $prog->formatted_duration,
+                    'is_current'  => $isCurrent,
+                    'is_past'     => $isPast,
+                ];
+            });
+
+        $dashboardData['currentProgram'] = $currentProgram;
+        $dashboardData['nextProgram'] = $nextProgram;
+        $dashboardData['programProgress'] = [
+            'percent'   => $progressPercent,
+            'elapsed'   => $elapsedMinutes,
+            'remaining' => $remainingMinutes,
+        ];
+        $dashboardData['todaySchedule'] = $todaySchedule;
+        $dashboardData['streamUrl'] = config('app.stream_url') ?: 'https://a12.asurahosting.com/listen/dilinger/radio.mp3';
 
         return view('admin.dashboard', $dashboardData);
     }
@@ -198,7 +294,7 @@ class AdminController extends Controller
      */
     public function ushow(Request $request)
     {
-        $query = User::query()->with('roles');
+        $query = User::withTrashed()->with('roles');
 
         if ($search = $request->input('search')) {
             $query->where(function($q) use ($search) {
@@ -217,7 +313,7 @@ class AdminController extends Controller
      */
     public function uview($id)
     {
-        $user = User::with('roles')->findOrFail($id);
+        $user = User::withTrashed()->with('roles')->findOrFail($id);
         return view('admin.user.view-user', compact('user'));
     }
 
@@ -226,7 +322,7 @@ class AdminController extends Controller
      */
     public function uedit($id, Request $request)
     {
-        $user = User::findOrFail($id);
+        $user = User::withTrashed()->findOrFail($id);
 
         // validamos. El email debe ser único excepto el del propio usuario
         $validated = $request->validate([
@@ -245,8 +341,6 @@ class AdminController extends Controller
             $user->password = Hash::make($validated['password']);
         }
 
-        // updated_at también se setea solo, pero lo forzamos si quieres explícito
-        $user->updated_at = Carbon::now();
         $user->save();
 
         return redirect()
@@ -255,46 +349,58 @@ class AdminController extends Controller
     }
 
     /**
-     * Eliminar usuario (delete normal / SoftDelete según el modelo)
+     * Eliminar usuario definitivamente (forceDelete)
      */
     public function udelete($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete(); // si User usa SoftDeletes -> soft delete. Si no, delete físico.
+        $user = User::withTrashed()->findOrFail($id);
+        $user->forceDelete();
 
         return redirect()
             ->back()
-            ->with('mensaje', 'El usuario ha sido eliminado');
+            ->with('mensaje', 'El usuario ha sido eliminado definitivamente');
     }
 
     /**
-     * Marcar como "no disponible al público"
-     * OJO: tu mensaje dice "publicación", pero aquí actúas sobre User.
-     * Esto asume que 'deleted_at' en User se usa como soft-block manual.
+     * Desactivar usuario (soft delete)
+     */
+    public function udestroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'El usuario ha sido desactivado del sistema.');
+    }
+
+    /**
+     * Reactivar usuario desactivado (restore)
+     */
+    public function uactivate($id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+
+        return redirect()
+            ->back()
+            ->with('success', 'El usuario ha sido reactivado en el sistema.');
+    }
+
+    /**
+     * Alias retrocompatible para udestroy
      */
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->deleted_at = Carbon::now();
-        $user->save();
-
-        return redirect()
-            ->back()
-            ->with('success', 'La publicación no está disponible al público');
+        return $this->udestroy($id);
     }
 
     /**
-     * Volver a activar.
+     * Alias retrocompatible para uactivate
      */
     public function activate($id)
     {
-        $user = User::findOrFail($id);
-        $user->deleted_at = null;
-        $user->save();
-
-        return redirect()
-            ->back()
-            ->with('success', 'La publicación ha sido activada al público');
+        return $this->uactivate($id);
     }
 
     /**

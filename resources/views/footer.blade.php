@@ -135,13 +135,31 @@
       </section>
     </div>
 
+    @php
+      $versionService = app(\App\Services\VersionService::class);
+      $footerVersion = $versionService->getVersion();
+      $footerCommit = $versionService->getShortCommit();
+      $footerCommitUrl = $versionService->getCommitUrl();
+    @endphp
+
     {{-- separador + barra inferior --}}
     <hr class="mt-8 mb-4 border-white/25 dark:border-white/10">
 
-    <div class="pt-1 flex flex-col md:flex-row items-center gap-3 text-center md:text-left">
-      <p class="text-xs md:text-sm m-0">
-        &copy; {{ date('Y') }} Derechos Reservados - Emancipación Cristiana Afro | Ver. 4.8.4
-      </p>
+    <div class="pt-1 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left text-xs md:text-sm">
+      <div class="flex flex-wrap items-center justify-center md:justify-start gap-2">
+        <span>&copy; {{ date('Y') }} Derechos Reservados - Emancipación Cristiana Afro</span>
+        <span class="opacity-60">|</span>
+        <a href="{{ route('about') }}" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/15 hover:bg-white/25 text-yellow-300 font-mono text-xs transition" title="Ver información del sistema y registro de cambios">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          {{ $footerVersion }}
+        </a>
+        @if($footerCommitUrl)
+          <a href="{{ $footerCommitUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 opacity-80 hover:opacity-100 hover:text-white transition font-mono text-xs" title="Ver compilación en GitHub">
+            <i class="fa-brands fa-github text-xs"></i>
+            <span>{{ $footerCommit }}</span>
+          </a>
+        @endif
+      </div>
       <img src="{{ asset('images/brands/logoda.png') }}" class="h-5 w-5 md:ml-auto" alt="Logo DA">
     </div>
 

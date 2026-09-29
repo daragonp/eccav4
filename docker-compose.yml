@@ -71,8 +71,7 @@ services:
       MYSQL_HOST: laravel_db
       MYSQL_USER: laraveluser
       MYSQL_PASSWORD: laravelpass
-      MYSQL_DATABASE: eccav4
-    entrypoint: ["/bin/sh", "-c", "apk add --no-cache mysql-client && while true; do mysqldump -h$$MYSQL_HOST -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE > /backups/eccav4_$$(date +%Y%m%d_%H%M).sql && find /backups -name '*.sql' -mtime +7 -delete && sleep 86400; done"]
+    entrypoint: ["/bin/sh", "-c", "apk add --no-cache mariadb-client gzip && while true; do BACKUP_FILE=/backups/eccav4_$$(date +%Y%m%d_%H%M).sql.gz; mysqldump --no-tablespaces -h$$MYSQL_HOST -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE | gzip > $$BACKUP_FILE; if [ ! -s $$BACKUP_FILE ]; then rm -f $$BACKUP_FILE; fi; find /backups -name '*.sql*' -mtime +7 -delete; sleep 86400; done"]
 
 volumes:
   laravel_db_data:

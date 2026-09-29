@@ -40,8 +40,8 @@ deploy.sh
 /public/images/logo/*.jpg
 /public/images/news/*
 /public/images/schedule/*
-/public/images/worship/*
 *.sql
+*.sql.gz
 .DS_Store
 **/.DS_Store
 

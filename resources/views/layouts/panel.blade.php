@@ -86,12 +86,21 @@
             <nav class="flex-1 overflow-y-auto px-2 pb-4">
                 <div class="space-y-1">
                     {{-- Panel principal --}}
-                    <a href="{{ url('/') }}" class="nav-item group">
+                    <a href="{{ url('dashboard') }}" class="nav-item group {{ request()->is('dashboard') ? 'active' : '' }}">
                         <div class="flex items-center gap-3">
                             <div class="nav-icon">
-                                <i class="fas fa-door-open me-2"></i>
+                                <i class="fas fa-tachometer-alt"></i>
                             </div>
-                            <span class="nav-text">Inicio</span>
+                            <span class="nav-text">Panel principal</span>
+                        </div>
+                    </a>
+
+                    <a href="{{ url('/') }}" target="_blank" class="nav-item group">
+                        <div class="flex items-center gap-3">
+                            <div class="nav-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <span class="nav-text">Ver sitio web</span>
                         </div>
                     </a>
 
@@ -196,6 +205,18 @@
                                 <span class="nav-text">Mirada Afro</span>
                             </div>
                         </a>
+
+                        {{-- Separador Sistema --}}
+                        <div class="border-t border-slate-200 dark:border-slate-700 my-2"></div>
+
+                        <a href="{{ route('about') }}" class="nav-item group {{ request()->is('about*') ? 'active' : '' }}">
+                            <div class="flex items-center gap-3">
+                                <div class="nav-icon">
+                                    <i class="fas fa-circle-info"></i>
+                                </div>
+                                <span class="nav-text">Acerca del sistema</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
             </nav>
@@ -257,7 +278,7 @@
                                 <i class="fas fa-sliders"></i>
                             </div>
                         </a>
-                        <a href="{{ url('show-woship') }}" class="nav-item-collapsed group {{ request()->is('show-woship*') ? 'active' : '' }}" title="Culto dominical">
+                        <a href="{{ url('show-worship') }}" class="nav-item-collapsed group {{ request()->is('show-worship*') ? 'active' : '' }}" title="Culto dominical">
                             <div class="nav-icon-collapsed">
                                 <i class="fas fa-church"></i>
                             </div>
@@ -282,6 +303,14 @@
                                 <i class="fas fa-earth-africa"></i>
                             </div>
                         </a>
+
+                        <div class="border-t border-slate-200 dark:border-slate-700 my-2"></div>
+
+                        <a href="{{ route('about') }}" class="nav-item-collapsed group {{ request()->is('about*') ? 'active' : '' }}" title="Acerca del sistema">
+                            <div class="nav-icon-collapsed">
+                                <i class="fas fa-circle-info"></i>
+                            </div>
+                        </a>
                     </div>
                 </nav>
 
@@ -296,7 +325,7 @@
         </aside>
 
         {{-- Main --}}
-        <main class="panel-main">
+        <main class="panel-main flex flex-col min-h-screen">
             {{-- Topbar --}}
             <header class="panel-topbar">
                 <div class="flex items-center gap-2">
@@ -373,6 +402,18 @@
                                         </div>
                                     </a>
 
+                                    <a href="{{ route('about') }}" class="menu-item" role="menuitem">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center">
+                                                <i class="fas fa-circle-info text-emerald-600 dark:text-emerald-400"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-medium text-slate-900 dark:text-white">Acerca del sistema</div>
+                                                <div class="text-xs text-slate-500 dark:text-slate-400">Versión {{ app(\App\Services\VersionService::class)->getVersion() }} &bull; SemVer</div>
+                                            </div>
+                                        </div>
+                                    </a>
+
                                     {{-- Enlace al dashboard de la emisora --}}
                                     <a href="https://a12.asurahosting.com/station/199/" target="_blank" class="menu-item" role="menuitem">
                                         <div class="flex items-center gap-3">
@@ -435,6 +476,39 @@
 
                 @yield('datatable')
             </div>
+
+            {{-- Footer del Panel con SemVer y Build Info --}}
+            @php
+                $panelVersionService = app(\App\Services\VersionService::class);
+                $panelVersionStr = $panelVersionService->getVersion();
+                $panelCommitShort = $panelVersionService->getShortCommit();
+                $panelCommitUrl = $panelVersionService->getCommitUrl();
+            @endphp
+            <footer class="mt-auto px-4 lg:px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xs text-xs text-slate-500 dark:text-slate-400">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                        <span class="font-bold text-slate-800 dark:text-slate-200">ECCA v4</span>
+                        <span>&bull;</span>
+                        <a href="{{ route('about') }}" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md font-mono text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-900/80 transition" title="Ver información del sistema y registro de cambios">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            {{ $panelVersionStr }}
+                        </a>
+                        @if($panelCommitUrl)
+                            <a href="{{ $panelCommitUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-mono text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" title="Ver commit en GitHub">
+                                <i class="fa-brands fa-github text-xs"></i>
+                                <span>{{ $panelCommitShort }}</span>
+                            </a>
+                        @else
+                            <span class="font-mono text-xs text-slate-400">{{ $panelCommitShort }}</span>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-3 text-xs">
+                        <a href="{{ route('about') }}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition font-medium">Acerca de &bull; SemVer</a>
+                        <span>&bull;</span>
+                        <span>&copy; {{ date('Y') }} Emancipación Cristiana Afro</span>
+                    </div>
+                </div>
+            </footer>
         </main>
     </div>
     {{-- Backdrop global siempre disponible --}}
