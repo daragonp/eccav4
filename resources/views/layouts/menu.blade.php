@@ -48,6 +48,7 @@
                     <a href="{{ url('worship-home') }}" class="nav-link {{ request()->is('worship-home') ? 'nav-link-active' : '' }}">Palabras de vida</a>
                     <a href="{{ url('worship') }}" class="nav-link {{ request()->is('worship') ? 'nav-link-active' : '' }}">Culto dominical</a>
                     <a href="{{ url('/biblia') }}" class="nav-link {{ request()->is('/biblia') ? 'nav-link-active' : '' }}">Biblia</a>
+                    <a href="{{ url('library') }}" class="nav-link {{ request()->is('library*') ? 'nav-link-active' : '' }}">Biblioteca</a>
                     <a href="{{ url('lumbrera') }}" class="nav-link {{ request()->is('lumbrera') ? 'nav-link-active' : '' }}">Programas</a>
                 </div>
             </div>
@@ -101,6 +102,7 @@
                 <a href="{{ url('worship-home') }}" class="mobile-nav-link {{ request()->is('worship-home') ? 'mobile-nav-link-active' : '' }}">Palabras de vida</a>
                 <a href="{{ url('worship') }}" class="mobile-nav-link {{ request()->is('worship') ? 'mobile-nav-link-active' : '' }}">Culto dominical</a>
                 <a href="{{ url('/biblia') }}" class="mobile-nav-link {{ request()->is('/biblia') ? 'mobile-nav-link-active' : '' }}">Biblia</a>
+                <a href="{{ url('library') }}" class="mobile-nav-link {{ request()->is('library*') ? 'mobile-nav-link-active' : '' }}">Biblioteca</a>
                 <a href="{{ url('lumbrera') }}" class="mobile-nav-link {{ request()->is('lumbrera') ? 'mobile-nav-link-active' : '' }}">Programas</a>
             </div>
         </div>
