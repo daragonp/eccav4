@@ -677,53 +677,103 @@
 
                 {{-- Campos específicos para Slider --}}
                 @if($sectionType === 'slider')
-                <div class="px-6 py-4 space-y-6">
+                @php
+                    // Detectar el tipo actual de cada lado para preseleccionar el selector
+                    $leftTypeCurrent  = $tableM->left_media_type ?? 'image';   // image | video | youtube
+                    $rightTypeCurrent = $tableM->right_media_type ?? 'image';
+                    // Para YouTube el valor guardado es la URL completa; para imagen/video es el nombre de archivo
+                    $leftYoutube  = $leftTypeCurrent  === 'youtube' ? $tableM->image_left  : '';
+                    $rightYoutube = $rightTypeCurrent === 'youtube' ? $tableM->image_right : '';
+                @endphp
+                <div class="px-6 py-4 space-y-6" id="slider-edit-fields">
+                    <p class="text-sm text-slate-600 dark:text-slate-400">
+                        Deja un lado sin cambios para conservar su contenido actual. Elige el tipo de medio y proporciona el nuevo archivo o enlace solo si deseas reemplazarlo.
+                    </p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="image_left" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Imagen izquierda</label>
-                            <div class="relative">
+                        {{-- ===================== LADO IZQUIERDO ===================== --}}
+                        <div class="space-y-3">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Medio izquierda</label>
+
+                            <select id="left_type" name="left_type" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100">
+                                <option value="image"   {{ $leftTypeCurrent === 'image'   ? 'selected' : '' }}>Imagen (archivo)</option>
+                                <option value="video"   {{ $leftTypeCurrent === 'video'   ? 'selected' : '' }}>Video (archivo)</option>
+                                <option value="youtube" {{ $leftTypeCurrent === 'youtube' ? 'selected' : '' }}>YouTube (enlace)</option>
+                            </select>
+
+                            {{-- Input imagen --}}
+                            <div data-left-input="image" class="{{ $leftTypeCurrent === 'image' ? '' : 'hidden' }}">
                                 <input id="image_left" type="file" name="image_left" accept="image/*"
                                     class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
-                                <label class="absolute inset-0 w-full h-full cursor-pointer" for="image_left"></label>
+                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">JPG, PNG, GIF, WebP • Máx. 20MB</p>
                             </div>
+                            {{-- Input video --}}
+                            <div data-left-input="video" class="{{ $leftTypeCurrent === 'video' ? '' : 'hidden' }}">
+                                <input id="video_left" type="file" name="video_left" accept="video/*"
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 cursor-pointer">
+                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">MP4, WebM, MOV, OGG • Máx. 50MB</p>
+                            </div>
+                            {{-- Input YouTube --}}
+                            <div data-left-input="youtube" class="{{ $leftTypeCurrent === 'youtube' ? '' : 'hidden' }}">
+                                <input id="youtube_left" name="youtube_left" type="url" value="{{ $leftYoutube }}" placeholder="https://www.youtube.com/watch?v=..."
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100">
+                            </div>
+
+                            {{-- Medio actual --}}
                             @if($tableM->image_left)
-                            <div class="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-lg mt-2">
-                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $tableM->image_left }}</span>
-                                <div class="flex items-center space-x-2">
-                                    <a href="{{ asset('images/slider/' . $tableM->image_left) }}" target="_blank" class="text-blue-500 hover:text-blue-700 dark:text-blue-400">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                    <button type="button" class="text-blue-500 hover:text-blue-700" data-preview-url="{{ asset('images/slider/' . $tableM->image_left) }}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">Actual: {{ $tableM->image_left }}</span>
+                                @if($tableM->left_media_src)
+                                <a href="{{ $tableM->left_media_src }}" target="_blank" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 ml-2">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                @endif
                             </div>
                             @endif
                         </div>
-                        <div>
-                            <label for="image_right" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Imagen derecha</label>
-                            <div class="relative">
+
+                        {{-- ===================== LADO DERECHO ===================== --}}
+                        <div class="space-y-3">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">Medio derecha</label>
+
+                            <select id="right_type" name="right_type" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100">
+                                <option value="image"   {{ $rightTypeCurrent === 'image'   ? 'selected' : '' }}>Imagen (archivo)</option>
+                                <option value="video"   {{ $rightTypeCurrent === 'video'   ? 'selected' : '' }}>Video (archivo)</option>
+                                <option value="youtube" {{ $rightTypeCurrent === 'youtube' ? 'selected' : '' }}>YouTube (enlace)</option>
+                            </select>
+
+                            {{-- Input imagen --}}
+                            <div data-right-input="image" class="{{ $rightTypeCurrent === 'image' ? '' : 'hidden' }}">
                                 <input id="image_right" type="file" name="image_right" accept="image/*"
                                     class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-slate-50 dark:file:bg-slate-800 file:text-slate-700 dark:file:text-slate-300 hover:file:bg-slate-100 dark:hover:file:bg-slate-700 cursor-pointer">
-                                <label class="absolute inset-0 w-full h-full cursor-pointer" for="image_right"></label>
+                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">JPG, PNG, GIF, WebP • Máx. 20MB</p>
                             </div>
+                            {{-- Input video --}}
+                            <div data-right-input="video" class="{{ $rightTypeCurrent === 'video' ? '' : 'hidden' }}">
+                                <input id="video_right" type="file" name="video_right" accept="video/*"
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 cursor-pointer">
+                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">MP4, WebM, MOV, OGG • Máx. 50MB</p>
+                            </div>
+                            {{-- Input YouTube --}}
+                            <div data-right-input="youtube" class="{{ $rightTypeCurrent === 'youtube' ? '' : 'hidden' }}">
+                                <input id="youtube_right" name="youtube_right" type="url" value="{{ $rightYoutube }}" placeholder="https://www.youtube.com/watch?v=..."
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100">
+                            </div>
+
+                            {{-- Medio actual --}}
                             @if($tableM->image_right)
-                            <div class="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800 rounded-lg mt-2">
-                                <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $tableM->image_right }}</span>
-                                <div class="flex items-center space-x-2">
-                                    <a href="{{ asset('images/slider/' . $tableM->image_right) }}" target="_blank" class="text-blue-500 hover:text-blue-700 dark:text-blue-400">
-                                        <i class="fas fa-external-link-alt"></i>
-                                    </a>
-                                    <button type="button" class="text-blue-500 hover:text-blue-700" data-preview-url="{{ asset('images/slider/' . $tableM->image_right) }}">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
+                            <div class="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">Actual: {{ $tableM->image_right }}</span>
+                                @if($tableM->right_media_src)
+                                <a href="{{ $tableM->right_media_src }}" target="_blank" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 ml-2">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                                @endif
                             </div>
                             @endif
                         </div>
                     </div>
 
-                    {{-- Vista previa de imágenes --}}
+                    {{-- Vista previa del carrusel --}}
                     <div class="border border-slate-200 dark:border-slate-700 rounded-xl p-6">
                         <div class="flex items-center mb-4">
                             <div class="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/20 flex items-center justify-center">
@@ -733,19 +783,27 @@
                         </div>
                         <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-4">
                             <div class="grid grid-cols-2 gap-4">
-                                <div class="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                                <div class="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center overflow-hidden">
                                     <div id="preview-left" class="w-full h-full flex items-center justify-center">
-                                        @if($tableM->image_left)
-                                        <img src="{{ asset('images/slider/' . $tableM->image_left) }}" alt="Imagen izquierda" class="w-full h-full object-cover rounded-lg">
+                                        @if($leftTypeCurrent === 'youtube' && $tableM->left_media_embed_url)
+                                        <iframe src="{{ $tableM->left_media_embed_url }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                        @elseif($leftTypeCurrent === 'video' && $tableM->left_media_src)
+                                        <video controls class="w-full h-full object-cover"><source src="{{ $tableM->left_media_src }}" type="{{ $tableM->left_media_mime ?? 'video/mp4' }}"></video>
+                                        @elseif($tableM->left_media_src)
+                                        <img src="{{ $tableM->left_media_src }}" alt="Izquierda" class="w-full h-full object-cover rounded-lg">
                                         @else
                                         <i class="fas fa-image text-slate-400 dark:text-slate-500 text-2xl"></i>
                                         @endif
                                     </div>
                                 </div>
-                                <div class="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
+                                <div class="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center overflow-hidden">
                                     <div id="preview-right" class="w-full h-full flex items-center justify-center">
-                                        @if($tableM->image_right)
-                                        <img src="{{ asset('images/slider/' . $tableM->image_right) }}" alt="Imagen derecha" class="w-full h-full object-cover rounded-lg">
+                                        @if($rightTypeCurrent === 'youtube' && $tableM->right_media_embed_url)
+                                        <iframe src="{{ $tableM->right_media_embed_url }}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+                                        @elseif($rightTypeCurrent === 'video' && $tableM->right_media_src)
+                                        <video controls class="w-full h-full object-cover"><source src="{{ $tableM->right_media_src }}" type="{{ $tableM->right_media_mime ?? 'video/mp4' }}"></video>
+                                        @elseif($tableM->right_media_src)
+                                        <img src="{{ $tableM->right_media_src }}" alt="Derecha" class="w-full h-full object-cover rounded-lg">
                                         @else
                                         <i class="fas fa-image text-slate-400 dark:text-slate-500 text-2xl"></i>
                                         @endif
@@ -755,6 +813,34 @@
                         </div>
                     </div>
                 </div>
+
+                <script>
+                (function() {
+                    // Alterna los inputs visibles según el tipo elegido en el modal de edición del slider.
+                    function wireSide(side) {
+                        var select = document.getElementById(side + '_type');
+                        if (!select) return;
+                        function sync() {
+                            ['image', 'video', 'youtube'].forEach(function(kind) {
+                                var box = document.querySelector('[data-' + side + '-input="' + kind + '"]');
+                                if (box) box.classList.toggle('hidden', select.value !== kind);
+                            });
+                        }
+                        select.addEventListener('change', sync);
+                        sync();
+                    }
+                    // El modal se inyecta de forma dinámica; esperar al DOM si hace falta.
+                    if (document.getElementById('left_type')) {
+                        wireSide('left');
+                        wireSide('right');
+                    } else {
+                        document.addEventListener('DOMContentLoaded', function() {
+                            wireSide('left');
+                            wireSide('right');
+                        });
+                    }
+                })();
+                </script>
                 @endif
 
                 {{-- Campos específicos para Podcast --}}
