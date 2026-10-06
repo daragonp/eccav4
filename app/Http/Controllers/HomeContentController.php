@@ -10,8 +10,8 @@ use App\Models\Podcast;
 use App\Models\Schedule;
 use App\Models\Suscriber;
 use App\Models\Worship;
+use App\Jobs\ResolveSubscriberLocation;
 use Illuminate\Http\Request;
-use Stevebauman\Location\Facades\Location;
 
 
 
@@ -75,16 +75,19 @@ class HomeContentController extends Controller
             'email' => ['required', 'email', 'max:255'],
         ]);
 
+        // Guardamos primero el suscriptor con datos mínimos para no bloquear la
+        // petición con la geolocalización (Location::get() es una llamada de red).
+        // La resolución de país/ciudad/coordenadas se delega a un Job en segundo plano.
         $newsuscribe = new Suscriber();
-
-        $position = Location::get();
         $newsuscribe->email = $validated['email'];
-        $newsuscribe->ip = $position->ip ?? $request->ip();
-        $newsuscribe->country = $position->countryName ?? 'N/A';
-        $newsuscribe->city = $position->cityName ?? 'N/A';
-        $newsuscribe->latitud = $position->latitude ?? '0';
-        $newsuscribe->longitude = $position->longitude ?? '0';
+        $newsuscribe->ip = $request->ip();
+        $newsuscribe->country = 'N/A';
+        $newsuscribe->city = 'N/A';
+        $newsuscribe->latitud = '0';
+        $newsuscribe->longitude = '0';
         $newsuscribe->save();
+
+        ResolveSubscriberLocation::dispatch($newsuscribe->id);
 
         return redirect()->back()->with('mensaje', 'Se ha suscrito a nuestro boletín, pronto tendrá más información.');
     }
