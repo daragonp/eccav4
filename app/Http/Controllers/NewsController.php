@@ -27,7 +27,7 @@ class NewsController extends Controller
 
         $news = News::where('category', 1)
             ->orderBy('created_at', 'DESC')
-            ->paginate(1);
+            ->paginate(10);
         return view('newsweek', compact('news'));
     }
 
@@ -248,7 +248,7 @@ class NewsController extends Controller
 
         $news = News::where('category', 2)
             ->orderBy('created_at', 'DESC')
-            ->paginate(1);
+            ->paginate(10);
         return view('opinion', compact('news'));
     }
 }
