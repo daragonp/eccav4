@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Worship;
+use App\Jobs\ProcessWorshipAudio;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -152,29 +153,13 @@ class WorshipController extends Controller
         $worship->save();
 
         if ($audioPath && $needsAIProcessing) {
-            try {
-                $aiResult = $this->audioProcessingService->processAudio($audioPath, $worship->title);
-                $worship->ai_summary = $aiResult['summary'];
-                $worship->ai_image = $aiResult['image_url'];
-                $worship->ai_processed = true;
-
-                if (empty($request->input('abstract')) && !empty($aiResult['summary'])) {
-                    $worship->abstract = $aiResult['summary'];
-                }
-
-                if (!$request->filled('title') && !empty($aiResult['title'])) {
-                    $worship->title = $aiResult['title'];
-                    $worship->slug = Str::slug($worship->title);
-                }
-
-                if (!$request->hasFile('image') && !empty($aiResult['image_url'])) {
-                    $worship->image = $aiResult['image_url'];
-                }
-
-                $worship->save();
-            } catch (\Exception $e) {
-                Log::error('Error procesando audio con IA: ' . $e->getMessage());
-            }
+            ProcessWorshipAudio::dispatch(
+                $worship->id,
+                $audioPath,
+                applyAbstractIfEmpty: empty($request->input('abstract')),
+                applyTitleIfEmpty: !$request->filled('title'),
+                applyImageIfMissing: !$request->hasFile('image'),
+            );
         }
 
         return redirect('show-worship')->with('success', 'Se ha agregado el culto dominical');
@@ -246,20 +231,13 @@ class WorshipController extends Controller
         $worship->save();
 
         if ($audioPath) {
-            try {
-                $aiResult = $this->audioProcessingService->processAudio($audioPath, $worship->title);
-                $worship->ai_summary = $aiResult['summary'];
-                $worship->ai_image = $aiResult['image_url'];
-                $worship->ai_processed = true;
-                $worship->save();
-
-                if (!$request->hasFile('image') && !empty($aiResult['image_url'])) {
-                    $worship->image = $aiResult['image_url'];
-                    $worship->save();
-                }
-            } catch (\Exception $e) {
-                Log::error('Error procesando audio con IA: ' . $e->getMessage());
-            }
+            ProcessWorshipAudio::dispatch(
+                $worship->id,
+                $audioPath,
+                applyAbstractIfEmpty: false,
+                applyTitleIfEmpty: false,
+                applyImageIfMissing: !$request->hasFile('image'),
+            );
         }
 
         return redirect()->back()->with('success', 'Se ha actualizado el culto dominical');
@@ -310,21 +288,15 @@ class WorshipController extends Controller
             return redirect()->back()->with('error', 'No hay audio para procesar');
         }
 
-        try {
-            $audioPath = 'audio/worship/' . $worship->audio;
-            $aiResult = $this->audioProcessingService->processAudio($audioPath, $worship->title);
+        ProcessWorshipAudio::dispatch(
+            $worship->id,
+            'audio/worship/' . $worship->audio,
+            applyAbstractIfEmpty: false,
+            applyTitleIfEmpty: false,
+            applyImageIfMissing: false,
+        );
 
-            // Actualizar el registro con los resultados de la IA
-            $worship->ai_summary = $aiResult['summary'];
-            $worship->ai_image = $aiResult['image_url'];
-            $worship->ai_processed = true;
-            $worship->save();
-
-            return redirect()->back()->with('success', 'El audio ha sido procesado con IA correctamente');
-        } catch (\Exception $e) {
-            Log::error('Error procesando audio con IA: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error al procesar el audio con IA: ' . $e->getMessage());
-        }
+        return redirect()->back()->with('success', 'El audio se está procesando con IA en segundo plano.');
     }
 
     /**
