@@ -2,11 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\News;
-use App\Models\NewsPDF;
-use App\Models\Present;
-use App\Models\BlogCategory;
-
 class RutasController extends Controller
 {
     //
