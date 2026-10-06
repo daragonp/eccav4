@@ -29,7 +29,7 @@ class News extends Model
 
     public function getNewstextContentAttribute()
     {
-        return \Illuminate\Support\Str::words(html_entity_decode(strip_tags($this->text ?? '')), 400);
+        return \Illuminate\Support\Str::words(html_entity_decode(strip_tags($this->abstract ?? '')), 400);
     }
 
     public function getNewsabstractContentAttribute()

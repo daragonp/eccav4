@@ -104,7 +104,6 @@ class HomeContentController extends Controller
         $buscar = News::query()
             ->where('title', 'LIKE', "%{$search}%")
             ->orWhere('abstract', 'LIKE', "%{$search}%")
-            ->orWhere('text', 'LIKE', "%{$search}%")
             ->get();
 
         // Return the search view with the resluts compacted
