@@ -6,7 +6,6 @@ use App\Models\News;
 use App\Models\NewsPDF;
 use App\Models\Present;
 use App\Models\BlogCategory;
-use App\Models\Worship;
 
 class RutasController extends Controller
 {
@@ -69,12 +68,5 @@ class RutasController extends Controller
     public function herencia(){
 
         return view ('herencia');
-    }
-
-    public function worship(){
-
-        $now = Worship::orderBy('created_at', 'DESC')->paginate(1);
-        $worships = Worship::orderBy('created_at', 'DESC')->paginate(1);
-        return view ('worships', compact('now', 'worships'));
     }
 }

@@ -199,7 +199,6 @@ Route::post('/adddonor', [DonateController::class, 'create']);
 
 
 Route::get('/', [HomeContentController::class, 'index'])->name('home');
-Route::get('/seeds', [HomeContentController::class, 'seeds']);
 Route::post('/newsuscriber', [HomeContentController::class, 'suscriberemail']);
 Route::get('/search', [HomeContentController::class, 'search']);
 // Ruta API para obtener la información del programa actual
@@ -219,7 +218,6 @@ Route::get('/lumbrera', [RutasController::class, 'lumbrera']);
 Route::get('/live', [HomeContentController::class, 'liveverse']);
 Route::get('/ojos', [RutasController::class, 'ojos']);
 Route::get('/herencia', [RutasController::class, 'herencia']);
-Route::get('/worships', [RutasController::class, 'worship']);
 
 
 

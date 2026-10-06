@@ -69,12 +69,6 @@ class HomeContentController extends Controller
         return view('live', compact('quote'));
     }
 
-    public function seeds()
-    {
-
-        return view('seeds');
-    }
-
     public function suscriberemail(Request $request)
     {
         $validated = $request->validate([
