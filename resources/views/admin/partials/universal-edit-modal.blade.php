@@ -906,6 +906,154 @@
                     </div>
                 </div>
                 @endif
+
+                {{-- Campos específicos para Biblioteca --}}
+                @if($sectionType === 'library')
+                @php
+                    $cats = \App\Models\LibraryCategory::orderBy('name')->get();
+                    $mediaMode = $tableM->is_external ? 'enlace' : 'archivo'; // modo actual inferido
+                @endphp
+                <div id="library-edit-fields" class="px-6 py-4 space-y-6">
+                    {{-- Hidden para reabrir el modal de edición correcto tras fallo de validación --}}
+                    <input type="hidden" name="_library_edit_id" value="{{ $tableM->id }}">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {{-- 1. Título --}}
+                        <div>
+                            <label for="library_title" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Título</label>
+                            <input id="library_title" type="text" name="title" value="{{ $tableM->title }}" required
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        {{-- 2. Autor --}}
+                        <div>
+                            <label for="library_author" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Autor</label>
+                            <input id="library_author" type="text" name="author" value="{{ $tableM->author }}"
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        {{-- 3. Categoría --}}
+                        <div>
+                            <label for="library_category_id" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Categoría</label>
+                            <select id="library_category_id" name="category_id"
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="">Sin categoría</option>
+                                @foreach($cats as $cat)
+                                    <option value="{{ $cat->id }}" {{ (int) $tableM->category_id === (int) $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        {{-- 4. Fecha de publicación --}}
+                        <div>
+                            <label for="library_published_at" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha de publicación</label>
+                            <input id="library_published_at" type="date" name="published_at" value="{{ optional($tableM->published_at)->format('Y-m-d') }}"
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                        </div>
+                        {{-- 5. Descripción --}}
+                        <div class="md:col-span-2">
+                            <label for="library_description" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Descripción</label>
+                            <textarea id="library_description" name="description" rows="3"
+                                      class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">{{ $tableM->description }}</textarea>
+                        </div>
+                        {{-- 6. Tipo --}}
+                        <div>
+                            <label for="library_type" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Tipo de recurso</label>
+                            <select id="library_type" name="type"
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="libro" {{ $tableM->type === 'libro' ? 'selected' : '' }}>Libro</option>
+                                <option value="video" {{ $tableM->type === 'video' ? 'selected' : '' }}>Video</option>
+                                <option value="audio" {{ $tableM->type === 'audio' ? 'selected' : '' }}>Audio</option>
+                            </select>
+                        </div>
+                        {{-- 7. Modo del medio --}}
+                        <div>
+                            <label for="library_media_mode" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Origen del medio</label>
+                            <select id="library_media_mode" name="media_mode"
+                                    class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                                <option value="archivo" {{ $mediaMode === 'archivo' ? 'selected' : '' }}>Archivo subido</option>
+                                <option value="enlace" {{ $mediaMode === 'enlace' ? 'selected' : '' }}>Enlace externo</option>
+                            </select>
+                        </div>
+                        {{-- 7a. Input archivo --}}
+                        <div data-media-input="archivo" class="md:col-span-2 {{ $mediaMode === 'archivo' ? '' : 'hidden' }}">
+                            <label for="library_file" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Archivo (vacío = conservar el actual)</label>
+                            <input id="library_file" type="file" name="file"
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 cursor-pointer">
+                            @if($tableM->file)
+                            <div class="mt-2 flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                                <span class="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">Actual: {{ $tableM->file }}</span>
+                                <a href="{{ $tableM->file_url }}" target="_blank" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 ml-2">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </a>
+                            </div>
+                            @endif
+                        </div>
+                        {{-- 7b. Input enlace --}}
+                        <div data-media-input="enlace" class="md:col-span-2 {{ $mediaMode === 'enlace' ? '' : 'hidden' }}">
+                            <label for="library_external_url" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Enlace externo</label>
+                            <input id="library_external_url" type="url" name="external_url" value="{{ $tableM->external_url }}" placeholder="https://..."
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100">
+                        </div>
+                        {{-- 8. Portada --}}
+                        <div class="md:col-span-2">
+                            <label for="library_cover" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Portada (vacío = conservar la actual)</label>
+                            <input id="library_cover" type="file" name="cover" accept="image/*"
+                                   class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 cursor-pointer">
+                            @if($tableM->cover_url)
+                            <div class="mt-2">
+                                <img src="{{ $tableM->cover_url }}" alt="Portada actual" class="h-20 w-20 object-cover rounded-lg ring-1 ring-slate-200 dark:ring-slate-700">
+                            </div>
+                            @endif
+                        </div>
+                        {{-- 9. Publicado --}}
+                        <div class="md:col-span-2">
+                            <label class="inline-flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+                                <input id="library_published" type="checkbox" name="published" value="1" {{ $tableM->published ? 'checked' : '' }}
+                                       class="rounded border-slate-300 dark:border-slate-700 text-emerald-600 focus:ring-emerald-500">
+                                Publicado (visible al público)
+                            </label>
+                        </div>
+                        {{-- 10. Aviso de tamaño --}}
+                        <div class="md:col-span-2">
+                            <p class="text-xs text-amber-600 dark:text-amber-400">
+                                <i class="fas fa-triangle-exclamation mr-1"></i>
+                                Tamaño máximo de archivo: ~100 MB (102400 KB). No suba archivos que superen ese límite.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                (function () {
+                    // Alterna inputs de medio (archivo vs enlace) y ajusta accept según el tipo.
+                    var typeSel   = document.getElementById('library_type');
+                    var modeSel   = document.getElementById('library_media_mode');
+                    var fileInput = document.getElementById('library_file');
+                    if (!typeSel || !modeSel) return;
+
+                    var urlInput  = document.getElementById('library_external_url');
+
+                    function syncMode() {
+                        ['archivo', 'enlace'].forEach(function (kind) {
+                            var box = document.querySelector('#library-edit-fields [data-media-input="' + kind + '"]');
+                            if (box) box.classList.toggle('hidden', modeSel.value !== kind);
+                        });
+                        // Refuerzo cliente: solo el input de medio visible es 'required',
+                        // y solo cuando el contenedor marca data-require-media="1" (modo CREAR).
+                        var requireMedia = (document.getElementById('library-edit-fields')
+                                            && document.getElementById('library-edit-fields').dataset.requireMedia === '1');
+                        if (fileInput) fileInput.required = requireMedia && modeSel.value === 'archivo';
+                        if (urlInput)  urlInput.required  = requireMedia && modeSel.value === 'enlace';
+                    }
+                    function syncAccept() {
+                        if (!fileInput) return;
+                        var map = { libro: '.pdf', video: 'video/*', audio: 'audio/*' };
+                        fileInput.setAttribute('accept', map[typeSel.value] || '*/*');
+                    }
+                    typeSel.addEventListener('change', syncAccept);
+                    modeSel.addEventListener('change', syncMode);
+                    syncMode(); syncAccept(); // estado inicial inmediato (patrón slider)
+                })();
+                </script>
+                @endif
             </div>
 
             {{-- Modal Footer --}}

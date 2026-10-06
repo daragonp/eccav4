@@ -7,9 +7,15 @@
   $sectionTitle= $sectionTitle?? 'Elemento';
 
   // Lógica inteligente para determinar si está activo (soporta active de DB y SoftDeletes)
+  // El flag opcional $activeAxis fuerza el eje de estado:
+  //   'trashed' -> siempre SoftDeletes (deleted_at), nunca una columna de publicación.
+  //   'auto' (por defecto) -> comportamiento histórico (active si existe, si no deleted_at).
+  $activeAxis = $activeAxis ?? 'auto';
   $isActive = true;
   if (isset($tableM)) {
-      if (isset($tableM->active)) {
+      if ($activeAxis === 'trashed') {
+          $isActive = is_null($tableM->deleted_at ?? null);
+      } elseif (isset($tableM->active)) {
           $isActive = (bool)$tableM->active;
       } elseif (array_key_exists('deleted_at', $tableM->getAttributes()) || isset($tableM->deleted_at)) {
           $isActive = is_null($tableM->deleted_at);
