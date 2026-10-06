@@ -647,6 +647,10 @@ class AdminController extends Controller
                 $model = Schedule::withTrashed()->findOrFail($id);
                 $title = 'Programación';
                 break;
+            case 'library':
+                $model = \App\Models\LibraryResource::withTrashed()->findOrFail($id);
+                $title = 'Recurso de Biblioteca';
+                break;
         }
 
         if (!$model) {
@@ -664,6 +668,7 @@ class AdminController extends Controller
             case 'podcast': $formAction = url("updatepodcast/{$id}"); break;
             case 'category': $formAction = url("updatecategory/{$id}"); break;
             case 'schedule': $formAction = url("update-schedule/{$id}"); break;
+            case 'library': $formAction = url("update-library/{$id}"); break;
         }
 
         return view('admin.partials.universal-edit-modal', [

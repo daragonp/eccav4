@@ -12,6 +12,8 @@ use App\Http\Controllers\BannerController;
 use App\Http\Controllers\DonateController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\WorshipController;
+use App\Http\Controllers\LibraryController;
+use App\Http\Controllers\LibraryCategoryController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleOverrideController;
@@ -80,6 +82,22 @@ Route::post('/activate-worship/{id}', [WorshipController::class, 'activate']);  
 Route::delete('/realdelete-worship/{id}', [WorshipController::class, 'delete']); // Eliminación permanente
 Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWithAI']);
 
+
+    //Rutas para administrador: Biblioteca
+    Route::get('/show-library', [LibraryController::class, 'show']);
+    Route::post('/addlibrary', [LibraryController::class, 'store']);
+    Route::get('/view-library/{id}', [LibraryController::class, 'view']);
+    Route::post('/update-library/{id}', [LibraryController::class, 'edit']);         // PERSISTE (modal universal)
+    Route::post('/toggle-library/{id}', [LibraryController::class, 'toggleActive']);  // publicar/despublicar sin eliminar
+    Route::post('/delete-library/{id}', [LibraryController::class, 'destroy']);       // soft delete
+    Route::post('/activate-library/{id}', [LibraryController::class, 'activate']);    // restore()
+    Route::delete('/realdelete-library/{id}', [LibraryController::class, 'delete']);  // hard delete + archivos
+
+    // CRUD mínimo de categorías de biblioteca
+    Route::get('/show-library-categories', [LibraryCategoryController::class, 'show']);
+    Route::post('/addlibrary-category', [LibraryCategoryController::class, 'store']);
+    Route::post('/update-library-category/{id}', [LibraryCategoryController::class, 'edit']);
+    Route::post('/delete-library-category/{id}', [LibraryCategoryController::class, 'destroy']);
 
 
     //Rutas para administrador: Versículo
@@ -272,6 +290,15 @@ Route::get('/programa-actual', [ScheduleController::class, 'getCurrentProgram'])
 // Rutas para ver los registros de culto en la parte pública
 Route::get('/worship', [WorshipController::class, 'publicIndex'])->name('worship.public.index');
 Route::get('/worship/{slug}', [WorshipController::class, 'publicShow'])->name('worship.public.show');
+
+// Rutas públicas de la Biblioteca
+Route::get('/library', [LibraryController::class, 'publicIndex'])->name('library.index');
+Route::get('/library/download/{id}', [LibraryController::class, 'download'])
+    ->where('id', '[0-9]+')
+    ->name('library.download');
+Route::get('/library/{slug}', [LibraryController::class, 'publicShow'])
+    ->where('slug', '[A-Za-z0-9\-]+')
+    ->name('library.show');
 
 // Ruta sobre el sistema, versión SemVer y stack tecnológico
 Route::get('/about', [AboutController::class, 'index'])->name('about');
