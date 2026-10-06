@@ -54,8 +54,8 @@
         </div>
       </div>
 
-      <input name="merchantId"      type="hidden" value="{{env('PAY_U_MARKET')}}">
-      <input name="accountId"       type="hidden" value="{{env('PAY_U_ACC_ID')}}">
+      <input name="merchantId"      type="hidden" value="{{ $merchantId }}">
+      <input name="accountId"       type="hidden" value="{{ $accountId }}">
       <input name="description"     type="hidden" value="{{$description}}">
       <input name="referenceCode"   type="hidden" value="TestPayU">
       <input name="amount"          type="hidden" value="20000">

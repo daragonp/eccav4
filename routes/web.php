@@ -163,7 +163,7 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::post('/delete-podcast/{id}', [PodcastController::class, 'delete']);
 });
 
-Route::post('/api/privacy-acceptance', [PrivacyController::class, 'recordAcceptance'])->name('privacy.acceptance');
+Route::post('/api/privacy-acceptance', [PrivacyController::class, 'recordAcceptance'])->middleware('throttle:20,1')->name('privacy.acceptance');
 
 // Rutas para las políticas
 Route::prefix('legal')->group(function () {
@@ -195,11 +195,11 @@ Route::get('/bischool-home', [BischoolController::class, 'history']);
 //Rutas para suscripción de email para mailing list
 
 Route::get('/donate', [DonateController::class, 'index']);
-Route::post('/adddonor', [DonateController::class, 'create']);
+Route::post('/adddonor', [DonateController::class, 'create'])->middleware('throttle:20,1');
 
 
 Route::get('/', [HomeContentController::class, 'index'])->name('home');
-Route::post('/newsuscriber', [HomeContentController::class, 'suscriberemail']);
+Route::post('/newsuscriber', [HomeContentController::class, 'suscriberemail'])->middleware('throttle:20,1');
 Route::get('/search', [HomeContentController::class, 'search']);
 // Ruta API para obtener la información del programa actual
 Route::get('/api/programa-actual', [HomeContentController::class, 'getProgramaActual']);

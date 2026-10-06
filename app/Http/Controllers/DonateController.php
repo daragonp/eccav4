@@ -13,8 +13,10 @@ class DonateController extends Controller
     public function index(){
 
         $description = 'Procesamiento de pagos con PayU';
+        $merchantId = config('services.payu.merchant');
+        $accountId = config('services.payu.account_id');
 
-        return view('donate', compact('description'));
+        return view('donate', compact('description', 'merchantId', 'accountId'));
     }
 
     public function create(Request $request){
@@ -40,14 +42,14 @@ class DonateController extends Controller
         $donor->message = $validated['message'] ?? null;
         $donor->save();
 
-        $apikey = env('PAYU_API_KEY', '4Vj8eK4rloUd272L48hsrarnUA');
-        $mercado = env('PAYU_MERCHANT_ID', '508029');
+        $apikey = config('services.payu.api_key');
+        $mercado = config('services.payu.merchant_id');
         $total = $donor->amount;
         $moneda = 'COP';
         $comodin = '~';
         $frase = md5($apikey.$comodin.$mercado.$comodin.$donor->reference.$comodin.$total.$comodin.$moneda);
 
-        $url = 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/';
+        $url = config('services.payu.base_url');
 
         return Redirect::to($url)->with(compact('frase'));
     }

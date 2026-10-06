@@ -16,7 +16,7 @@ if (config('auth.allow_registration', false)) {
                     ->name('register');
 
     Route::post('/register', [RegisteredUserController::class, 'store'])
-                    ->middleware('guest');
+                    ->middleware(['guest', 'throttle:5,1']);
 }
 
 Route::get('/login', [AuthenticatedSessionController::class, 'create'])
@@ -24,7 +24,7 @@ Route::get('/login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-                ->middleware('guest');
+                ->middleware(['guest', 'throttle:5,1']);
 
 Route::get('/forgot-password', [PasswordResetLinkController::class, 'create'])
                 ->middleware('guest')

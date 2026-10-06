@@ -33,4 +33,12 @@ return [
     'api_key' => env('OPENAI_API_KEY'),
 ],
 
+    'payu' => [
+        'api_key' => env('PAYU_API_KEY'),
+        'merchant_id' => env('PAYU_MERCHANT_ID'),
+        'account_id' => env('PAY_U_ACC_ID'),
+        'merchant' => env('PAY_U_MARKET'),
+        'base_url' => env('PAYU_BASE_URL', 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/'),
+    ],
+
 ];
