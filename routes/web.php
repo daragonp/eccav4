@@ -278,5 +278,5 @@ Route::get('/about', [AboutController::class, 'index'])->name('about');
 
 // Fallback al final de todas las rutas
 Route::fallback(function () {
-    return view('errors.404');
+    return response()->view('errors.404', [], 404);
 });
