@@ -16,8 +16,6 @@ class NewsController extends Controller
      */
     public function index($slug)
     {
-
-        //dd($showpost);
         $postpdf = News::where('slug', $slug)->first();
         return view('showpostpdf', compact('postpdf'));
     }

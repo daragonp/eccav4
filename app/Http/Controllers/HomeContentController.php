@@ -38,25 +38,6 @@ class HomeContentController extends Controller
             ->take(1)
             ->first();
 
-        /*$now = Carbon::now();
-        $dayOfWeek = $now->dayOfWeek; // 0 = Domingo, 1 = Lunes, etc.
-        $currentTime = $now->format('H:i'); // Ejemplo: "17:30"
-        $programinfo = Schedule::where('day',  $dayOfWeek)->get;
-        /* $programaActual =NULL;
-        if (!$programaActual) {
-            return response()->json([
-                'nombre_programa' => 'Música Continua',
-                'director' => 'Equipo de la Emisora',
-                'foto_director' => asset('images/default-radio.jpg'), // Asegúrate de que esta imagen exista
-                'horarios_emision' => ['24/7'],
-                'descripcion_programa' => 'Disfruta de la mejor música sin interrupciones y con la mejor compañía.',
-            ]);
-        }
-*/
-        //return response()->json($programinfo);
-
-        //dd($programinfo);
-
         return view('welcome', compact('quote', 'podcast', 'news', 'opinion', 'worship', 'slider'));
     }
 
