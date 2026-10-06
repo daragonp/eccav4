@@ -41,4 +41,10 @@ return [
         'base_url' => env('PAYU_BASE_URL', 'https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/'),
     ],
 
+    'github' => [
+        'run_number' => env('GITHUB_RUN_NUMBER'),
+        'sha'        => env('GITHUB_SHA'),
+        'ref_name'   => env('GITHUB_REF_NAME'),
+    ],
+
 ];

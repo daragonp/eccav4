@@ -41,7 +41,7 @@ class VersionService
             'commit_date'   => null,
             'release_date'  => date('Y-m-d'),
             'repository'    => 'https://github.com/daragonp/eccav4',
-            'github_run'    => env('GITHUB_RUN_NUMBER', null),
+            'github_run'    => config('services.github.run_number'),
         ];
 
         $merged = array_merge($defaults, $data);
@@ -138,7 +138,7 @@ class VersionService
      */
     public function getGitHubRunNumber(): ?string
     {
-        $run = env('GITHUB_RUN_NUMBER') ?? ($this->get()['github_run'] ?? null);
+        $run = config('services.github.run_number') ?? ($this->get()['github_run'] ?? null);
         return $run ? (string)$run : null;
     }
 
@@ -269,12 +269,13 @@ class VersionService
      */
     protected function resolveGitMetadata(): array
     {
+        $sha = config('services.github.sha');
         $result = [
-            'commit_hash'  => env('GITHUB_SHA', null),
-            'commit_short' => env('GITHUB_SHA') ? substr(env('GITHUB_SHA'), 0, 7) : null,
-            'branch'       => env('GITHUB_REF_NAME', null),
+            'commit_hash'  => $sha,
+            'commit_short' => $sha ? substr($sha, 0, 7) : null,
+            'branch'       => config('services.github.ref_name'),
             'commit_date'  => null,
-            'github_run'   => env('GITHUB_RUN_NUMBER', null),
+            'github_run'   => config('services.github.run_number'),
         ];
 
         // Si estamos en un entorno con comando git disponible
