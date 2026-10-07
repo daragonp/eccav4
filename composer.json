@@ -58,5 +58,9 @@
         "sort-packages": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^13.3"
+    }
 }

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             NewsTableSeeder::class,
             PodCastTableSeeder::class,
+            LibrarySeeder::class,
                 ]);
     }
 }

@@ -33,6 +33,8 @@ storage/framework/.
 deploy.sh
 /public/audio/*
 /public/documents/*
+/public/library/files/*
+/public/library/covers/*
 /public/feed/*
 /public/images/slider/*
 /public/images/bible/*
