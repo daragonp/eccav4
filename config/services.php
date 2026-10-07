@@ -47,4 +47,9 @@ return [
         'ref_name'   => env('GITHUB_REF_NAME'),
     ],
 
+    'widestream' => [
+        'api_key'  => env('WIDESTREAM_API_KEY'),
+        'api_base' => env('WIDESTREAM_API_BASE', 'https://widestream.app/api/v1'),
+    ],
+
 ];

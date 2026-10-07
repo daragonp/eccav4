@@ -23,21 +23,6 @@ use Spatie\Permission\Models\Permission;
 class AdminController extends Controller
 {
     /**
-     * Obtener el programa actualmente en emisión.
-     * Utiliza el modelo Schedule que soporta overrides festivos y horarios que cruzan medianoche.
-     * Devuelve un Schedule o null si no hay ninguno.
-     */
-    private function getCurrentProgram(): ?Schedule
-    {
-        try {
-            return Schedule::getCurrentProgram();
-        } catch (\Throwable $e) {
-            // Si algo falla no tumbes el dashboard
-            return null;
-        }
-    }
-
-    /**
      * Dashboard principal
      */
     public function index()
@@ -80,101 +65,54 @@ class AdminController extends Controller
             ];
         });
 
-        // 1. Programa al aire y progreso en tiempo real
-        $now = now();
-        $currentProgram = $this->getCurrentProgram();
-        $progressPercent = 0;
-        $elapsedMinutes = 0;
-        $remainingMinutes = 0;
-        $nextProgram = null;
-
-        if ($currentProgram) {
-            $startStr = $currentProgram->start instanceof \Carbon\CarbonInterface
-                ? $currentProgram->start->format('H:i')
-                : substr((string)$currentProgram->start, 0, 5);
-            $endStr = $currentProgram->end instanceof \Carbon\CarbonInterface
-                ? $currentProgram->end->format('H:i')
-                : substr((string)$currentProgram->end, 0, 5);
-
-            $currentProgram->start_formatted = $startStr;
-            $currentProgram->end_formatted = $endStr;
-
-            $startTime = Carbon::createFromFormat('H:i', $startStr);
-            $endTime = Carbon::createFromFormat('H:i', $endStr);
-            if ($endTime < $startTime) {
-                $endTime->addDay();
-            }
-            $currentTime = Carbon::createFromFormat('H:i', $now->format('H:i'));
-            if ($currentTime < $startTime) {
-                $currentTime->addDay();
-            }
-
-            $totalDuration = max(1, $startTime->diffInMinutes($endTime));
-            $elapsedMinutes = max(0, $startTime->diffInMinutes($currentTime));
-            $remainingMinutes = max(0, $totalDuration - $elapsedMinutes);
-            $progressPercent = min(100, round(($elapsedMinutes / $totalDuration) * 100));
-
-            // Siguiente programa
-            $nextProgram = Schedule::where('day', $now->dayOfWeekIso)
-                ->whereNull('deleted_at')
-                ->where('start', '>=', $endStr)
-                ->orderBy('start', 'asc')
-                ->first();
-
-            if (!$nextProgram) {
-                // Si no hay más programas hoy, buscar el primero de mañana
-                $nextDay = $now->dayOfWeekIso === 7 ? 1 : $now->dayOfWeekIso + 1;
-                $nextProgram = Schedule::where('day', $nextDay)
-                    ->whereNull('deleted_at')
-                    ->orderBy('start', 'asc')
-                    ->first();
-            }
-
-            if ($nextProgram) {
-                $nextProgram->start_formatted = $nextProgram->start instanceof \Carbon\CarbonInterface
-                    ? $nextProgram->start->format('H:i')
-                    : substr((string)$nextProgram->start, 0, 5);
-            }
-        }
-
-        // 2. Cronograma de hoy para la línea de tiempo interactiva
-        $todaySchedule = Schedule::where('day', $now->dayOfWeekIso)
-            ->whereNull('deleted_at')
-            ->orderBy('start', 'asc')
-            ->get()
-            ->map(function ($prog) use ($currentProgram, $now) {
-                $startStr = $prog->start instanceof \Carbon\CarbonInterface ? $prog->start->format('H:i') : substr((string)$prog->start, 0, 5);
-                $endStr = $prog->end instanceof \Carbon\CarbonInterface ? $prog->end->format('H:i') : substr((string)$prog->end, 0, 5);
-                $currentTime = $now->format('H:i');
-
-                $isCurrent = $currentProgram && (int)$currentProgram->id === (int)$prog->id;
-                $isPast = !$isCurrent && $endStr <= $currentTime;
-
-                return (object)[
-                    'id'          => $prog->id,
-                    'name'        => $prog->name,
-                    'host'        => $prog->host,
-                    'start'       => $startStr,
-                    'end'         => $endStr,
-                    'duration'    => $prog->formatted_duration,
-                    'is_current'  => $isCurrent,
-                    'is_past'     => $isPast,
-                ];
-            });
-
-        $dashboardData['currentProgram'] = $currentProgram;
-        $dashboardData['nextProgram'] = $nextProgram;
-        $dashboardData['programProgress'] = [
-            'percent'   => $progressPercent,
-            'elapsed'   => $elapsedMinutes,
-            'remaining' => $remainingMinutes,
-        ];
-        $dashboardData['todaySchedule'] = $todaySchedule;
+        // El "ahora suena" se obtiene en tiempo real desde el endpoint de WideStream
+        // (ver nowPlaying()), consumido por el dashboard vía fetch. Ya no se calcula
+        // la programación local (currentProgram/nextProgram/parrilla) en esta vista.
         $dashboardData['streamUrl'] = config('app.stream_url') ?: 'https://widestream.app/radio.aac';
         $dashboardData['streamHls'] = config('app.stream_hls_url') ?: 'https://widestream.app/hls/live.m3u8';
         $dashboardData['streamEmbed'] = config('app.stream_embed_url') ?: 'https://widestream.app/embed/main';
 
         return view('admin.dashboard', $dashboardData);
+    }
+
+    /**
+     * Proxy del endpoint "ahora suena" de WideStream.
+     *
+     * Llama al API de WideStream server-side con la clave almacenada en
+     * config('services.widestream.api_key') para no exponerla al navegador,
+     * y devuelve el JSON normalizado al dashboard. Cachea 10 segundos para
+     * no saturar el servicio ante refrescos frecuentes.
+     */
+    public function nowPlaying()
+    {
+        $apiKey = (string) config('services.widestream.api_key');
+        $apiBase = rtrim((string) config('services.widestream.api_base', 'https://widestream.app/api/v1'), '/');
+
+        if ($apiKey === '') {
+            return response()->json([
+                'playing' => false,
+                'error'   => 'WideStream API key no configurada.',
+            ], 200);
+        }
+
+        $data = Cache::remember('widestream:now_playing', now()->addSeconds(10), function () use ($apiKey, $apiBase) {
+            try {
+                $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
+                    ->timeout(5)
+                    ->acceptJson()
+                    ->get($apiBase . '/now-playing');
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return ['playing' => false, 'error' => 'Respuesta no exitosa de WideStream.'];
+            } catch (\Throwable $e) {
+                return ['playing' => false, 'error' => 'No se pudo contactar a WideStream.'];
+            }
+        });
+
+        return response()->json($data, 200);
     }
 
     /**

@@ -520,5 +520,55 @@
 
     {{-- Contenedor para inyección dinámica de modales de edición --}}
     <div id="dynamic-modal-container"></div>
+
+    {{-- Toggle de tema claro/oscuro: binding robusto e independiente de dashboard.js.
+         Para evitar un doble toggle (dashboard.js liga un listener directo al mismo
+         botón), al preparar la vista se CLONA el botón #themeToggle para descartar
+         cualquier listener previo y se liga aquí el único handler. Funciona aunque el
+         bundle falle y se re-aplica en cada navegación de Turbo. --}}
+    <script>
+      (function () {
+        function applyTheme(theme) {
+          const root = document.documentElement;
+          root.classList.toggle('dark', theme === 'dark');
+          try { localStorage.setItem('theme', theme); } catch (e) {}
+          const icon = document.getElementById('themeIcon');
+          if (icon) icon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+
+        function bindThemeToggle() {
+          const btn = document.getElementById('themeToggle');
+          if (!btn) return;
+
+          // Clona el botón para eliminar listeners previos (incluido el de dashboard.js)
+          // y garantizar un único handler que alterne el tema una sola vez por clic.
+          const fresh = btn.cloneNode(true);
+          btn.parentNode.replaceChild(fresh, btn);
+          fresh.dataset.bound = '1';
+
+          fresh.addEventListener('click', function (e) {
+            e.preventDefault();
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(isDark ? 'light' : 'dark');
+          });
+
+          // Sincroniza el ícono con el estado actual (aplicado por el pre-set del head).
+          const icon = document.getElementById('themeIcon');
+          if (icon) {
+            icon.className = document.documentElement.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+          }
+        }
+
+        // Se ejecuta después de dashboard.js (que corre en DOMContentLoaded/turbo:load):
+        // al clonar el botón, el listener directo que dashboard.js pudo haber añadido
+        // queda descartado, dejando este como único.
+        if (document.readyState !== 'loading') {
+          setTimeout(bindThemeToggle, 0);
+        } else {
+          document.addEventListener('DOMContentLoaded', function () { setTimeout(bindThemeToggle, 0); });
+        }
+        document.addEventListener('turbo:load', function () { setTimeout(bindThemeToggle, 0); });
+      })();
+    </script>
 </body>
 </html>

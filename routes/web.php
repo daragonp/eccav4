@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth', 'admin']], function () {
 
     //Rutas para administrador:
     Route::get('/dashboard', [AdminController::class, 'index']);
+    Route::get('/api/now-playing', [AdminController::class, 'nowPlaying'])->name('api.now.playing');
     Route::get('/profile', [AdminController::class, 'profile']);
     Route::put('/profile', [AdminController::class, 'updateProfile'])->name('profile.update');
     Route::get('/admin/edit-modal/{type}/{id}', [AdminController::class, 'getEditModal'])->name('admin.edit-modal');

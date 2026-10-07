@@ -8,25 +8,20 @@
 <div class="space-y-6">
 
     {{-- ========================================================================= --}}
-    {{-- 1. COCKPIT ON-AIR: REPRODUCTOR EN VIVO Y ESTADO DE EMISIÓN               --}}
+    {{-- 1. COCKPIT ON-AIR: AHORA SUENA (WideStream en tiempo real) + REPRODUCTOR  --}}
     {{-- ========================================================================= --}}
-    @if($currentProgram)
     <div class="relative overflow-hidden rounded-3xl bg-linear-to-r from-emerald-600 via-teal-600 to-cyan-700 text-white shadow-xl p-5 sm:p-7 border border-emerald-400/30">
         {{-- Elementos decorativos de fondo --}}
         <div class="absolute -right-16 -top-16 w-56 h-56 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="absolute right-1/3 -bottom-10 w-48 h-48 bg-teal-400/10 rounded-full blur-2xl pointer-events-none"></div>
 
         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            {{-- Info Programa Actual --}}
+            {{-- Info "Ahora suena" (poblada por fetch a /api/now-playing) --}}
             <div class="flex items-start sm:items-center gap-4 sm:gap-5 flex-1 min-w-0">
                 <div class="relative shrink-0">
-                    @if($currentProgram->image_url)
-                        <img src="{{ $currentProgram->image_url }}" alt="{{ $currentProgram->name }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover shadow-lg border-2 border-white/20">
-                    @else
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg border border-white/20">
-                            <i class="fas fa-radio text-2xl sm:text-3xl text-emerald-100"></i>
-                        </div>
-                    @endif
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white shadow-lg border border-white/20">
+                        <i class="fas fa-music text-2xl sm:text-3xl text-emerald-100"></i>
+                    </div>
                     <span class="absolute -bottom-1 -right-1 flex h-4 w-4">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white"></span>
@@ -36,105 +31,50 @@
                 <div class="min-w-0 flex-1">
                     <div class="flex items-center gap-2 mb-1.5 flex-wrap">
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-500/90 text-white text-[11px] font-bold uppercase tracking-wider shadow-xs">
-                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Al Aire
+                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> En Vivo
                         </span>
-                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-white font-medium">
-                            <i class="far fa-clock mr-1"></i> {{ $currentProgram->start_formatted ?? $currentProgram->start }} — {{ $currentProgram->end_formatted ?? $currentProgram->end }}
-                        </span>
-                        <span class="text-xs px-2.5 py-0.5 rounded-full bg-emerald-900/40 text-emerald-100 font-medium">
-                            Duración: {{ $currentProgram->duration }} min
+                        <span class="text-[11px] px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-white font-medium">
+                            Radio Emancipación Cristiana Afro
                         </span>
                     </div>
 
-                    <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white truncate drop-shadow-xs">
-                        {{ $currentProgram->name }}
+                    <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-100 mb-0.5">Ahora suena</div>
+                    <h2 id="nowPlayingTitle" class="text-xl sm:text-2xl font-black tracking-tight text-white truncate drop-shadow-xs">
+                        Cargando…
                     </h2>
-                    <p class="text-xs sm:text-sm text-emerald-100 mt-1 truncate">
-                        Con <strong class="text-white">{{ $currentProgram->host ?? 'Equipo ECCA' }}</strong>
-                        @if($currentProgram->about)
-                            — <span class="opacity-90">{{ $currentProgram->about }}</span>
-                        @endif
+                    <p id="nowPlayingArtist" class="text-xs sm:text-sm text-emerald-100 mt-1 truncate">
+                        &nbsp;
                     </p>
                 </div>
             </div>
 
-            {{-- Reproductor Integrado y Siguiente Programa --}}
-            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 lg:border-l lg:border-white/20 lg:pl-6">
-                {{-- Botón de Play Streaming en Vivo --}}
-                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl p-2 sm:px-4 sm:py-2.5 border border-white/20 shadow-inner">
-                    <button id="dashboardLivePlayBtn" class="w-12 h-12 rounded-xl bg-white text-emerald-700 hover:bg-emerald-50 active:scale-95 flex items-center justify-center shadow-md transition-all group cursor-pointer" title="Escuchar emisión en vivo">
-                        <i id="dashboardPlayIcon" class="fas fa-play text-lg ml-0.5 transition-transform group-hover:scale-110"></i>
-                    </button>
-                    <div>
-                        <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-100 flex items-center gap-1.5">
-                            <span>Radio ECCA</span>
-                            <div class="live-equalizer flex items-end gap-0.5 h-3">
-                                <span class="eq-bar w-0.5 bg-emerald-200 rounded-full h-1"></span>
-                                <span class="eq-bar w-0.5 bg-emerald-200 rounded-full h-3"></span>
-                                <span class="eq-bar w-0.5 bg-emerald-200 rounded-full h-2"></span>
-                            </div>
-                        </div>
-                        <span id="dashboardLiveStatusText" class="text-xs font-semibold text-white">Streaming en vivo</span>
-                    </div>
+            {{-- Reproductor: widget compacto embebido de WideStream --}}
+            <div class="w-full sm:w-72 shrink-0 lg:border-l lg:border-white/20 lg:pl-6">
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-inner">
+                    <iframe
+                        src="{{ rtrim($streamEmbed, '/') }}?layout=button&theme=transparent"
+                        width="100%"
+                        height="48"
+                        frameborder="0"
+                        allow="autoplay"
+                        title="Reproductor en vivo WideStream"
+                        style="border-radius: 16px; overflow: hidden; border: none; display: block;"
+                    ></iframe>
                 </div>
-
-                {{-- Tarjeta Siguiente Programa --}}
-                @if($nextProgram)
-                <div class="bg-black/20 backdrop-blur-sm rounded-2xl px-4 py-2.5 border border-white/10 text-left min-w-[180px]">
-                    <div class="text-[10px] uppercase font-bold tracking-wider text-teal-200 flex items-center gap-1">
-                        <i class="fas fa-forward-step text-[9px]"></i> A continuación:
-                    </div>
-                    <div class="text-xs font-bold text-white truncate max-w-[190px] mt-0.5">{{ $nextProgram->name }}</div>
-                    <div class="text-[11px] text-teal-100">Hoy a las {{ $nextProgram->start_formatted ?? $nextProgram->start }}</div>
-                </div>
-                @endif
             </div>
         </div>
 
-        {{-- Barra de Progreso en Vivo --}}
-        @if(isset($programProgress))
-        <div class="mt-4 pt-3 border-t border-white/15">
+        {{-- Barra de Progreso de la pista actual (poblada por fetch) --}}
+        <div id="nowPlayingProgressWrap" class="mt-4 pt-3 border-t border-white/15 hidden">
             <div class="flex items-center justify-between text-xs text-emerald-100 mb-1.5 font-medium">
-                <span>Progreso emisión: {{ $programProgress['elapsed'] }} min transcurridos</span>
-                <span>{{ $programProgress['remaining'] }} min restantes ({{ $programProgress['percent'] }}%)</span>
+                <span id="nowPlayingAlbum" class="truncate">&nbsp;</span>
+                <span id="nowPlayingTime">0:00 / 0:00</span>
             </div>
             <div class="w-full h-2 bg-black/20 rounded-full overflow-hidden p-0.5">
-                <div class="h-full bg-linear-to-r from-amber-300 to-yellow-400 rounded-full transition-all duration-1000 shadow-sm" style="width: {{ $programProgress['percent'] }}%"></div>
-            </div>
-        </div>
-        @endif
-    </div>
-    @else
-    {{-- Estado cuando no hay programa agendado en el minuto exacto --}}
-    <div class="relative overflow-hidden rounded-3xl bg-linear-to-r from-slate-800 via-indigo-950 to-slate-900 text-white shadow-xl p-5 sm:p-7 border border-slate-700">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-slate-300 border border-white/10">
-                    <i class="fas fa-music text-2xl"></i>
-                </div>
-                <div>
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-indigo-500/80 text-white text-[10px] font-bold uppercase tracking-wider mb-1">
-                        Transmisión Continua 24/7
-                    </span>
-                    <h2 class="text-xl font-bold text-white">Música y Alabanza Continua</h2>
-                    <p class="text-xs sm:text-sm text-slate-400 mt-0.5">No hay un programa asignado en este bloque horario. Nuestra señal radial sigue al aire.</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <button id="dashboardLivePlayBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-semibold shadow-sm flex items-center gap-2 transition-all cursor-pointer">
-                    <i id="dashboardPlayIcon" class="fas fa-play"></i>
-                    <span>Escuchar radio</span>
-                </button>
-                <a href="{{ url('show-schedule') }}" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-xl text-xs font-semibold transition-all">
-                    Ver parrilla completa
-                </a>
+                <div id="nowPlayingProgressBar" class="h-full bg-linear-to-r from-amber-300 to-yellow-400 rounded-full transition-all duration-1000 shadow-sm" style="width: 0%"></div>
             </div>
         </div>
     </div>
-    @endif
-
-    {{-- Audio nativo invisible para el botón On-Air --}}
-    <audio id="dashboardAudioStream" preload="none" src="{{ $streamUrl }}"></audio>
 
     {{-- ========================================================================= --}}
     {{-- 2. DOCK DE ACCIONES RÁPIDAS (CENTRO DE CONTROL OPERATIVO)                --}}
@@ -338,58 +278,7 @@
     </div>
 
     {{-- ========================================================================= --}}
-    {{-- 4. PARRILLA DEL DÍA: LÍNEA DE TIEMPO INTERACTIVA                         --}}
-    {{-- ========================================================================= --}}
-    @if(isset($todaySchedule) && $todaySchedule->count() > 0)
-    <div class="card overflow-hidden">
-        <div class="card-body p-4 sm:p-5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-xl text-purple-700 dark:text-purple-300">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white text-base">Parrilla Radial de Hoy</h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Programación completa sincronizada para el día en curso</p>
-                    </div>
-                </div>
-
-                {{-- Filtro de la parrilla --}}
-                <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs">
-                    <button type="button" class="schedule-filter-btn px-3 py-1 rounded-lg font-medium bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs cursor-pointer" data-filter="all">Todos ({{ $todaySchedule->count() }})</button>
-                    <button type="button" class="schedule-filter-btn px-3 py-1 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" data-filter="upcoming">En antena / Siguientes</button>
-                    <button type="button" class="schedule-filter-btn px-3 py-1 rounded-lg font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white cursor-pointer" data-filter="past">Finalizados</button>
-                </div>
-            </div>
-
-            {{-- Grid scrollable de programas de hoy --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 max-h-[360px] overflow-y-auto pr-1">
-                @foreach($todaySchedule as $prog)
-                <div class="schedule-card p-3 rounded-xl border transition-all duration-200 {{ $prog->is_current ? 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-400 ring-2 ring-emerald-500/20 shadow-sm' : ($prog->is_past ? 'bg-slate-50/60 dark:bg-slate-800/30 border-slate-200 dark:border-slate-800 opacity-60' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-purple-300') }}"
-                     data-status="{{ $prog->is_current ? 'current' : ($prog->is_past ? 'past' : 'upcoming') }}">
-                    <div class="flex items-start justify-between gap-2">
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold {{ $prog->is_current ? 'bg-emerald-600 text-white animate-pulse' : ($prog->is_past ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' : 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300') }}">
-                            <i class="far fa-clock"></i> {{ $prog->start }} - {{ $prog->end }}
-                        </span>
-                        @if($prog->is_current)
-                            <span class="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">● Al Aire</span>
-                        @else
-                            <span class="text-[10px] text-slate-400">{{ $prog->duration }}</span>
-                        @endif
-                    </div>
-                    <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate mt-2">{{ $prog->name }}</h4>
-                    <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                        <i class="fas fa-microphone-lines text-[9px] mr-1"></i> {{ $prog->host ?: 'Música Continua' }}
-                    </p>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-    @endif
-
-    {{-- ========================================================================= --}}
-    {{-- 5. CENTRO DE CONTENIDO RECIENTE (TABS Y GESTIÓN)                          --}}
+    {{-- 4. CENTRO DE CONTENIDO RECIENTE (TABS Y GESTIÓN)                          --}}
     {{-- ========================================================================= --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -636,98 +525,64 @@
 
 @push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
     // =========================================================================
-    // 1. REPRODUCTOR DE STREAMING ON-AIR INTERACTIVO
+    // 1. "AHORA SUENA" EN TIEMPO REAL (endpoint proxy /api/now-playing)
     // =========================================================================
-    const audio = document.getElementById('dashboardAudioStream');
-    const playBtn = document.getElementById('dashboardLivePlayBtn');
-    const playIcon = document.getElementById('dashboardPlayIcon');
-    const statusText = document.getElementById('dashboardLiveStatusText');
-    const eqBars = document.querySelectorAll('.eq-bar');
+    function fmtTime(seconds) {
+        seconds = Math.max(0, Math.floor(seconds || 0));
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return m + ':' + (s < 10 ? '0' : '') + s;
+    }
 
-    if (audio && playBtn) {
-        let isPlaying = false;
+    function renderNowPlaying(data) {
+        const titleEl   = document.getElementById('nowPlayingTitle');
+        const artistEl  = document.getElementById('nowPlayingArtist');
+        const albumEl   = document.getElementById('nowPlayingAlbum');
+        const timeEl    = document.getElementById('nowPlayingTime');
+        const barEl     = document.getElementById('nowPlayingProgressBar');
+        const wrapEl    = document.getElementById('nowPlayingProgressWrap');
+        if (!titleEl) return;
 
-        playBtn.addEventListener('click', function() {
-            if (!isPlaying) {
-                playBtn.disabled = true;
-                if (statusText) statusText.textContent = 'Conectando señal...';
-
-                // Recargar el stream para evitar lag de buffer congelado
-                const streamUrl = audio.src.split('?')[0] + '?t=' + new Date().getTime();
-                audio.src = streamUrl;
-
-                audio.play().then(() => {
-                    isPlaying = true;
-                    playBtn.disabled = false;
-                    playIcon.className = 'fas fa-pause text-lg text-emerald-700';
-                    if (statusText) statusText.textContent = 'En directo (Reproduciendo)';
-                    startEqualizer();
-                }).catch(err => {
-                    console.error('Error al reproducir streaming:', err);
-                    playBtn.disabled = false;
-                    if (statusText) statusText.textContent = 'Error de conexión';
-                    alert('No se pudo conectar con el servidor de streaming. Verifique que la emisora esté emitiendo.');
-                });
-            } else {
-                audio.pause();
-                audio.src = '';
-                isPlaying = false;
-                playIcon.className = 'fas fa-play text-lg ml-0.5';
-                if (statusText) statusText.textContent = 'Streaming en vivo';
-                stopEqualizer();
-            }
-        });
-
-        function startEqualizer() {
-            eqBars.forEach((bar, i) => {
-                bar.classList.add('animate-pulse');
-                bar.style.animationDuration = (0.4 + (i * 0.2)) + 's';
-            });
+        if (!data || data.playing === false || !data.title) {
+            titleEl.textContent = 'Música y alabanza continua';
+            artistEl.textContent = 'Transmisión 24/7';
+            if (wrapEl) wrapEl.classList.add('hidden');
+            return;
         }
 
-        function stopEqualizer() {
-            eqBars.forEach(bar => {
-                bar.classList.remove('animate-pulse');
-                bar.style.animationDuration = '';
-            });
+        titleEl.textContent  = data.title;
+        artistEl.textContent = data.artist || '';
+
+        const dur = Number(data.duration) || 0;
+        const elapsed = Number(data.elapsed_seconds) || 0;
+        if (dur > 0 && wrapEl) {
+            wrapEl.classList.remove('hidden');
+            if (albumEl) albumEl.textContent = data.album || '';
+            if (timeEl)  timeEl.textContent = fmtTime(elapsed) + ' / ' + fmtTime(dur);
+            if (barEl)   barEl.style.width = Math.min(100, Math.round((elapsed / dur) * 100)) + '%';
+        } else if (wrapEl) {
+            wrapEl.classList.add('hidden');
         }
     }
 
-    // =========================================================================
-    // 2. FILTRADO INTERACTIVO DE LA PARRILLA RADIAL DE HOY
-    // =========================================================================
-    const filterButtons = document.querySelectorAll('.schedule-filter-btn');
-    const scheduleCards = document.querySelectorAll('.schedule-card');
+    function fetchNowPlaying() {
+        fetch('{{ url('api/now-playing') }}', { headers: { 'Accept': 'application/json' } })
+            .then(r => r.ok ? r.json() : null)
+            .then(renderNowPlaying)
+            .catch(() => { /* silencioso: no romper el dashboard si WideStream no responde */ });
+    }
 
-    filterButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Estilos activo/inactivo
-            filterButtons.forEach(b => {
-                b.classList.remove('bg-white', 'dark:bg-slate-700', 'text-slate-900', 'dark:text-white', 'shadow-xs');
-                b.classList.add('text-slate-600', 'dark:text-slate-400');
-            });
-            this.classList.add('bg-white', 'dark:bg-slate-700', 'text-slate-900', 'dark:text-white', 'shadow-xs');
-            this.classList.remove('text-slate-600', 'dark:text-slate-400');
-
-            const filter = this.getAttribute('data-filter');
-
-            scheduleCards.forEach(card => {
-                const status = card.getAttribute('data-status');
-                if (filter === 'all') {
-                    card.style.display = 'block';
-                } else if (filter === 'upcoming') {
-                    card.style.display = (status === 'current' || status === 'upcoming') ? 'block' : 'none';
-                } else if (filter === 'past') {
-                    card.style.display = (status === 'past') ? 'block' : 'none';
-                }
-            });
-        });
-    });
+    fetchNowPlaying();
+    // Refresca cada 15s mientras la pestaña está visible.
+    const npTimer = setInterval(function() {
+        if (document.visibilityState === 'visible') fetchNowPlaying();
+    }, 15000);
+    window.addEventListener('beforeunload', () => clearInterval(npTimer));
 
     // =========================================================================
-    // 3. ANIMACIÓN SUAVE DE NÚMEROS KPI
+    // 2. ANIMACIÓN SUAVE DE NÚMEROS KPI
     // =========================================================================
     document.querySelectorAll('.stat-card .text-2xl, .stat-card .text-3xl').forEach(stat => {
         const text = stat.textContent.trim();
@@ -746,6 +601,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 30);
         }
     });
-});
+})();
 </script>
 @endpush
