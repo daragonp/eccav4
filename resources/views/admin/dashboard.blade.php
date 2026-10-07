@@ -50,15 +50,16 @@
 
             {{-- Reproductor: widget compacto embebido de WideStream --}}
             <div class="w-full sm:w-72 shrink-0 lg:border-l lg:border-white/20 lg:pl-6">
-                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-inner">
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-inner" style="height: 64px; overflow: hidden;">
                     <iframe
                         src="{{ rtrim($streamEmbed, '/') }}?layout=button&theme=transparent"
                         width="100%"
                         height="48"
                         frameborder="0"
                         allow="autoplay"
+                        scrolling="no"
                         title="Reproductor en vivo WideStream"
-                        style="border-radius: 16px; overflow: hidden; border: none; display: block;"
+                        style="width: 100%; height: 48px; max-height: 48px; min-height: 48px; border-radius: 16px; overflow: hidden; border: none; display: block;"
                     ></iframe>
                 </div>
             </div>
