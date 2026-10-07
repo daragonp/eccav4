@@ -325,6 +325,20 @@ class VersionService
     {
         return [
             [
+                'version' => 'v4.10.0',
+                'date'    => date('Y-m-d'),
+                'title'   => 'Nueva Sección Biblioteca, Correcciones de Seguridad y Mejoras de Rendimiento',
+                'highlights' => [
+                    'Nueva sección Biblioteca (/library): el administrador publica libros (PDF o enlace), videos (archivo o YouTube/Dailymotion/Vimeo) y audios (archivo o enlace), con portada y categorías propias.',
+                    'Galería pública filtrable por tipo y categoría, y páginas de detalle con reproductor embebido (visor PDF, audio, video) y descarga libre.',
+                    'Corrección de 8 páginas públicas que devolvían error 500 (donate, programación, búsqueda, palabra en vivo, herencia, entre otras).',
+                    'Reparación de la edición del carrusel: ahora conserva correctamente imágenes, videos y enlaces de YouTube.',
+                    'Blindaje de seguridad: credenciales de pago movidas a configuración, límite de intentos de inicio de sesión, actualización de dompdf y restricción de CORS.',
+                    'Procesamiento de audio con IA y geolocalización de suscriptores movidos a cola para no bloquear las peticiones.',
+                    'Nuevos índices de base de datos (incluida búsqueda de texto completo) y páginas inexistentes que ahora devuelven un 404 real.',
+                ],
+            ],
+            [
                 'version' => 'v4.8.4',
                 'date'    => '2026-09-29',
                 'title'   => 'Rediseño de Sidebar Unificado, Topbar Profesional y Laravel 13.34.0',
