@@ -1,54 +1,24 @@
-<div id="radio-player-container"
-     data-turbo-permanent
-     class="radio-player-container"
-     data-default-photo="{{ asset('images/genericprogramimage.png') }}"
-     data-stream-url="{{ config('app.stream_url', 'https://widestream.app/radio.aac') }}"
-     data-initialized="0"><!-- data-initialized evita re-inicializar -->
+{{-- WideStream Player: Barra Sticky Flotante (Dock) --}}
+{{-- Reemplaza al reproductor personalizado anterior. La URL del embed se toma de la
+     configuración (config/app.php -> stream_embed_url, por defecto el embed de WideStream). --}}
+@php
+    $wideStreamEmbed = config('app.stream_embed_url', 'https://widestream.app/embed/main');
+    // Parámetros del dock sticky transparente solicitados por el servicio de streaming.
+    $wideStreamSrc = $wideStreamEmbed
+        . (str_contains($wideStreamEmbed, '?') ? '&' : '?')
+        . 'theme=transparent&sticky=dock';
+@endphp
 
-  <div class="player-controls">
-    <audio id="radio-audio" preload="none"></audio>
-
-    <div class="station-branding">
-      <img src="{{ asset('images/logo/logo.png') }}" alt="Logo de la Emisora" class="station-logo">
-      <span class="station-name">Radio Emancipación Cristiana Afro</span>
-      <span class="live-indicator">EN VIVO</span>
-    </div>
-
-    <div class="player-buttons-group">
-      <div class="volume-group">
-        <button id="volume-toggle-btn" class="player-button" title="Volumen">
-          <i class="fas fa-volume-up"></i>
-        </button>
-        <div class="volume-slider-popup">
-          <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.7" class="volume-slider">
-        </div>
-      </div>
-
-      <button id="play-pause-btn" class="player-button" title="Reproducir/Pausar">
-        <i class="fas fa-play"></i>
-        <span class="loading-spinner" style="display:none;"></span>
-      </button>
-
-      <button id="info-toggle-btn" class="player-button toggle-arrow" title="Información">
-        <i class="fas fa-chevron-up"></i>
-      </button>
-    </div>
-  </div>
-
-  <div id="program-details" class="program-details">
-    <div class="program-grid">
-      <div class="program-column director-photo-column">
-        <img id="director-photo" src="{{ asset('images/logo/ImagenRadio.jpg') }}" alt="Foto del Director">
-      </div>
-      <div class="program-column info-column">
-        <h3 id="program-name">Cargando programa...</h3>
-        <p id="program-description">Descripción: N/A</p>
-        <p id="director-name">Director: N/A</p>
-      </div>
-      <div class="program-column schedule-column">
-        <i class="fas fa-clock icono-horario"></i>
-        <p id="program-schedule">Horarios: N/A</p>
-      </div>
-    </div>
+<div style="position: fixed; bottom: 16px; left: 16px; right: 16px; z-index: 999999; display: flex; justify-content: center; pointer-events: none;">
+  <div style="width: 100%; max-width: 960px; pointer-events: auto; filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.6));">
+    <iframe
+      src="{{ $wideStreamSrc }}"
+      width="100%"
+      height="80"
+      frameborder="0"
+      allow="autoplay"
+      title="Radio Emancipación Cristiana Afro - WideStream"
+      style="width: 100%; height: 80px; border: none; border-radius: 16px; display: block; overflow: hidden;"
+    ></iframe>
   </div>
 </div>

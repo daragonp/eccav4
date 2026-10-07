@@ -568,10 +568,6 @@
                         </span>
 
                     </div>
-                    <div class="d-flex ms-auto align-items-center">
-                        {{-- WideStream Player Widget --}}
-                        <x-radio-widget layout="button" theme="transparent" width="220px" height="48" />
-                    </div>
                 </div>
             </div>
         </nav>
