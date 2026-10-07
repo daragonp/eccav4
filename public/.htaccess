@@ -5,9 +5,20 @@
 
     RewriteEngine On
 
+    # Evita que mod_dir redirija /library -> /library/ por existir el directorio
+    # físico public/library (donde se guardan los medios subidos). Así la ruta
+    # pública /library la resuelve Laravel y los archivos reales se siguen sirviendo.
+    DirectorySlash Off
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # La sección Biblioteca comparte nombre con el directorio físico public/library.
+    # Si la petición no es un archivo real existente, enviarla al front controller
+    # (sin esta regla, el directorio /library impediría que Laravel enrute /library).
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^library(/.*)?$ index.php [L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
