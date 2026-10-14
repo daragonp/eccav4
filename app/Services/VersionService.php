@@ -325,8 +325,21 @@ class VersionService
     {
         return [
             [
+                'version' => 'v4.10.1',
+                'date'    => '2026-10-07',
+                'title'   => 'Reproductor WideStream en el Panel, "Ahora Suena" en Vivo y Correcciones',
+                'highlights' => [
+                    'Panel: el reproductor del dashboard ahora usa el widget compacto de WideStream, con altura fija para que no tape el contenido.',
+                    '"Ahora suena" en tiempo real en el dashboard mediante un proxy seguro al API de WideStream (clave protegida en el servidor).',
+                    'Se retira del dashboard la programación local (programa actual y parrilla del día); la información al aire se obtiene en vivo del servicio de streaming.',
+                    'Corrección del botón de tema claro/oscuro en el panel de administración.',
+                    'Corrección del error 404 al eliminar definitivamente desde las vistas de detalle (versículos, noticias, cultos, programación, carrusel y biblioteca).',
+                    'El sitio público usa un único reproductor fijo (dock) de WideStream en todas las páginas.',
+                ],
+            ],
+            [
                 'version' => 'v4.10.0',
-                'date'    => date('Y-m-d'),
+                'date'    => '2026-10-06',
                 'title'   => 'Nueva Sección Biblioteca, Correcciones de Seguridad y Mejoras de Rendimiento',
                 'highlights' => [
                     'Nueva sección Biblioteca (/library): el administrador publica libros (PDF o enlace), videos (archivo o YouTube/Dailymotion/Vimeo) y audios (archivo o enlace), con portada y categorías propias.',
