@@ -48,7 +48,9 @@ class VerseController extends Controller
 
     public function view($id)
     {
-        $quote = Verse::findOrFail($id);
+        // withTrashed: permite ver el detalle de versículos inactivos (soft-deleted),
+        // que la lista sí muestra. Sin esto, /view-quote/{id} de un inactivo da 404.
+        $quote = Verse::withTrashed()->findOrFail($id);
         return view('admin.quote.view-quote', compact('quote'));
     }
 
@@ -142,7 +144,9 @@ class VerseController extends Controller
 
         $quote->forceDelete();
 
-        return back()->with('success', 'La publicación ha sido eliminada definitivamente.');
+        // Redirige a la lista: back() volvería a /view-quote/{id} de un registro ya
+        // eliminado permanentemente, lo que produciría un 404.
+        return redirect('show-quote')->with('success', 'La publicación ha sido eliminada definitivamente.');
     }
 
     public function history()

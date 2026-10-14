@@ -244,7 +244,8 @@ class ScheduleController extends Controller
      */
     public function view($id)
     {
-        $schedule = Schedule::findOrFail($id);
+        // withTrashed: permite ver el detalle de programas inactivos (soft-deleted).
+        $schedule = Schedule::withTrashed()->findOrFail($id);
 
         // Obtener todos los días del mismo bloque
         $allDays = Schedule::where('emission_key', $schedule->emission_key)
@@ -364,15 +365,17 @@ class ScheduleController extends Controller
                 ->where('emission_key', $emissionKey)
                 ->forceDelete();
 
-            // Eliminar la imagen física si no es la genérica
+            // (continúa) Eliminar la imagen física si no es la genérica
             if ($image != 'genericprogramimage.png' && Storage::disk('public')->exists('images/schedule/' . $image)) {
                 Storage::disk('public')->delete('images/schedule/' . $image);
             }
 
-            return redirect()->back()->with('success', 'El programa ha sido eliminado definitivamente.');
+            // Redirige a la lista: back() volvería a /view-schedule/{id} de un registro
+            // ya eliminado permanentemente, lo que produciría un 404.
+            return redirect('/show-schedule')->with('success', 'El programa ha sido eliminado definitivamente.');
 
         } catch (Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Error al eliminar el programa: ' . $e->getMessage()]);
+            return redirect('/show-schedule')->withErrors(['error' => 'Error al eliminar el programa: ' . $e->getMessage()]);
         }
     }
 

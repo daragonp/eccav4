@@ -254,7 +254,9 @@ class LibraryController extends Controller
 
         $resource->forceDelete();
 
-        return back()->with('success', 'El recurso ha sido eliminado definitivamente.');
+        // Redirige a la lista: back() volvería a /view-library/{id} de un registro ya
+        // eliminado permanentemente, lo que produciría un 404.
+        return redirect('show-library')->with('success', 'El recurso ha sido eliminado definitivamente.');
     }
 
     // ==================================================================

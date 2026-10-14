@@ -307,7 +307,9 @@ class WorshipController extends Controller
         $worship = Worship::withTrashed()->findOrFail($id);
         $worship->forceDelete();
 
-        return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
+        // Redirige a la lista: back() volvería a /view-worship/{id} de un registro ya
+        // eliminado permanentemente, lo que produciría un 404.
+        return redirect('show-worship')->with('success', 'La publicación ha sido eliminada definitivamente.');
     }
 
     /**

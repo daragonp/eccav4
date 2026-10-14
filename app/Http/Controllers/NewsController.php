@@ -39,7 +39,8 @@ class NewsController extends Controller
 
     public function view($id)
     {
-        $news = News::findOrFail($id);
+        // withTrashed: permite ver el detalle de noticias inactivas (soft-deleted).
+        $news = News::withTrashed()->findOrFail($id);
 
         return view('admin.news.view-news', compact('news'));
     }
@@ -233,7 +234,9 @@ class NewsController extends Controller
 
         $news->forceDelete();
 
-        return redirect()->back()->with('success', 'La publicación ha sido eliminada definitivamente.');
+        // Redirige a la lista: back() volvería a /view-news/{id} de un registro ya
+        // eliminado permanentemente, lo que produciría un 404.
+        return redirect('show-news')->with('success', 'La publicación ha sido eliminada definitivamente.');
     }
 
     public function adminindex(Request $request)

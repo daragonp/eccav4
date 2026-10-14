@@ -37,6 +37,8 @@ class BannerController extends Controller
      */
     public function view($id)
     {
+        // Banner NO usa SoftDeletes (su estado es el flag 'active'), por lo que
+        // findOrFail ya encuentra registros activos e inactivos. No usar withTrashed aquí.
         $slider = Banner::findOrFail($id);
         return view('admin.slider.view-slider', compact('slider'));
     }
@@ -278,6 +280,8 @@ class BannerController extends Controller
 
         $slider->delete();
 
-        return redirect()->back()->with('success', 'El carrusel ha sido eliminado definitivamente.');
+        // Redirige a la lista: back() volvería a /view-slider/{id} de un registro ya
+        // eliminado, lo que produciría un 404.
+        return redirect('show-slider')->with('success', 'El carrusel ha sido eliminado definitivamente.');
     }
 }
