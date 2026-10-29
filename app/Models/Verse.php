@@ -15,6 +15,7 @@ class Verse extends Model
         'audio',
         'video',
         'date',
+        'text',
     ];
 
     protected $casts = [
