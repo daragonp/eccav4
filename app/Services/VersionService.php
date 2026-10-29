@@ -325,6 +325,18 @@ class VersionService
     {
         return [
             [
+                'version' => 'v4.11.0',
+                'date'    => '2026-10-07',
+                'title'   => 'API Privada del Versículo del Día para Servicios Externos',
+                'highlights' => [
+                    'Nuevo campo de texto obligatorio en el versículo del día, para que su contenido viaje como texto y no solo en la imagen.',
+                    'Endpoint privado GET /api/v1/verse/today que entrega el versículo del día en JSON (texto, imagen, audio y PDF) a servicios autorizados como la emisora.',
+                    'Autenticación por clave de API: cada servicio recibe un token propio (almacenado de forma segura y mostrado una sola vez al crearlo), con posibilidad de activar o revocar el acceso.',
+                    'Registro de estadísticas de uso: cada petición a la API queda registrada (servicio, fecha, IP, resultado) y es consultable desde el panel.',
+                    'Nueva sección en el panel de administración para gestionar las claves de API y ver las estadísticas de consumo.',
+                ],
+            ],
+            [
                 'version' => 'v4.10.1',
                 'date'    => '2026-10-07',
                 'title'   => 'Reproductor WideStream en el Panel, "Ahora Suena" en Vivo y Correcciones',
