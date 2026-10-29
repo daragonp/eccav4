@@ -16,11 +16,14 @@ class Verse extends Model
         'video',
         'date',
         'text',
+        'reference',
+        'verses_refs',
     ];
 
     protected $casts = [
         'date' => 'date',
         'deleted_at' => 'datetime',
+        'verses_refs' => 'array',
     ];
 
     public function getImageUrlAttribute(): ?string
