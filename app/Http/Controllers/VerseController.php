@@ -4,21 +4,28 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Verse;
+use App\Services\BibleTextService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class VerseController extends Controller
 {
     public function store(Request $request)
     {
         $this->validate($request, [
-            'image' => 'required',
-            'date'  => 'required',
-            'text'  => 'required|string',
+            'image'       => 'required',
+            'date'        => 'required',
+            'text'        => 'required|string',
+            'verses_refs' => 'nullable|string',
         ], [
             'image.required' => 'Debe seleccionar la imagen del recurso.',
             'date.required'  => 'Debe seleccionar la fecha en la que se mostrará el recurso.',
             'text.required'  => 'Debe ingresar el texto del versículo.',
         ]);
+
+        // El backend es la única autoridad: resuelve text/reference/verses_refs
+        // contra biblia.json y descarta cualquier dato enviado por el navegador.
+        $bible = app(BibleTextService::class);
 
         $quote = new Verse();
 
@@ -40,10 +47,14 @@ class VerseController extends Controller
             $quote->video = $videoName;
         }
 
-        $quote->date       = $request->input('date');
-        $quote->text       = $request->input('text');
-        $quote->created_at = Carbon::now();
-        $quote->updated_at = Carbon::now();
+        $payload = $this->resolveVersesPayload($request, $bible);
+
+        $quote->date        = $request->input('date');
+        $quote->text        = $payload['text'];
+        $quote->reference   = $payload['reference'];
+        $quote->verses_refs = $payload['verses_refs'];
+        $quote->created_at  = Carbon::now();
+        $quote->updated_at  = Carbon::now();
         $quote->save();
 
         return back()->with('success', 'El recurso ha sido creado');
@@ -76,12 +87,17 @@ class VerseController extends Controller
     public function edit($id, Request $request)
     {
         $this->validate($request, [
-            'date' => 'required',
-            'text' => 'required|string',
+            'date'        => 'required',
+            'text'        => 'required|string',
+            'verses_refs' => 'nullable|string',
         ], [
             'date.required' => 'El campo fecha es obligatorio.',
             'text.required' => 'Debe ingresar el texto del versículo.',
         ]);
+
+        // El backend es la única autoridad: resuelve text/reference/verses_refs
+        // contra biblia.json y descarta cualquier dato enviado por el navegador.
+        $bible = app(BibleTextService::class);
 
         $quote = Verse::withTrashed()->findOrFail($id);
 
@@ -103,12 +119,119 @@ class VerseController extends Controller
             $quote->video = $videoName;
         }
 
-        $quote->date       = $request->input('date');
-        $quote->text       = $request->input('text');
-        $quote->updated_at = Carbon::now();
+        $payload = $this->resolveVersesPayload($request, $bible);
+
+        $quote->date        = $request->input('date');
+        $quote->text        = $payload['text'];
+        $quote->reference   = $payload['reference'];
+        $quote->verses_refs = $payload['verses_refs'];
+        $quote->updated_at  = Carbon::now();
         $quote->save();
 
         return back()->with('success', 'El versículo ha sido actualizado');
+    }
+
+    /**
+     * Centraliza el parseo, validación y resolución server-side del carrito de
+     * versículos (campo oculto `verses_refs`). Es la única autoridad que decide el
+     * valor final de text/reference/verses_refs: se descartan por completo los
+     * campos pretty/text que pudiera enviar el navegador.
+     *
+     * - Si el carrito viene vacío/ausente: versículo manual. Conserva el `text`
+     *   escrito a mano y deja reference y verses_refs en null.
+     * - Si el carrito trae ítems: se resuelven contra biblia.json y se regeneran
+     *   text, reference y verses_refs. Las refs inválidas (parciales o totales)
+     *   provocan un error de validación recuperable, sin persistir nada.
+     *
+     * @return array{text:string, reference:?string, verses_refs:?array}
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function resolveVersesPayload(Request $request, BibleTextService $bible): array
+    {
+        $raw = $request->input('verses_refs');
+        $refs = [];
+
+        if (filled($raw)) {
+            $decoded = json_decode($raw, true);
+
+            if (!is_array($decoded)) {
+                throw ValidationException::withMessages([
+                    'verses_refs' => 'La selección de versículos no es válida.',
+                ]);
+            }
+
+            foreach ($decoded as $item) {
+                $book    = is_array($item) ? ($item['book'] ?? null) : null;
+                $chapter = is_array($item) ? ($item['chapter'] ?? null) : null;
+                $verse   = is_array($item) ? ($item['verse'] ?? null) : null;
+
+                if (!is_string($book) || !preg_match('/^[a-z0-9\-]+$/', $book)
+                    || !is_numeric($chapter) || (int) $chapter < 1
+                    || !is_numeric($verse)   || (int) $verse < 1) {
+                    throw ValidationException::withMessages([
+                        'verses_refs' => 'La selección de versículos contiene datos inválidos.',
+                    ]);
+                }
+
+                // Se ignoran pretty/text del navegador: solo viajan book/chapter/verse.
+                $refs[] = [
+                    'book'    => $book,
+                    'chapter' => (int) $chapter,
+                    'verse'   => (int) $verse,
+                ];
+            }
+        }
+
+        if (count($refs) > 20) {
+            throw ValidationException::withMessages([
+                'verses_refs' => 'Puedes seleccionar un máximo de 20 versículos.',
+            ]);
+        }
+
+        // Caso manual: sin carrito, el texto escrito a mano manda.
+        if (empty($refs)) {
+            return [
+                'text'        => $request->input('text'),
+                'reference'   => null,
+                'verses_refs' => null,
+            ];
+        }
+
+        try {
+            $result = $bible->buildTextAndReference($refs);
+        } catch (\RuntimeException $e) {
+            // Fallo de lectura de biblia.json: fatal para la operación pero
+            // recuperable para el administrador. Se registra a nivel error.
+            report($e);
+            throw ValidationException::withMessages([
+                'verses_refs' => 'No fue posible leer la Biblia en el servidor. Intenta más tarde.',
+            ]);
+        }
+
+        if (empty($result['resolvedRefs'])) {
+            throw ValidationException::withMessages([
+                'verses_refs' => 'No fue posible resolver ningún versículo seleccionado.',
+            ]);
+        }
+
+        if (!empty($result['invalidRefs'])) {
+            // No descartar en silencio: avisar exactamente qué refs no existen.
+            $citas = collect($result['invalidRefs'])
+                ->map(fn ($r) => $bible->prettyRef($r['book'], (int) $r['chapter'], (int) $r['verse']))
+                ->implode(', ');
+
+            throw ValidationException::withMessages([
+                'verses_refs' => "No se encontraron estos versículos en la Biblia: {$citas}. "
+                               . 'Quítalos del carrito e intenta de nuevo.',
+            ]);
+        }
+
+        return [
+            'text'        => $result['text'],
+            'reference'   => $result['reference'],
+            'verses_refs' => $result['resolvedRefs'],
+        ];
     }
 
     public function update(Request $request, $id)

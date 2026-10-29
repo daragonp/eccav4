@@ -30,6 +30,8 @@ class VerseApiController extends Controller
                 'id'         => $verse->id,
                 'date'       => optional($verse->date)->toDateString(),
                 'text'       => $verse->text, // puede ser null si aún no se ha completado
+                'reference'  => $verse->reference, // cita combinada "Juan 3:16; Salmos 23:1"; null si es manual
+                'verses'     => $verse->verses_refs, // lista [{book,chapter,verse,pretty,text}]; null si es manual
                 'image_url'  => $verse->image_url, // accessor → URL absoluta a images/bible
                 'audio_url'  => $verse->audio_url, // null si no hay
                 'pdf_url'    => $verse->pdf_url,    // columna `video` → documents/quote; null si no hay
