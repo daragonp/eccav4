@@ -17,6 +17,15 @@
                 placeholder="Escribe aquí el texto del versículo tal como aparece en la imagen..."
                 class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2">{{ old('text') }}</textarea>
     </div>
+    <div class="md:col-span-2">
+      @php
+        // Repoblar el carrito desde old('verses_refs') para que un fallo de validación al crear
+        // (p.ej. falta la imagen) no pierda la selección al recargar el modal.
+        $decodedOldRefs = json_decode(old('verses_refs', ''), true);
+        $initialRefsCreate = is_array($decodedOldRefs) ? $decodedOldRefs : [];
+      @endphp
+      @include('admin.quote._verse-cart', ['textFieldId' => 'textInput', 'initialRefs' => $initialRefsCreate])
+    </div>
     <div>
       <label for="dateInput" class="block text-sm mb-1">Fecha</label>
       <input id="dateInput" type="date" name="date" required

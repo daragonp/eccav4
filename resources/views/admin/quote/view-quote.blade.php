@@ -84,6 +84,20 @@ $textoFecha = ucfirst($nombreDia) . ', ' . $date->day . ' de ' . $nombreMes . ' 
                 <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-200">
                     <i class="fas fa-quote-left mr-2 text-brand-green"></i> Texto del versículo
                 </h2>
+                @if(!empty($quote->reference))
+                <p class="mb-3 text-sm font-medium text-brand-green">
+                    <i class="fas fa-bookmark mr-1"></i> {{ $quote->reference }}
+                </p>
+                @endif
+                @if(!empty($quote->verses_refs) && is_array($quote->verses_refs))
+                <ul class="mb-3 space-y-1">
+                    @foreach($quote->verses_refs as $ref)
+                    <li class="text-sm text-slate-600 dark:text-slate-400">
+                        <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $ref['pretty'] ?? '' }}</span> — {{ $ref['text'] ?? '' }}
+                    </li>
+                    @endforeach
+                </ul>
+                @endif
                 @if(!empty($quote->text))
                 <p class="text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed">{{ $quote->text }}</p>
                 @else
