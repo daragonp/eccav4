@@ -254,6 +254,20 @@
                         </div>
                         <span class="nav-text">Configuración</span>
                     </a>
+
+                    <a href="{{ url('show-api-clients') }}" class="nav-item group {{ request()->is('show-api-clients*') || request()->is('*api-client*') ? 'active' : '' }}" title="Claves de API (emisora)">
+                        <div class="nav-icon">
+                            <i class="fa-solid fa-key"></i>
+                        </div>
+                        <span class="nav-text">Claves de API</span>
+                    </a>
+
+                    <a href="{{ url('api-stats') }}" class="nav-item group {{ request()->is('api-stats*') ? 'active' : '' }}" title="Estadísticas de uso de la API">
+                        <div class="nav-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <span class="nav-text">Estadísticas API</span>
+                    </a>
                 </div>
             </nav>
         </aside>

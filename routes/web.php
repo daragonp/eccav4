@@ -5,6 +5,7 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ApiClientController;
 use App\Http\Controllers\BischoolController;
 use App\Http\Controllers\RutasController;
 use App\Http\Controllers\VerseController;
@@ -180,6 +181,13 @@ Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWi
     Route::get('/update-podcast/{id}', [PodcastController::class, 'update']);
     Route::post('/updatepodcast/{id}', [PodcastController::class, 'edit']);
     Route::post('/delete-podcast/{id}', [PodcastController::class, 'delete']);
+
+    //Rutas para administrador: Clientes API (emisora)
+    Route::get('/show-api-clients', [ApiClientController::class, 'show']);
+    Route::post('/add-api-client', [ApiClientController::class, 'store']);
+    Route::post('/toggle-api-client/{id}', [ApiClientController::class, 'toggle']);
+    Route::delete('/delete-api-client/{id}', [ApiClientController::class, 'destroy']);
+    Route::get('/api-stats', [ApiClientController::class, 'stats']);
 });
 
 Route::post('/api/privacy-acceptance', [PrivacyController::class, 'recordAcceptance'])->middleware('throttle:20,1')->name('privacy.acceptance');
