@@ -13,9 +13,11 @@ class VerseController extends Controller
         $this->validate($request, [
             'image' => 'required',
             'date'  => 'required',
+            'text'  => 'required|string',
         ], [
             'image.required' => 'Debe seleccionar la imagen del recurso.',
             'date.required'  => 'Debe seleccionar la fecha en la que se mostrará el recurso.',
+            'text.required'  => 'Debe ingresar el texto del versículo.',
         ]);
 
         $quote = new Verse();
@@ -39,6 +41,7 @@ class VerseController extends Controller
         }
 
         $quote->date       = $request->input('date');
+        $quote->text       = $request->input('text');
         $quote->created_at = Carbon::now();
         $quote->updated_at = Carbon::now();
         $quote->save();
@@ -74,8 +77,10 @@ class VerseController extends Controller
     {
         $this->validate($request, [
             'date' => 'required',
+            'text' => 'required|string',
         ], [
             'date.required' => 'El campo fecha es obligatorio.',
+            'text.required' => 'Debe ingresar el texto del versículo.',
         ]);
 
         $quote = Verse::withTrashed()->findOrFail($id);
@@ -99,6 +104,7 @@ class VerseController extends Controller
         }
 
         $quote->date       = $request->input('date');
+        $quote->text       = $request->input('text');
         $quote->updated_at = Carbon::now();
         $quote->save();
 

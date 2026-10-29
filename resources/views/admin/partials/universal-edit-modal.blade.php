@@ -491,6 +491,10 @@
                 @if($sectionType === 'verse')
                 <div class="px-6 py-4 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label for="verse_text" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Texto del versículo</label>
+                            <textarea id="verse_text" name="text" rows="4" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>{{ $tableM->text }}</textarea>
+                        </div>
                         <div>
                             <label for="date" class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Fecha</label>
                             <input id="date" type="date" name="date" value="{{ !empty($tableM->date) ? (\Carbon\Carbon::parse($tableM->date)->format('Y-m-d')) : '' }}" class="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>

@@ -78,6 +78,23 @@ $textoFecha = ucfirst($nombreDia) . ', ' . $date->day . ' de ' . $nombreMes . ' 
             </div>
         </div>
 
+        {{-- Card de Texto del versículo --}}
+        <div class="card">
+            <div class="card-body p-6">
+                <h2 class="text-lg font-semibold mb-3 text-slate-800 dark:text-slate-200">
+                    <i class="fas fa-quote-left mr-2 text-brand-green"></i> Texto del versículo
+                </h2>
+                @if(!empty($quote->text))
+                <p class="text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed">{{ $quote->text }}</p>
+                @else
+                <div class="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 text-amber-800 dark:text-amber-300 text-sm">
+                    <i class="fas fa-triangle-exclamation mr-1"></i>
+                    Este versículo no tiene texto. Edítalo para completarlo (requerido por la API de la emisora).
+                </div>
+                @endif
+            </div>
+        </div>
+
         {{-- Card de Imagen --}}
         <div class="card">
             <div class="card-body p-6">

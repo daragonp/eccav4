@@ -11,6 +11,12 @@
 {{-- CAMPOS DEL MODAL PARA AGREGAR UN REGISTRO --}}
 @section('modalFields')
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="md:col-span-2">
+      <label for="textInput" class="block text-sm mb-1">Texto del versículo</label>
+      <textarea id="textInput" name="text" rows="4" required
+                placeholder="Escribe aquí el texto del versículo tal como aparece en la imagen..."
+                class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2">{{ old('text') }}</textarea>
+    </div>
     <div>
       <label for="dateInput" class="block text-sm mb-1">Fecha</label>
       <input id="dateInput" type="date" name="date" required
