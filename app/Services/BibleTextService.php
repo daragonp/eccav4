@@ -44,9 +44,12 @@ class BibleTextService
                     $clean[$libro][$cap] = [];
                     foreach ($vers as $num => $txt) {
                         $t = trim($txt);
+                        // Quitar el prefijo de salto de línea mal escapado del dato fuente
+                        // (muchos versículos del JSON empiezan por "/n" o "\n" literal).
+                        $t = preg_replace('#^\s*(?:/n|\\\\n)+\s*#', '', $t);
                         // Quitar residuos "')," "')" ",)" etc.
                         $t = rtrim($t, " ,')");
-                        $clean[$libro][$cap][$num] = $t;
+                        $clean[$libro][$cap][$num] = trim($t);
                     }
                 }
             }

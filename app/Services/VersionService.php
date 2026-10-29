@@ -325,6 +325,18 @@ class VersionService
     {
         return [
             [
+                'version' => 'v4.12.0',
+                'date'    => '2026-10-07',
+                'title'   => 'Selector de Versículos desde la Biblia para el Versículo del Día',
+                'highlights' => [
+                    'El formulario del versículo del día permite seleccionar versículos de la Biblia Reina Valera (libro, capítulo y versículo) directamente desde el panel.',
+                    'Se pueden agregar varios versículos, no contiguos e incluso de distintos libros y capítulos, en una lista acumulable con opción de quitar y reordenar.',
+                    'El texto se arma automáticamente con cada versículo y su cita, y sigue siendo editable a mano; también se guarda la referencia combinada (ej. "Juan 3:16; Salmos 23:1").',
+                    'La API del versículo del día ahora entrega además la referencia y el desglose estructurado de los versículos seleccionados.',
+                    'Corrección de un residuo de formato ("/n") en el texto de los versículos de la Biblia, que afectaba tanto a la sección pública como al texto entregado por la API.',
+                ],
+            ],
+            [
                 'version' => 'v4.11.0',
                 'date'    => '2026-10-07',
                 'title'   => 'API Privada del Versículo del Día para Servicios Externos',
