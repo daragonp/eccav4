@@ -78,6 +78,47 @@
     </div>
 
     {{-- ========================================================================= --}}
+    {{-- 1b. CULTO EN VIVO: override rápido para el domingo                        --}}
+    {{-- ========================================================================= --}}
+    @php($liveSetting = \App\Models\LiveStream::current())
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 dark:border-slate-700/80">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3 min-w-0">
+                <div class="w-10 h-10 rounded-lg bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-tower-broadcast"></i>
+                </div>
+                <div class="min-w-0">
+                    <div class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Culto en Vivo</div>
+                    <div class="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                        @switch($liveSetting->mode)
+                            @case('forzar_vivo') Forzado EN VIVO @break
+                            @case('forzar_oculto') Forzado oculto @break
+                            @default Automático (por ventana)
+                        @endswitch
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <form action="{{ route('live.admin.toggle') }}" method="POST">
+                    @csrf
+                    @if ($liveSetting->mode === 'forzar_vivo')
+                        <button type="submit" class="inline-flex items-center rounded-lg bg-slate-200 dark:bg-slate-700 px-3.5 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors">
+                            <i class="fa-solid fa-stop mr-1.5"></i> Finalizar transmisión
+                        </button>
+                    @else
+                        <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3.5 py-2 text-xs font-bold text-white hover:bg-red-700 transition-colors">
+                            <i class="fa-solid fa-tower-broadcast mr-1.5"></i> Estamos EN VIVO ahora
+                        </button>
+                    @endif
+                </form>
+                <a href="{{ url('show-live') }}" class="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <i class="fa-solid fa-sliders mr-1.5"></i> Configurar
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {{-- ========================================================================= --}}
     {{-- 2. DOCK DE ACCIONES RÁPIDAS (CENTRO DE CONTROL OPERATIVO)                --}}
     {{-- ========================================================================= --}}
     <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 dark:border-slate-700/80">

@@ -144,6 +144,13 @@
                         <span class="nav-text">Cultos Dominicales</span>
                     </a>
 
+                    <a href="{{ url('show-live') }}" class="nav-item group {{ request()->is('show-live*') ? 'active' : '' }}" title="Culto en Vivo (Transmisión Dominical)">
+                        <div class="nav-icon">
+                            <i class="fa-solid fa-video"></i>
+                        </div>
+                        <span class="nav-text">Culto en Vivo</span>
+                    </a>
+
                     <a href="{{ url('show-categories') }}" class="nav-item group {{ request()->is('show-categories*') || request()->is('*-podcast*') ? 'active' : '' }}" title="Podcasts & Audios">
                         <div class="nav-icon">
                             <i class="fa-solid fa-podcast"></i>
