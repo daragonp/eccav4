@@ -48,20 +48,55 @@
                 </div>
             </div>
 
-            {{-- Reproductor: widget compacto embebido de WideStream --}}
-            <div class="w-full sm:w-72 shrink-0 lg:border-l lg:border-white/20 lg:pl-6">
-                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 shadow-inner" style="height: 64px; overflow: hidden;">
-                    <iframe
-                        src="{{ rtrim($streamEmbed, '/') }}?layout=button&theme=transparent"
-                        width="100%"
-                        height="48"
-                        frameborder="0"
-                        allow="autoplay"
-                        scrolling="no"
-                        title="Reproductor en vivo WideStream"
-                        style="width: 100%; height: 48px; max-height: 48px; min-height: 48px; border-radius: 16px; overflow: hidden; border: none; display: block;"
-                    ></iframe>
+            {{-- Reproductor On-Air: Control nativo en vivo --}}
+            <div class="flex flex-wrap items-center gap-2.5 shrink-0 lg:border-l lg:border-white/20 lg:pl-6">
+                {{-- Widget de reproducción --}}
+                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-md rounded-2xl px-3.5 py-2.5 border border-white/20 shadow-inner">
+                    <button id="dashboardLivePlayBtn" type="button"
+                            class="w-11 h-11 rounded-xl bg-white text-emerald-700 hover:bg-emerald-50 active:scale-95 flex items-center justify-center shadow-md transition-all group cursor-pointer shrink-0"
+                            title="Reproducir emisión en vivo">
+                        <i id="dashboardPlayIcon" class="fas fa-play text-base ml-0.5 text-emerald-700 transition-transform group-hover:scale-110"></i>
+                    </button>
+                    <div class="min-w-0 pr-1">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-100 flex items-center gap-1.5">
+                            <span>Señal Radial</span>
+                            <div id="liveEqualizer" class="flex items-end gap-0.5 h-3">
+                                <span class="eq-bar eq-bar-1 w-0.5 bg-emerald-200 rounded-full h-1"></span>
+                                <span class="eq-bar eq-bar-2 w-0.5 bg-emerald-200 rounded-full h-3"></span>
+                                <span class="eq-bar eq-bar-3 w-0.5 bg-emerald-200 rounded-full h-2"></span>
+                            </div>
+                        </div>
+                        <span id="dashboardLiveStatusText" class="text-xs font-semibold text-white block truncate">
+                            Listo para escuchar
+                        </span>
+                    </div>
+
+                    {{-- Control de volumen y mute rápido --}}
+                    <div class="flex items-center gap-1.5 pl-2.5 border-l border-white/15">
+                        <button id="dashboardMuteBtn" type="button" class="text-white/80 hover:text-white p-1 text-xs transition cursor-pointer" title="Silenciar / Activar audio">
+                            <i id="dashboardMuteIcon" class="fas fa-volume-high"></i>
+                        </button>
+                        <input id="dashboardVolumeSlider" type="range" min="0" max="1" step="0.05" value="0.8"
+                               class="w-14 sm:w-16 h-1 bg-white/20 rounded-lg appearance-none cursor-pointer accent-amber-300"
+                               title="Volumen">
+                    </div>
                 </div>
+
+                {{-- Enlace rápido a consola WideStream --}}
+                <a href="{{ config('app.stream_station_url', 'https://widestream.app/') }}" target="_blank" rel="noopener noreferrer"
+                   class="hidden xl:inline-flex items-center gap-1.5 px-3 py-3 rounded-2xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-emerald-100 hover:text-white border border-white/20 transition shadow-inner"
+                   title="Abrir consola de emisión WideStream">
+                    <i class="fas fa-tower-broadcast text-[11px]"></i>
+                    <span>Consola</span>
+                </a>
+
+                {{-- Elemento de audio nativo --}}
+                <audio id="dashboardAudioStream" preload="none">
+                    <source src="{{ $streamUrl }}" type="audio/aac">
+                    @if(!empty($streamHls))
+                        <source src="{{ $streamHls }}" type="application/x-mpegURL">
+                    @endif
+                </audio>
             </div>
         </div>
 
@@ -565,6 +600,14 @@
 @endsection
 
 @push('scripts')
+<style>
+@keyframes eqDance1 { 0%, 100% { height: 4px; } 50% { height: 12px; } }
+@keyframes eqDance2 { 0%, 100% { height: 12px; } 50% { height: 4px; } }
+@keyframes eqDance3 { 0%, 100% { height: 6px; } 50% { height: 11px; } }
+.eq-playing .eq-bar-1 { animation: eqDance1 0.7s infinite ease-in-out !important; }
+.eq-playing .eq-bar-2 { animation: eqDance2 0.5s infinite ease-in-out !important; }
+.eq-playing .eq-bar-3 { animation: eqDance3 0.6s infinite ease-in-out !important; }
+</style>
 <script>
 (function() {
     // =========================================================================
@@ -621,6 +664,104 @@
         if (document.visibilityState === 'visible') fetchNowPlaying();
     }, 15000);
     window.addEventListener('beforeunload', () => clearInterval(npTimer));
+
+    // =========================================================================
+    // 1b. REPRODUCTOR ON-AIR NATIVO EN TIEMPO REAL
+    // =========================================================================
+    const audioEl = document.getElementById('dashboardAudioStream');
+    const playBtn = document.getElementById('dashboardLivePlayBtn');
+    const playIcon = document.getElementById('dashboardPlayIcon');
+    const statusText = document.getElementById('dashboardLiveStatusText');
+    const eqContainer = document.getElementById('liveEqualizer');
+    const muteBtn = document.getElementById('dashboardMuteBtn');
+    const muteIcon = document.getElementById('dashboardMuteIcon');
+    const volumeSlider = document.getElementById('dashboardVolumeSlider');
+
+    if (audioEl && playBtn) {
+        let isPlaying = false;
+        let lastVolume = volumeSlider ? Number(volumeSlider.value) : 0.8;
+        audioEl.volume = lastVolume;
+
+        playBtn.addEventListener('click', function() {
+            if (!isPlaying) {
+                playBtn.disabled = true;
+                if (statusText) statusText.textContent = 'Conectando…';
+                if (playIcon) playIcon.className = 'fas fa-spinner fa-spin text-base text-emerald-700';
+
+                // Recargar con timestamp para evitar chunks retrasados de stream
+                const baseSrc = '{{ $streamUrl }}';
+                audioEl.src = baseSrc + (baseSrc.includes('?') ? '&' : '?') + 't=' + Date.now();
+                audioEl.load();
+
+                audioEl.play().then(() => {
+                    isPlaying = true;
+                    playBtn.disabled = false;
+                    if (playIcon) playIcon.className = 'fas fa-pause text-base text-emerald-700';
+                    if (statusText) statusText.textContent = 'En vivo (Al aire)';
+                    if (eqContainer) eqContainer.classList.add('eq-playing');
+                }).catch(err => {
+                    console.warn('Error al reproducir streaming:', err);
+                    playBtn.disabled = false;
+                    isPlaying = false;
+                    if (playIcon) playIcon.className = 'fas fa-play text-base ml-0.5 text-emerald-700';
+                    if (statusText) statusText.textContent = 'Error al conectar';
+                    if (eqContainer) eqContainer.classList.remove('eq-playing');
+                });
+            } else {
+                audioEl.pause();
+                audioEl.src = '';
+                isPlaying = false;
+                if (playIcon) playIcon.className = 'fas fa-play text-base ml-0.5 text-emerald-700';
+                if (statusText) statusText.textContent = 'Pausado';
+                if (eqContainer) eqContainer.classList.remove('eq-playing');
+            }
+        });
+
+        audioEl.addEventListener('error', function() {
+            isPlaying = false;
+            playBtn.disabled = false;
+            if (playIcon) playIcon.className = 'fas fa-play text-base ml-0.5 text-emerald-700';
+            if (statusText) statusText.textContent = 'Señal no disponible';
+            if (eqContainer) eqContainer.classList.remove('eq-playing');
+        });
+
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', function() {
+                const vol = Number(this.value);
+                audioEl.volume = vol;
+                if (vol > 0 && audioEl.muted) {
+                    audioEl.muted = false;
+                }
+                lastVolume = vol;
+                updateVolumeUI();
+            });
+        }
+
+        if (muteBtn) {
+            muteBtn.addEventListener('click', function() {
+                audioEl.muted = !audioEl.muted;
+                updateVolumeUI();
+            });
+        }
+
+        function updateVolumeUI() {
+            if (!muteIcon) return;
+            if (audioEl.muted || audioEl.volume === 0) {
+                muteIcon.className = 'fas fa-volume-xmark text-amber-300';
+            } else if (audioEl.volume < 0.5) {
+                muteIcon.className = 'fas fa-volume-low text-white';
+            } else {
+                muteIcon.className = 'fas fa-volume-high text-white';
+            }
+        }
+
+        window.addEventListener('beforeunload', () => {
+            if (audioEl) {
+                audioEl.pause();
+                audioEl.src = '';
+            }
+        });
+    }
 
     // =========================================================================
     // 2. ANIMACIÓN SUAVE DE NÚMEROS KPI
