@@ -88,7 +88,11 @@ class LiveStreamService
         $startHm = substr((string) $live->window_start, 0, 5);
         $endHm   = substr((string) $live->window_end, 0, 5);
 
-        return $now->dayOfWeekIso === (int) $live->window_day
+        $days = is_array($live->window_days)
+            ? array_map('intval', $live->window_days)
+            : [(int) $live->window_day];
+
+        return in_array($now->dayOfWeekIso, $days, true)
             && $nowHm >= $startHm
             && $nowHm < $endHm;
     }

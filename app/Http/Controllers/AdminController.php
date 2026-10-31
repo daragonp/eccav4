@@ -16,6 +16,7 @@ use App\Models\Verse;
 use App\Models\Banner;
 use App\Models\News;
 use App\Models\Worship;
+use App\Models\LiveStream;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Permission\Models\Role as SpatieRole;
 use Spatie\Permission\Models\Permission;
@@ -71,6 +72,7 @@ class AdminController extends Controller
         $dashboardData['streamUrl'] = config('app.stream_url') ?: 'https://widestream.app/radio.aac';
         $dashboardData['streamHls'] = config('app.stream_hls_url') ?: 'https://widestream.app/hls/live.m3u8';
         $dashboardData['streamEmbed'] = config('app.stream_embed_url') ?: 'https://widestream.app/embed/main';
+        $dashboardData['liveSetting'] = LiveStream::current();
 
         return view('admin.dashboard', $dashboardData);
     }

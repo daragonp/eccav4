@@ -133,6 +133,13 @@ class LiveStreamFeatureTest extends TestCase
         $this->actingAs($this->admin())->get('/show-live')->assertOk();
     }
 
+    public function test_dashboard_recibe_live_setting_desde_controlador(): void
+    {
+        $res = $this->actingAs($this->admin())->get('/dashboard');
+        $res->assertOk();
+        $res->assertViewHas('liveSetting');
+    }
+
     public function test_update_live_valido_persiste(): void
     {
         $res = $this->actingAs($this->admin())->post('/update-live', [
@@ -148,6 +155,22 @@ class LiveStreamFeatureTest extends TestCase
         $live = LiveStream::current();
         $this->assertSame('forzar_oculto', $live->mode);
         $this->assertSame('https://youtu.be/ABCDEF12345', $live->youtube_url);
+        $this->assertSame([7], $live->window_days);
+    }
+
+    public function test_update_live_con_multiples_dias_persiste(): void
+    {
+        $res = $this->actingAs($this->admin())->post('/update-live', [
+            'platform'     => 'youtube',
+            'window_days'  => [3, 7],
+            'window_start' => '09:00',
+            'window_end'   => '13:00',
+            'mode'         => 'auto',
+        ]);
+
+        $res->assertRedirect();
+        $live = LiveStream::current();
+        $this->assertSame([3, 7], $live->window_days);
     }
 
     public function test_update_live_invalido_devuelve_errores(): void

@@ -80,7 +80,6 @@
     {{-- ========================================================================= --}}
     {{-- 1b. CULTO EN VIVO: override rápido para el domingo                        --}}
     {{-- ========================================================================= --}}
-    @php($liveSetting = \App\Models\LiveStream::current())
     <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 dark:border-slate-700/80">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-3 min-w-0">

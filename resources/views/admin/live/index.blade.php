@@ -101,16 +101,27 @@
                     </select>
                 </div>
 
-                <div>
-                    <label for="window_day" class="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-300">Día de la ventana</label>
-                    <select id="window_day" name="window_day" class="w-full rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-white">
-                        @php
-                            $dias = [1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles', 4 => 'Jueves', 5 => 'Viernes', 6 => 'Sábado', 7 => 'Domingo'];
-                        @endphp
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium mb-1.5 text-slate-700 dark:text-slate-300">Días de transmisión</label>
+                    @php
+                        $dias = [1 => 'Lunes', 2 => 'Martes', 3 => 'Miércoles', 4 => 'Jueves', 5 => 'Viernes', 6 => 'Sábado', 7 => 'Domingo'];
+                        $selectedDays = old('window_days', $live->window_days ?? [$live->window_day ?? 7]);
+                        if (!is_array($selectedDays)) {
+                            $selectedDays = [(int) $selectedDays];
+                        }
+                    @endphp
+                    <div class="flex flex-wrap gap-2">
                         @foreach ($dias as $num => $nombre)
-                            <option value="{{ $num }}" @selected((int) old('window_day', $live->window_day) === $num)>{{ $nombre }}</option>
+                            <label class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border cursor-pointer transition-all text-xs font-semibold
+                                {{ in_array($num, $selectedDays) ? 'bg-emerald-50 border-emerald-400 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-600 dark:text-emerald-200 shadow-2xs' : 'bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                                <input type="checkbox" name="window_days[]" value="{{ $num }}"
+                                       @checked(in_array($num, $selectedDays))
+                                       class="rounded border-slate-300 dark:border-slate-700 text-emerald-600 focus:ring-emerald-500">
+                                {{ $nombre }}
+                            </label>
                         @endforeach
-                    </select>
+                    </div>
+                    <p class="mt-1.5 text-xs text-slate-500 dark:text-slate-400">Selecciona uno o más días en los que se activa la ventana horaria automática.</p>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\VerseApiController;
+use App\Http\Controllers\LiveController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,3 +39,14 @@ Route::prefix('v1')
     ->group(function () {
         Route::get('/verse/today', [VerseApiController::class, 'today']);
     });
+
+/*
+|--------------------------------------------------------------------------
+| Culto en Vivo: estado público (proxy cacheado)
+|--------------------------------------------------------------------------
+|
+| Endpoint consumido por el banner de la home y la página /en-vivo.
+| Genera la URL /api/live-status con name 'api.live.status'.
+|
+*/
+Route::get('/live-status', [LiveController::class, 'status'])->name('api.live.status');

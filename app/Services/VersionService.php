@@ -325,6 +325,19 @@ class VersionService
     {
         return [
             [
+                'version' => 'v4.13.1',
+                'date'    => '2026-10-31',
+                'title'   => 'Soporte Multi-Día, Optimización de Caché y Refactorización de Culto en Vivo',
+                'highlights' => [
+                    'Soporte multi-día para la transmisión: la ventana horaria ahora permite configurar múltiples días de culto (ej: domingos y miércoles) mediante selector de días en el panel de administración.',
+                    'Alineación de caché y polling: reducción del TTL de caché a 1 minuto en /api/live-status, eliminando respuestas estancadas y sincronizándose con el sondeo del banner en la home.',
+                    'Organización de rutas: traslado del endpoint público /api/live-status a routes/api.php bajo el grupo de rutas de API.',
+                    'Desacoplamiento MVC en Dashboard: inyección de la configuración de transmisión desde AdminController, eliminando llamadas a la base de datos dentro de la vista Blade.',
+                    'Claridad en vistas: renombrado de la vista de devocionales a palabra-vida.blade.php para evitar ambigüedad con la transmisión en vivo.',
+                    'Limpieza de esquema: remoción de la columna obsoleta active en la tabla live_streams con compatibilidad total hacia atrás.',
+                ],
+            ],
+            [
                 'version' => 'v4.13.0',
                 'date'    => '2026-10-07',
                 'title'   => 'Transmisión del Culto Dominical en Vivo (Culto en Vivo)',

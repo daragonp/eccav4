@@ -38,7 +38,9 @@ class LiveSettingController extends Controller
             'tiktok_url'         => ['nullable', 'url', 'max:500'],
             'x_url'              => ['nullable', 'url', 'max:500'],
             'instagram_url'      => ['nullable', 'url', 'max:500'],
-            'window_day'         => ['required', 'integer', 'between:1,7'],
+            'window_days'        => ['required_without:window_day', 'array', 'min:1'],
+            'window_days.*'      => ['integer', 'between:1,7'],
+            'window_day'         => ['required_without:window_days', 'integer', 'between:1,7'],
             'window_start'       => ['required', 'date_format:H:i'],
             'window_end'         => ['required', 'date_format:H:i', 'after:window_start'],
             'mode'               => ['required', 'in:auto,forzar_vivo,forzar_oculto'],
@@ -46,23 +48,26 @@ class LiveSettingController extends Controller
             'url_grabacion'      => ['nullable', 'url', 'max:500'],
             'title'              => ['nullable', 'string', 'max:255'],
         ], [
-            'platform.required'        => 'La plataforma principal es obligatoria.',
-            'platform.in'              => 'La plataforma debe ser YouTube o Facebook.',
-            'youtube_url.url'          => 'La URL de YouTube no es válida.',
-            'facebook_url.url'         => 'La URL de Facebook no es válida.',
-            'tiktok_url.url'           => 'La URL de TikTok no es válida.',
-            'x_url.url'                => 'La URL de X no es válida.',
-            'instagram_url.url'        => 'La URL de Instagram no es válida.',
-            'window_day.required'      => 'El día de la ventana es obligatorio.',
-            'window_day.between'       => 'El día debe estar entre lunes (1) y domingo (7).',
-            'window_start.required'    => 'La hora de inicio es obligatoria.',
-            'window_start.date_format' => 'La hora de inicio debe tener formato HH:MM.',
-            'window_end.required'      => 'La hora de fin es obligatoria.',
-            'window_end.date_format'   => 'La hora de fin debe tener formato HH:MM.',
-            'window_end.after'         => 'La hora de fin debe ser posterior a la de inicio.',
-            'mode.required'            => 'El modo de visibilidad es obligatorio.',
-            'mode.in'                  => 'El modo debe ser Automático, Forzar en vivo o Forzar oculto.',
-            'url_grabacion.url'        => 'La URL de la grabación no es válida.',
+            'platform.required'            => 'La plataforma principal es obligatoria.',
+            'platform.in'                  => 'La plataforma debe ser YouTube o Facebook.',
+            'youtube_url.url'              => 'La URL de YouTube no es válida.',
+            'facebook_url.url'             => 'La URL de Facebook no es válida.',
+            'tiktok_url.url'               => 'La URL de TikTok no es válida.',
+            'x_url.url'                    => 'La URL de X no es válida.',
+            'instagram_url.url'            => 'La URL de Instagram no es válida.',
+            'window_days.required_without' => 'Debes seleccionar al menos un día de transmisión.',
+            'window_days.min'              => 'Debes seleccionar al menos un día de transmisión.',
+            'window_days.*.between'        => 'Cada día debe estar entre lunes (1) y domingo (7).',
+            'window_day.required_without'  => 'El día de la ventana es obligatorio.',
+            'window_day.between'           => 'El día debe estar entre lunes (1) y domingo (7).',
+            'window_start.required'        => 'La hora de inicio es obligatoria.',
+            'window_start.date_format'     => 'La hora de inicio debe tener formato HH:MM.',
+            'window_end.required'          => 'La hora de fin es obligatoria.',
+            'window_end.date_format'       => 'La hora de fin debe tener formato HH:MM.',
+            'window_end.after'             => 'La hora de fin debe ser posterior a la de inicio.',
+            'mode.required'                => 'El modo de visibilidad es obligatorio.',
+            'mode.in'                      => 'El modo debe ser Automático, Forzar en vivo o Forzar oculto.',
+            'url_grabacion.url'            => 'La URL de la grabación no es válida.',
         ]);
 
         $live = LiveStream::current();
@@ -73,7 +78,11 @@ class LiveSettingController extends Controller
         $live->tiktok_url         = $request->input('tiktok_url');
         $live->x_url              = $request->input('x_url');
         $live->instagram_url      = $request->input('instagram_url');
-        $live->window_day         = (int) $request->input('window_day');
+        if ($request->has('window_days')) {
+            $live->window_days = array_values(array_unique(array_map('intval', (array) $request->input('window_days'))));
+        } elseif ($request->has('window_day')) {
+            $live->window_days = [(int) $request->input('window_day')];
+        }
         $live->window_start       = $request->input('window_start') . ':00';
         $live->window_end         = $request->input('window_end') . ':00';
         $live->mode               = $request->input('mode');

@@ -213,4 +213,21 @@ class LiveStreamServiceTest extends TestCase
 
         $this->assertTrue($this->service()->isLive());
     }
+
+    // Multi-día: ventana activa en miércoles (3) y domingo (7).
+    public function test_ventana_soporta_multiples_dias(): void
+    {
+        // 2024-06-19 es miércoles.
+        Carbon::setTestNow(Carbon::create(2024, 6, 19, 10, 0, 0, 'America/Bogota'));
+        Http::fake();
+        $live = LiveStream::current();
+        $live->window_days = [3, 7]; // Miércoles y Domingo
+        $live->save();
+
+        $this->assertTrue($this->service()->isLive());
+
+        // 2024-06-20 es jueves (no está en la lista).
+        Carbon::setTestNow(Carbon::create(2024, 6, 20, 10, 0, 0, 'America/Bogota'));
+        $this->assertFalse($this->service()->isLive());
+    }
 }

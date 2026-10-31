@@ -47,7 +47,7 @@ class HomeContentController extends Controller
 
         $quote = Verse::whereDate('date', '=', $date)->first();
 
-        return view('live', compact('quote'));
+        return view('palabra-vida', compact('quote'));
     }
 
     public function suscriberemail(Request $request)

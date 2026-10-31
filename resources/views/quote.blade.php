@@ -47,7 +47,7 @@
         <img
           src="{{ $imgPath ? asset($imgPath) : asset('images/bible/placeholder.png') }}"
           alt="{{ empty($quote->image_alt) ? 'Imagen del día' : e($quote->image_alt) }}"
-          class="max-h-[500px] w-auto rounded-md border-2 border-[var(--green-dark)] dark:border-[var(--green-light)] shadow"
+          class="w-full max-w-2xl max-h-[760px] object-contain rounded-md border-2 border-[var(--green-dark)] dark:border-[var(--green-light)] shadow"
           loading="lazy"
           decoding="async"
         />

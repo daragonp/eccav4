@@ -239,9 +239,8 @@ Route::get('/search', [HomeContentController::class, 'search']);
 // Ruta API para obtener la información del programa actual
 Route::get('/api/programa-actual', [HomeContentController::class, 'getProgramaActual']);
 
-// Culto en Vivo: página pública y endpoint proxy de estado (público, cacheado).
+// Culto en Vivo: página pública.
 Route::get('/en-vivo', [LiveController::class, 'index'])->name('live.index');
-Route::get('/api/live-status', [LiveController::class, 'status'])->name('api.live.status');
 
 
 Route::get('/objetivos', [RutasController::class, 'objetivos']);

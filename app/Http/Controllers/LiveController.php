@@ -27,12 +27,13 @@ class LiveController extends Controller
     }
 
     /**
-     * Endpoint proxy JSON. Cachea el estado completo normalizado 3 minutos.
-     * Nunca expone la API key de YouTube. Siempre responde HTTP 200.
+     * Endpoint proxy JSON. Cachea el estado completo normalizado 1 minuto (alineado
+     * con el polling de 60s del banner). Nunca expone la API key de YouTube.
+     * Siempre responde HTTP 200.
      */
     public function status(LiveStreamService $service)
     {
-        $data = Cache::remember('livestream:status', now()->addMinutes(3), function () use ($service) {
+        $data = Cache::remember('livestream:status', now()->addMinute(), function () use ($service) {
             return $service->getLiveState();
         });
 

@@ -1,15 +1,15 @@
 {
-    "version": "4.13.0",
+    "version": "4.13.1",
     "major": 4,
     "minor": 13,
-    "patch": 0,
+    "patch": 1,
     "prerelease": null,
     "build": null,
     "branch": "master",
     "commit_hash": "3b5e5bf976052daff92dea0966157d869d0b433e",
     "commit_short": "3b5e5bf",
-    "commit_date": "2026-09-29T17:39:26-05:00",
-    "release_date": "2026-10-07",
+    "commit_date": "2026-10-31T13:20:00-05:00",
+    "release_date": "2026-10-31",
     "repository": "https://github.com/daragonp/eccav4",
     "github_run": null
 }
