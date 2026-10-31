@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             NewsTableSeeder::class,
             PodCastTableSeeder::class,
             LibrarySeeder::class,
+            LiveStreamSeeder::class,
                 ]);
     }
 }
