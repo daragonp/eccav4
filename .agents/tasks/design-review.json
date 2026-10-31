@@ -1,0 +1,27 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "findings": [
+    {
+      "id": 1,
+      "severity": "MEDIUM",
+      "location": "§6 archive() — bucle de desambiguación de title y Worship::updateOrCreate(['broadcast'=>$fecha])",
+      "problem": "Worship usa SoftDeletes (verificado en app/Models/Worship.php y la migración). El bucle de desambiguación de title y el updateOrCreate usan el scope por defecto que excluye registros soft-deleted, pero el índice UNIQUE de title sigue vivo en BD. Un Worship soft-deleted con el mismo title o broadcast no se detecta, por lo que updateOrCreate intenta un INSERT que viola el UNIQUE de title y lanza 500. La tabla de errores de §6 afirma que 'no llega excepción', lo cual es falso con soft deletes.",
+      "fix": "Usar withTrashed() en la detección: buscar el Worship del domingo con Worship::withTrashed()->where('broadcast',$fecha)->first() y restaurarlo si trashed(); y en el bucle de título usar Worship::withTrashed()->where('title',$title)->where('broadcast','!=',$fecha)->exists(). Alternativamente declarar explícitamente la política de re-archivado tras borrado. Afecta al criterio de aceptación 10."
+    },
+    {
+      "id": 2,
+      "severity": "NIT",
+      "location": "§4 — snippet 'Punto de inclusión' en welcome.blade.php",
+      "problem": "El snippet muestra @section('content') seguido inmediatamente por <section aria-labelledby=\"home-quote\">, pero el archivo real tiene una línea en blanco entre ambos (líneas 5-7). Un str_replace literal podría no coincidir.",
+      "fix": "Anotar que la inserción va tras @section('content') y antes de la primera <section aria-labelledby=\"home-quote\">, sin depender del espaciado, o reproducir la línea en blanco real."
+    },
+    {
+      "id": 3,
+      "severity": "NIT",
+      "location": "§6 — tabla de mapeo del archivado, campo autor",
+      "problem": "El diseño dice usar 'los mismos valores que WorshipController::store', pero store usa autor='P. Henry Belalcázar' y el archivado usa 'Culto en Vivo'. Inexactitud documental, no funcional (cabe en string(30)).",
+      "fix": "Aclarar que autor es un valor propio del archivado (no copiado de store) o alinear a 'P. Henry Belalcázar' si se desea paridad."
+    }
+  ],
+  "reviewDoc": "/Users/daragonp/Proyectos/eccav4/.worktrees/culto-en-vivo/.agents/tasks/design-review.md"
+}
