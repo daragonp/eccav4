@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\YouTube;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -76,12 +77,8 @@ class Banner extends Model
 
     protected function detectYoutubeId(?string $value): ?string
     {
-        if (empty($value)) {
-            return null;
-        }
-
-        $match = preg_match('/(?:youtube(?:-nocookie)?\.com\/(?:.*[?&]v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/', $value, $matches);
-        return $match ? $matches[1] : null;
+        // Fuente única del regex en App\Support\YouTube::extractId().
+        return YouTube::extractId($value);
     }
 
     protected function detectYoutubeEmbedUrl(?string $value): ?string

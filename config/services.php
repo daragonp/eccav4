@@ -52,4 +52,9 @@ return [
         'api_base' => env('WIDESTREAM_API_BASE', 'https://widestream.app/api/v1'),
     ],
 
+    'youtube' => [
+        'api_key'    => env('YOUTUBE_API_KEY'),
+        'channel_id' => env('YOUTUBE_CHANNEL_ID'),
+    ],
+
 ];
