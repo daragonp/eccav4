@@ -3,6 +3,8 @@
 @section('title', 'Tez brillante')
 
 @section('content')
+  @include('partials.live-banner')
+
   <section aria-labelledby="home-quote" class="mb-8">
     <h2 id="home-quote" class="sr-only">Palabra del día</h2>
     @include('quote', ['narrow' => true])

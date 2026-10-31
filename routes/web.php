@@ -22,6 +22,8 @@ use App\Http\Controllers\HomeContentController;
 use App\Http\Controllers\BibleController;
 use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\LiveController;
+use App\Http\Controllers\Admin\LiveSettingController;
 
 
 require __DIR__ . '/auth.php';
@@ -83,6 +85,12 @@ Route::post('/delete-worship/{id}', [WorshipController::class, 'destroy']);     
 Route::post('/activate-worship/{id}', [WorshipController::class, 'activate']);   // Activar
 Route::delete('/realdelete-worship/{id}', [WorshipController::class, 'delete']); // Eliminación permanente
 Route::get('/reprocess-worship-ai/{id}', [WorshipController::class, 'reprocessWithAI']);
+
+    //Rutas para administrador: Culto en Vivo (transmisión dominical)
+    Route::get('/show-live', [LiveSettingController::class, 'show'])->name('live.admin.show');
+    Route::post('/update-live', [LiveSettingController::class, 'update'])->name('live.admin.update');
+    Route::post('/toggle-live', [LiveSettingController::class, 'toggleLive'])->name('live.admin.toggle');
+    Route::post('/archive-live', [LiveSettingController::class, 'archive'])->name('live.admin.archive');
 
 
     //Rutas para administrador: Biblioteca
@@ -230,6 +238,10 @@ Route::post('/newsuscriber', [HomeContentController::class, 'suscriberemail'])->
 Route::get('/search', [HomeContentController::class, 'search']);
 // Ruta API para obtener la información del programa actual
 Route::get('/api/programa-actual', [HomeContentController::class, 'getProgramaActual']);
+
+// Culto en Vivo: página pública y endpoint proxy de estado (público, cacheado).
+Route::get('/en-vivo', [LiveController::class, 'index'])->name('live.index');
+Route::get('/api/live-status', [LiveController::class, 'status'])->name('api.live.status');
 
 
 Route::get('/objetivos', [RutasController::class, 'objetivos']);
