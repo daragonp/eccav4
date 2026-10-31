@@ -325,6 +325,19 @@ class VersionService
     {
         return [
             [
+                'version' => 'v4.13.0',
+                'date'    => '2026-10-07',
+                'title'   => 'Transmisión del Culto Dominical en Vivo (Culto en Vivo)',
+                'highlights' => [
+                    'Nueva sección "Culto en Vivo": transmisión del culto dominical en directo a través de la web, con reproductor embebido en una página dedicada (/en-vivo).',
+                    'Banner "EN VIVO" que aparece automáticamente en la página principal cuando la transmisión está al aire.',
+                    'Detección automática del directo de YouTube (se muestra solo cuando realmente están transmitiendo), combinada con una ventana horaria configurable (domingos 9:00 por defecto).',
+                    'Soporte para varias plataformas: YouTube y Facebook incrustados, más enlaces a TikTok, X e Instagram; con un botón de "Estamos en vivo" en el panel como control manual.',
+                    'Opción de archivar la grabación del culto y enlazarla con la sección de Cultos Dominicales.',
+                    'Guía de transmisión (OBS + doble cámara) para el equipo de la iglesia.',
+                ],
+            ],
+            [
                 'version' => 'v4.12.0',
                 'date'    => '2026-10-07',
                 'title'   => 'Selector de Versículos desde la Biblia para el Versículo del Día',
