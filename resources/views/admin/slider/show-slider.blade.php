@@ -182,7 +182,7 @@
     <div class="card">
         <div class="card-body p-0">
             <div class="table-wrap">
-                <table class="w-full">
+                <table class="w-full table-stack">
                     <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                         <tr>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Carrusel</th>
@@ -193,7 +193,7 @@
                     <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                         @forelse ($sliders as $slider)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                <td class="px-4 py-3 text-sm">
+                                <td data-label="Carrusel" class="px-4 py-3 text-sm">
                                     <div class="flex items-center">
                                         <div class="flex mr-2">
                                             {{-- Lado Izquierdo --}}
@@ -244,7 +244,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 text-sm">
+                                <td data-label="Estado" class="px-4 py-3 text-sm">
                                     @if ($slider->active)
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700 shadow-sm">
                                             <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -261,7 +261,7 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-sm text-center">
+                                <td class="cell-actions px-4 py-3 text-sm text-center">
                                     @include('admin.partials.actions', [
                                         'id'         => $slider->id,
                                         'view'       => url("view-slider", $slider->id),

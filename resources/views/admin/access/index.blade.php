@@ -28,8 +28,8 @@
 
 <div class="card">
     <div class="card-body p-0">
-        <div class="overflow-x-auto">
-            <table class="w-full min-w-[980px]">
+        <div class="table-wrap overflow-x-auto">
+            <table class="w-full min-w-[980px] table-stack">
                 <thead class="bg-slate-50 dark:bg-slate-800/60">
                     <tr>
                         <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">Usuario</th>
@@ -46,7 +46,7 @@
                         $testForThisUser = is_array($testPermission) && (($testPermission['user_id'] ?? null) === $user->id);
                     @endphp
                     <tr class="border-t border-slate-200 dark:border-slate-700">
-                        <td class="px-4 py-4 align-top">
+                        <td data-label="Usuario" class="cell-block px-4 py-4 align-top">
                             <div class="font-medium text-slate-900 dark:text-white">{{ $user->name }}</div>
                             <div class="text-sm text-slate-500 dark:text-slate-400">{{ $user->email }}</div>
                             @if($testForThisUser)
@@ -63,7 +63,7 @@
                             </div>
                             @endif
                         </td>
-                        <td class="px-4 py-4 align-top">
+                        <td data-label="Roles" class="cell-block px-4 py-4 align-top">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 @foreach($roles as $role)
                                 <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
@@ -79,7 +79,7 @@
                                 @endforeach
                             </div>
                         </td>
-                        <td class="px-4 py-4 align-top">
+                        <td data-label="Permisos directos" class="cell-block px-4 py-4 align-top">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 @foreach($permissions as $permission)
                                 <label class="inline-flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
@@ -95,7 +95,7 @@
                                 @endforeach
                             </div>
                         </td>
-                        <td class="px-4 py-4 align-top text-right">
+                        <td data-label="Acción" class="cell-block px-4 py-4 align-top text-right">
                             <form id="{{ $formId }}" action="{{ route('access.control.update', $user->id) }}" method="POST" class="mb-3">
                                 @csrf
                             </form>

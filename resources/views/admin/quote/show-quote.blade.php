@@ -74,7 +74,7 @@
   <div class="card">
     <div class="card-body p-0">
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Fecha</th>
@@ -97,8 +97,8 @@
                 }
               @endphp
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $formattedDate }}</td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td data-label="Fecha" class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $formattedDate }}</td>
+                <td data-label="Imagen" class="px-4 py-3 text-sm text-center">
                   @if ($verse->image_url)
                     <a href="{{ $verse->image_url }}" target="_blank" class="inline-flex">
                       <img src="{{ $verse->image_url }}" alt="Versículo" class="h-10 w-10 object-cover rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-xs">
@@ -107,7 +107,7 @@
                     <span class="text-slate-400 text-xs"><i class="fa-solid fa-image-slash"></i></span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Documento" class="px-4 py-3 text-sm">
                   @if ($verse->pdf_url)
                     <a href="{{ $verse->pdf_url }}" target="_blank" class="btn btn-sm btn-ghost text-red-600 dark:text-red-400 inline-flex items-center gap-1.5 font-medium">
                       <i class="fa-solid fa-file-pdf text-red-500"></i> Ver PDF
@@ -116,23 +116,23 @@
                     <span class="text-slate-400 text-xs inline-flex items-center gap-1"><i class="fa-solid fa-file-excel"></i> Sin doc</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Audio" class="px-4 py-3 text-sm">
                   @if ($verse->audio_url)
-                    <audio controls class="w-44 h-8">
+                    <audio controls class="w-44 h-8 max-w-full">
                       <source src="{{ $verse->audio_url }}">
                     </audio>
                   @else
                     <span class="text-slate-400 text-xs inline-flex items-center gap-1"><i class="fa-solid fa-volume-xmark"></i> Sin audio</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Estado" class="px-4 py-3 text-sm">
                   @if ($verse->deleted_at)
                     <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fa-solid fa-ban mr-1"></i> Inactivo</span>
                   @else
                     <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fa-solid fa-check mr-1"></i> Activo</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td class="cell-actions px-4 py-3 text-sm text-center">
                   @include('admin.partials.actions', [
                       'id'           => $verse->id,
                       'view'         => url("view-quote", $verse->id),

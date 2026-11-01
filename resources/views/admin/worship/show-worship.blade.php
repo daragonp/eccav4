@@ -76,7 +76,7 @@
   <div class="card">
     <div class="card-body p-0">
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Título</th>
@@ -102,10 +102,10 @@
                 }
               @endphp
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $worship->title }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $formattedDate }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $worship->autor ?? '-' }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                <td data-label="Título" class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $worship->title }}</td>
+                <td data-label="Fecha" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $formattedDate }}</td>
+                <td data-label="Autor" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $worship->autor ?? '-' }}</td>
+                <td data-label="Etiqueta" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                   @if($worship->badge)
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-600">
                       {{ $worship->badge }}
@@ -114,7 +114,7 @@
                     -
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td data-label="Imagen" class="px-4 py-3 text-sm text-center">
                   @if ($worship->image_url)
                     <a href="{{ $worship->image_url }}" target="_blank" class="inline-flex">
                       <img src="{{ $worship->image_url }}" alt="{{ $worship->title }}" class="h-10 w-10 object-cover rounded-md ring-1 ring-slate-200 dark:ring-slate-800">
@@ -123,16 +123,16 @@
                     <span class="text-slate-400"><i class="fas fa-image-slash"></i></span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Audio" class="px-4 py-3 text-sm">
                   @if ($worship->audio_url)
-                    <audio controls class="w-40 h-8">
+                    <audio controls class="w-40 h-8 max-w-full">
                       <source src="{{ $worship->audio_url }}">
                     </audio>
                   @else
                     <span class="text-slate-400"><i class="fas fa-volume-mute"></i></span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Estado IA" class="px-4 py-3 text-sm">
                   @if (!$worship->audio)
                     <span class="chip-brand bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300 border-gray-300 dark:border-gray-700"><i class="fas fa-volume-mute mr-1"></i> Sin audio</span>
                   @elseif ($worship->ai_processed)
@@ -141,14 +141,14 @@
                     <span class="chip-brand bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700"><i class="fas fa-clock mr-1"></i> Pendiente de IA</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Estado" class="px-4 py-3 text-sm">
                   @if ($worship->deleted_at)
                     <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-trash-alt mr-1"></i> Inactivo</span>
                   @else
                     <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fas fa-check-circle mr-1"></i> Activo</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td class="cell-actions px-4 py-3 text-sm text-center">
                   @include('admin.partials.actions', [
                       'id'           => $worship->id,
                       'view'         => url("view-worship", $worship->id),

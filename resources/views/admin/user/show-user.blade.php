@@ -92,7 +92,7 @@
   <div class="card">
     <div class="card-body p-0">
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Avatar</th>
@@ -125,7 +125,7 @@
                 $role = $user->roles->first();
               @endphp
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Avatar" class="px-4 py-3 text-sm">
                   @if (empty($user->image))
                     <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-semibold">
                       {{ $initials }}
@@ -134,9 +134,9 @@
                     <img src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-10 h-10 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-800">
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $user->name }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $user->email }}</td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Nombre" class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $user->name }}</td>
+                <td data-label="Correo" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 break-all">{{ $user->email }}</td>
+                <td data-label="Rol" class="px-4 py-3 text-sm">
                   @if ($role)
                     <span class="chip-brand bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border-blue-300 dark:border-blue-700">
                       {{ $role->name }}
@@ -145,14 +145,14 @@
                     <span class="text-slate-500 dark:text-slate-400">Sin rol</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Estado" class="px-4 py-3 text-sm">
                   @if ($user->deleted_at)
                     <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-ban mr-1"></i> Inactivo</span>
                   @else
                     <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fas fa-check-circle mr-1"></i> Activo</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td class="cell-actions px-4 py-3 text-sm text-center">
                   @include('admin.partials.actions', [
                       'id'           => $user->id,
                       'view'         => url("view-user/{$user->id}"),

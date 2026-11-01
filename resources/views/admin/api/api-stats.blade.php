@@ -41,7 +41,7 @@
         </h2>
       </div>
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Cliente</th>
@@ -54,15 +54,15 @@
             @forelse ($clientes as $client)
               @php $conteo = $totalesPorCliente[$client->id] ?? null; @endphp
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">
+                <td data-label="Cliente" class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">
                   {{ $client->name }}
                   @if($client->trashed())
                     <span class="ml-1 text-xs text-slate-400">(archivado)</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm font-mono text-slate-600 dark:text-slate-300">{{ $client->token_prefix }}…</td>
-                <td class="px-4 py-3 text-sm text-right text-slate-900 dark:text-white">{{ number_format($conteo->total ?? 0) }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                <td data-label="Prefijo" class="px-4 py-3 text-sm font-mono text-slate-600 dark:text-slate-300">{{ $client->token_prefix }}…</td>
+                <td data-label="Peticiones" class="px-4 py-3 text-sm text-right text-slate-900 dark:text-white">{{ number_format($conteo->total ?? 0) }}</td>
+                <td data-label="Último uso" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                   {{ !empty($conteo->ultimo) ? \Carbon\Carbon::parse($conteo->ultimo)->format('d/m/Y H:i') : 'Nunca' }}
                 </td>
               </tr>
@@ -88,7 +88,7 @@
         </h2>
       </div>
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Cliente</th>
@@ -102,20 +102,20 @@
           <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
             @forelse ($logs as $log)
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-sm text-slate-900 dark:text-white">
+                <td data-label="Cliente" class="px-4 py-3 text-sm text-slate-900 dark:text-white">
                   {{ $log->client->name ?? '— (no autorizado)' }}
                 </td>
-                <td class="px-4 py-3 text-sm font-mono text-slate-600 dark:text-slate-300">{{ $log->endpoint }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $log->method }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $log->ip }}</td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td data-label="Endpoint" class="px-4 py-3 text-sm font-mono text-slate-600 dark:text-slate-300 break-all">{{ $log->endpoint }}</td>
+                <td data-label="Método" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $log->method }}</td>
+                <td data-label="IP" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $log->ip }}</td>
+                <td data-label="Estado" class="px-4 py-3 text-sm text-center">
                   @if($log->status_code >= 200 && $log->status_code < 300)
                     <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700">{{ $log->status_code }}</span>
                   @else
                     <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700">{{ $log->status_code }}</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                <td data-label="Fecha" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                   {{ $log->created_at ? $log->created_at->format('d/m/Y H:i:s') : '—' }}
                 </td>
               </tr>

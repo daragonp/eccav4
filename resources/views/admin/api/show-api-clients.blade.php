@@ -85,7 +85,7 @@
   <div class="card">
     <div class="card-body p-0">
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Nombre</th>
@@ -98,24 +98,24 @@
           <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
             @forelse ($clients as $client)
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">
+                <td data-label="Nombre" class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">
                   {{ $client->name }}
                   @if($client->trashed())
                     <span class="ml-1 text-xs text-slate-400">(archivado)</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm font-mono text-slate-600 dark:text-slate-300">{{ $client->token_prefix }}…</td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Prefijo" class="px-4 py-3 text-sm font-mono text-slate-600 dark:text-slate-300">{{ $client->token_prefix }}…</td>
+                <td data-label="Estado" class="px-4 py-3 text-sm">
                   @if($client->active && !$client->trashed())
                     <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fa-solid fa-check mr-1"></i> Activo</span>
                   @else
                     <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fa-solid fa-ban mr-1"></i> Inactivo</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                <td data-label="Último uso" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                   {{ $client->last_used_at ? $client->last_used_at->format('d/m/Y H:i') : 'Nunca' }}
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td class="cell-actions px-4 py-3 text-sm">
                   <div class="flex items-center justify-center gap-2">
                     {{-- Activar / Revocar --}}
                     <form action="{{ url('toggle-api-client', $client->id) }}" method="POST"

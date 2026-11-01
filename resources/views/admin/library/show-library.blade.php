@@ -165,7 +165,7 @@
   <div class="card">
     <div class="card-body p-0">
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-center text-sm font-semibold text-slate-900 dark:text-white">Portada</th>
@@ -181,24 +181,24 @@
           <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
             @forelse ($resources as $resource)
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-center">
+                <td data-label="Portada" class="px-4 py-3 text-center">
                   @if ($resource->cover_url)
                     <img src="{{ $resource->cover_url }}" alt="{{ $resource->title }}" class="h-10 w-10 object-cover rounded-md ring-1 ring-slate-200 dark:ring-slate-800 mx-auto">
                   @else
                     <span class="text-slate-400"><i class="fas fa-image"></i></span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $resource->title }}</td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Título" class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $resource->title }}</td>
+                <td data-label="Tipo" class="px-4 py-3 text-sm">
                   <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-600">
                     {{ ucfirst($resource->type) }}
                   </span>
                 </td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ optional($resource->category)->name ?? '-' }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                <td data-label="Categoría" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ optional($resource->category)->name ?? '-' }}</td>
+                <td data-label="Origen" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                   {{ $resource->is_external ? 'Enlace' : 'Archivo' }}
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Estado" class="px-4 py-3 text-sm">
                   @if ($resource->deleted_at)
                     <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-trash-alt mr-1"></i> Eliminado</span>
                   @elseif ($resource->published)
@@ -207,7 +207,7 @@
                     <span class="chip-brand bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 border-yellow-300 dark:border-yellow-700"><i class="fas fa-eye-slash mr-1"></i> Despublicado</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-center">
+                <td data-label="Publicar" class="px-4 py-3 text-center">
                   <form action="{{ url('toggle-library', $resource->id) }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" title="{{ $resource->published ? 'Despublicar' : 'Publicar' }}"
@@ -216,7 +216,7 @@
                     </button>
                   </form>
                 </td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td class="cell-actions px-4 py-3 text-sm text-center">
                   @include('admin.partials.actions', [
                       'id'           => $resource->id,
                       'view'         => url('view-library', $resource->id),

@@ -62,7 +62,7 @@
   <div class="card">
     <div class="card-body p-0">
       <div class="table-wrap">
-        <table class="w-full">
+        <table class="w-full table-stack">
           <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">ID</th>
@@ -83,19 +83,19 @@
                 }
               @endphp
               <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $role->id }}</td>
-                <td class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $role->name }}</td>
-                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                <td data-label="ID" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">{{ $role->id }}</td>
+                <td data-label="Rol" class="px-4 py-3 text-sm font-medium text-slate-900 dark:text-white">{{ $role->name }}</td>
+                <td data-label="Usuarios" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                   {{ $role->users_count ?? 0 }}
                 </td>
-                <td class="px-4 py-3 text-sm">
+                <td data-label="Estado" class="px-4 py-3 text-sm">
                   @if ($isActive)
                     <span class="chip-brand bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 border-green-300 dark:border-green-700"><i class="fas fa-check-circle mr-1"></i> Activo</span>
                   @else
                     <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700"><i class="fas fa-ban mr-1"></i> Inactivo</span>
                   @endif
                 </td>
-                <td class="px-4 py-3 text-sm text-center">
+                <td class="cell-actions px-4 py-3 text-sm text-center">
                   @include('admin.partials.actions', [
                       'id'           => $role->id,
                       'view'         => null,

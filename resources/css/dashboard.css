@@ -2010,3 +2010,290 @@ img {
   visibility: visible;
   pointer-events: auto;
 }
+
+/* ==========================================================================
+   15) ADAPTACIÓN MÓVIL INTEGRAL (DASHBOARD)
+   --------------------------------------------------------------------------
+   Mejoras de experiencia en pantallas pequeñas:
+   - Tablas CRUD: scroll horizontal con indicadores + modo "tarjeta apilada"
+   - Objetivos táctiles de >=44px (accesibilidad WCAG 2.5.5)
+   - Cockpit "Ahora Suena" y acciones rápidas reorganizadas
+   - Ajustes de densidad y tipografía para móvil
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   15.1) TABLAS: SCROLL HORIZONTAL MEJORADO (aplica a TODAS las tablas admin)
+   -------------------------------------------------------------------------- */
+
+/* Momentum scroll en iOS + indicador de scroll disponible */
+.table-wrap,
+.card-body .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  position: relative;
+}
+
+/* Sombra lateral que indica que la tabla continúa (desaparece al final) */
+@media (max-width: 1023px) {
+  .table-wrap {
+    background:
+      linear-gradient(to right, var(--paper) 30%, rgba(255, 255, 255, 0)) left center,
+      linear-gradient(to left, var(--paper) 30%, rgba(255, 255, 255, 0)) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(2, 6, 23, 0.12), rgba(2, 6, 23, 0)) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(2, 6, 23, 0.12), rgba(2, 6, 23, 0)) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+
+  .dark .table-wrap {
+    background:
+      linear-gradient(to right, var(--dark-surface) 30%, rgba(30, 41, 59, 0)) left center,
+      linear-gradient(to left, var(--dark-surface) 30%, rgba(30, 41, 59, 0)) right center,
+      radial-gradient(farthest-side at 0 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0)) left center,
+      radial-gradient(farthest-side at 100% 50%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0)) right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
+  }
+}
+
+/* Barra de scroll visible y táctil en móvil */
+.table-wrap::-webkit-scrollbar,
+.card-body .overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb,
+.card-body .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+  border-radius: 9999px;
+}
+
+.dark .table-wrap::-webkit-scrollbar-thumb,
+.dark .card-body .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   15.2) TABLAS APILADAS EN TARJETAS (opt-in con .table-stack)
+   --------------------------------------------------------------------------
+   Para usar: añade la clase `table-stack` a la <table> y el atributo
+   `data-label="Nombre columna"` a cada <td>. Debajo de 768px cada fila se
+   convierte en una tarjeta vertical legible sin scroll horizontal.
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  table.table-stack {
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  table.table-stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  table.table-stack tbody {
+    display: block;
+  }
+
+  table.table-stack tr {
+    display: block;
+    margin: 0 0.75rem 0.875rem;
+    border: 1px solid color-mix(in oklab, var(--ring) 100%, transparent);
+    border-radius: 0.875rem;
+    background: var(--paper);
+    box-shadow: 0 2px 8px rgba(2, 6, 23, 0.05);
+    overflow: hidden;
+  }
+
+  .dark table.table-stack tr {
+    background: var(--dark-surface);
+    border-color: var(--dark-border);
+  }
+
+  table.table-stack td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0.625rem 0.9rem !important;
+    text-align: right !important;
+    border-bottom: 1px solid color-mix(in oklab, var(--ring) 60%, transparent);
+  }
+
+  .dark table.table-stack td {
+    border-bottom-color: rgba(71, 85, 105, 0.5);
+  }
+
+  table.table-stack td:last-child {
+    border-bottom: 0;
+  }
+
+  /* Etiqueta de columna generada desde data-label */
+  table.table-stack td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--dark-text-tertiary, #94a3b8);
+    text-align: left;
+    flex: 0 0 auto;
+    margin-right: auto;
+  }
+
+  /* Celdas sin etiqueta (p.ej. acciones) ocupan toda la fila centradas */
+  table.table-stack td[data-label=""]::before,
+  table.table-stack td:not([data-label])::before {
+    content: "";
+    margin: 0;
+  }
+
+  table.table-stack td[data-label=""],
+  table.table-stack td.cell-actions {
+    justify-content: center;
+    background: color-mix(in oklab, var(--ring) 20%, transparent);
+  }
+
+  .dark table.table-stack td.cell-actions {
+    background: rgba(15, 23, 42, 0.4);
+  }
+
+  /* Evita que avatares/imágenes se estiren dentro de la tarjeta */
+  table.table-stack td img {
+    margin-left: auto;
+  }
+
+  /* Celdas con contenido complejo (grids, formularios): etiqueta arriba,
+     contenido a todo el ancho y alineado a la izquierda */
+  table.table-stack td.cell-block {
+    display: block;
+    text-align: left !important;
+    padding: 0.75rem 0.9rem !important;
+  }
+
+  table.table-stack td.cell-block::before {
+    display: block;
+    margin: 0 0 0.5rem 0;
+  }
+
+  table.table-stack td.cell-block .text-right {
+    text-align: left !important;
+  }
+
+  table.table-stack td.cell-block img {
+    margin-left: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15.3) OBJETIVOS TÁCTILES Y DENSIDAD (<= 640px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* Botones de acción por fila: de 32px -> 40px para dedos */
+  .btn-action,
+  table .inline-flex.w-8,
+  .flex.items-center.justify-center.gap-1\.5 > a,
+  .flex.items-center.justify-center.gap-1\.5 > button,
+  .flex.items-center.justify-center.gap-1\.5 form button {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  /* Oculta los separadores "|" entre acciones en móvil para ganar espacio */
+  .flex.items-center.justify-center.gap-1\.5 > .text-slate-300,
+  .flex.items-center.justify-center.gap-1\.5 > .dark\:text-slate-700 {
+    display: none;
+  }
+
+  /* El botón "Nuevo ..." ocupa todo el ancho y es fácil de tocar */
+  .flex.justify-end > .btn-primary {
+    width: 100%;
+    justify-content: center;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  /* Topbar: botón de menú con mejor área táctil */
+  .btn-topbar-toggle {
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  /* Padding de contenido más ajustado para aprovechar el ancho */
+  .panel-main > .p-4 {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  /* Inputs y selects más altos para evitar zoom en iOS (font >=16px) */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15.4) BOTÓN TOGGLE DEL TOPBAR (faltaba estilo base explícito)
+   -------------------------------------------------------------------------- */
+.btn-topbar-toggle {
+  @apply inline-flex items-center justify-center rounded-xl w-10 h-10 p-0
+         text-slate-700 dark:text-slate-300
+         hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors;
+}
+
+/* --------------------------------------------------------------------------
+   15.5) COCKPIT "AHORA SUENA" EN MÓVIL
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  /* El slider de volumen necesita más superficie táctil */
+  #dashboardVolumeSlider {
+    height: 6px;
+  }
+
+  #dashboardVolumeSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+  }
+
+  #dashboardVolumeSlider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 9999px;
+    background: #fff;
+    cursor: pointer;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15.6) PAGINACIÓN TÁCTIL
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  nav[role="navigation"] a,
+  nav[role="navigation"] span,
+  .pagination a,
+  .pagination span {
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

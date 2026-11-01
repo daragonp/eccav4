@@ -92,7 +92,7 @@
     <div class="card">
       <div class="card-body p-0">
         <div class="table-wrap">
-          <table class="w-full">
+          <table class="w-full table-stack">
             <thead class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th class="px-4 py-3.5 text-left text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Episodio</th>
@@ -105,7 +105,7 @@
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
               @forelse ($podcasts as $podcast)
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                  <td class="px-4 py-3.5">
+                  <td data-label="Episodio" class="px-4 py-3.5">
                     <div class="font-semibold text-slate-900 dark:text-white text-sm">
                       {{ $podcast->title }}
                     </div>
@@ -115,7 +115,7 @@
                       </div>
                     @endif
                   </td>
-                  <td class="px-4 py-3.5 text-sm">
+                  <td data-label="Serie" class="px-4 py-3.5 text-sm">
                     @if($podcast->category)
                       <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60">
                         <i class="fa-solid fa-bookmark text-[10px]"></i>
@@ -125,10 +125,10 @@
                       <span class="text-slate-400 text-xs italic">Sin categoría</span>
                     @endif
                   </td>
-                  <td class="px-4 py-3.5 text-sm">
+                  <td data-label="Audio" class="px-4 py-3.5 text-sm">
                     @if ($podcast->audio_file)
                       <div class="flex items-center gap-2">
-                        <audio controls class="h-8 w-48 sm:w-60">
+                        <audio controls class="h-8 w-48 sm:w-60 max-w-full">
                           <source src="{{ asset('audio/podcast/' . $podcast->audio_file) }}">
                         </audio>
                       </div>
@@ -138,10 +138,10 @@
                       </span>
                     @endif
                   </td>
-                  <td class="px-4 py-3.5 text-xs text-slate-500 dark:text-slate-400">
+                  <td data-label="Fecha" class="px-4 py-3.5 text-xs text-slate-500 dark:text-slate-400">
                     {{ $podcast->created_at ? $podcast->created_at->format('d/m/Y') : '-' }}
                   </td>
-                  <td class="px-4 py-3.5 text-center">
+                  <td class="cell-actions px-4 py-3.5 text-center">
                     @include('admin.partials.actions', [
                         'id'           => $podcast->id,
                         'view'         => null,
@@ -182,7 +182,7 @@
     <div class="card">
       <div class="card-body p-0">
         <div class="table-wrap">
-          <table class="w-full">
+          <table class="w-full table-stack">
             <thead class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th class="px-4 py-3.5 text-left text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Nombre de Serie</th>
@@ -195,10 +195,10 @@
             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
               @forelse ($categories as $cat)
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                  <td class="px-4 py-3.5 font-semibold text-slate-900 dark:text-white text-sm">
+                  <td data-label="Serie" class="px-4 py-3.5 font-semibold text-slate-900 dark:text-white text-sm">
                     {{ $cat->name }}
                   </td>
-                  <td class="px-4 py-3.5 text-sm">
+                  <td data-label="Subcategoría" class="px-4 py-3.5 text-sm">
                     @if($cat->subcategory)
                       <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                         {{ $cat->subcategory }}
@@ -207,15 +207,15 @@
                       <span class="text-slate-400 text-xs">-</span>
                     @endif
                   </td>
-                  <td class="px-4 py-3.5 text-xs text-slate-600 dark:text-slate-300 max-w-sm">
+                  <td data-label="Descripción" class="px-4 py-3.5 text-xs text-slate-600 dark:text-slate-300 max-w-sm">
                     {{ $cat->description }}
                   </td>
-                  <td class="px-4 py-3.5 text-center">
+                  <td data-label="Episodios" class="px-4 py-3.5 text-center">
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300">
                       {{ $cat->podcast_count ?? 0 }}
                     </span>
                   </td>
-                  <td class="px-4 py-3.5 text-center">
+                  <td class="cell-actions px-4 py-3.5 text-center">
                     @include('admin.partials.actions', [
                         'id'           => $cat->id,
                         'view'         => null,

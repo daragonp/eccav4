@@ -34,8 +34,8 @@
     {{-- Tabla de overrides --}}
     <div class="card">
         <div class="card-body p-0">
-            <div class="overflow-x-auto">
-                <table class="w-full">
+            <div class="table-wrap overflow-x-auto">
+                <table class="w-full table-stack">
                     <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
                         <tr>
                             <th class="px-4 py-3 text-left text-sm font-semibold text-slate-900 dark:text-white">Fecha</th>
@@ -49,24 +49,24 @@
                     <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                         @forelse ($overrides as $override)
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                <td class="px-4 py-3 text-sm text-slate-900 dark:text-white">
+                                <td data-label="Fecha" class="px-4 py-3 text-sm text-slate-900 dark:text-white">
                                     <div class="font-medium">{{ $override->date->format('d/m/Y') }}</div>
                                     <div class="text-xs text-slate-500 dark:text-slate-400">
                                         {{ $override->date->diffForHumans() }}
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                                <td data-label="Día Real" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                                     {{ $override->date_day_name }}
                                 </td>
-                                <td class="px-4 py-3 text-sm">
+                                <td data-label="Usar programación de" class="px-4 py-3 text-sm">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300">
                                         {{ $override->override_day_name }}
                                     </span>
                                 </td>
-                                <td class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+                                <td data-label="Motivo" class="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
                                     {{ $override->reason ?? '-' }}
                                 </td>
-                                <td class="px-4 py-3 text-sm">
+                                <td data-label="Estado" class="px-4 py-3 text-sm">
                                     @if ($override->is_active)
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
                                             <i class="fas fa-check-circle mr-1"></i> Activo
@@ -77,8 +77,8 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-sm text-center">
-                                    <div class="flex items-center justify-center gap-2">
+                                <td class="cell-actions px-4 py-3 text-sm text-center">
+                                    <div class="flex items-center justify-center gap-2 flex-wrap">
                                         {{-- Botón editar --}}
                                         <button 
                                             type="button"

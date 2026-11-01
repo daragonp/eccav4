@@ -254,7 +254,7 @@
     <div class="card">
         <div class="card-body p-0">
             <div class="table-wrap">
-                <table class="w-full">
+                <table class="w-full table-stack">
                     <thead class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700">
                         <tr>
                             <th class="px-4 py-3.5 text-left text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Programa & Director</th>
@@ -274,7 +274,7 @@
                                 $isCurrentLive = isset($currentProgram) && $currentProgram && ($currentProgram->emission_key === $schedule->emission_key);
                             @endphp
                             <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors {{ $isCurrentLive ? 'bg-emerald-50/50 dark:bg-emerald-950/20' : '' }}">
-                                <td class="px-4 py-3.5 text-sm">
+                                <td data-label="Programa" class="px-4 py-3.5 text-sm">
                                     <div class="flex items-center gap-3">
                                         @if ($schedule->image)
                                             <img src="{{ asset('images/schedule/' . $schedule->image) }}" alt="{{ $schedule->name }}" class="w-10 h-10 rounded-xl object-cover shrink-0 ring-1 ring-slate-200 dark:ring-slate-700">
@@ -296,7 +296,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-4 py-3.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                <td data-label="Horario" class="px-4 py-3.5 text-xs font-semibold text-slate-700 dark:text-slate-300">
                                     <div class="flex items-center gap-1.5">
                                         <i class="fa-regular fa-clock text-slate-400 text-xs"></i>
                                         <span>{{ is_object($schedule->start) ? $schedule->start->format('H:i') : substr($schedule->start, 0, 5) }}</span>
@@ -304,7 +304,7 @@
                                         <span>{{ is_object($schedule->end) ? $schedule->end->format('H:i') : substr($schedule->end, 0, 5) }}</span>
                                     </div>
                                 </td>
-                                <td class="px-4 py-3.5 text-sm">
+                                <td data-label="Días" class="px-4 py-3.5 text-sm">
                                     <div class="flex flex-wrap gap-1">
                                         @foreach ($daysSelected as $d)
                                             @if (isset($dayNames[$d]))
@@ -315,7 +315,7 @@
                                         @endforeach
                                     </div>
                                 </td>
-                                <td class="px-4 py-3.5 text-sm">
+                                <td data-label="Estado" class="px-4 py-3.5 text-sm">
                                     @if ($schedule->deleted_at)
                                         <span class="chip-brand bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300 border-red-300 dark:border-red-700">
                                             <i class="fa-solid fa-ban mr-1"></i> Inactivo
@@ -326,7 +326,7 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3.5 text-sm text-center">
+                                <td class="cell-actions px-4 py-3.5 text-sm text-center">
                                     @include('admin.partials.actions', [
                                         'id'         => $schedule->id,
                                         'view'       => url("view-schedule", $schedule->id),
