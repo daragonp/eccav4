@@ -38,8 +38,18 @@
                         </span>
                     </div>
 
+                    {{-- Programa en emisión (poblado por fetch a /api/now-playing -> program) --}}
+                    <div id="nowProgramWrap" class="mb-2 hidden">
+                        <div class="text-[11px] font-bold uppercase tracking-wider text-amber-200 mb-0.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-microphone-lines text-[10px]"></i>
+                            <span>Programa al aire</span>
+                        </div>
+                        <h2 id="nowProgramName" class="text-xl sm:text-2xl font-black tracking-tight text-white truncate drop-shadow-xs leading-tight">&nbsp;</h2>
+                        <p id="nowProgramMeta" class="text-xs sm:text-sm text-emerald-100 mt-0.5 truncate">&nbsp;</p>
+                    </div>
+
                     <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-100 mb-0.5">Ahora suena</div>
-                    <h2 id="nowPlayingTitle" class="text-xl sm:text-2xl font-black tracking-tight text-white truncate drop-shadow-xs">
+                    <h2 id="nowPlayingTitle" class="text-base sm:text-lg font-bold tracking-tight text-white truncate drop-shadow-xs">
                         Cargando…
                     </h2>
                     <p id="nowPlayingArtist" class="text-xs sm:text-sm text-emerald-100 mt-1 truncate">
@@ -620,6 +630,31 @@
         return m + ':' + (s < 10 ? '0' : '') + s;
     }
 
+    function renderProgram(program) {
+        const wrapEl = document.getElementById('nowProgramWrap');
+        const nameEl = document.getElementById('nowProgramName');
+        const metaEl = document.getElementById('nowProgramMeta');
+        if (!wrapEl || !nameEl || !metaEl) return;
+
+        if (!program || !program.name) {
+            wrapEl.classList.add('hidden');
+            return;
+        }
+
+        nameEl.textContent = program.name;
+
+        // Línea secundaria: presentador + tema (lo que esté disponible).
+        const parts = [];
+        if (program.host_name) {
+            const role = program.host_role ? program.host_role : 'Conduce';
+            parts.push(role + ': ' + program.host_name);
+        }
+        if (program.theme) parts.push(program.theme);
+        metaEl.textContent = parts.join('  ·  ') || '\u00A0';
+
+        wrapEl.classList.remove('hidden');
+    }
+
     function renderNowPlaying(data) {
         const titleEl   = document.getElementById('nowPlayingTitle');
         const artistEl  = document.getElementById('nowPlayingArtist');
@@ -628,6 +663,9 @@
         const barEl     = document.getElementById('nowPlayingProgressBar');
         const wrapEl    = document.getElementById('nowPlayingProgressWrap');
         if (!titleEl) return;
+
+        // El programa es independiente de que haya pista con metadatos.
+        renderProgram(data ? data.program : null);
 
         if (!data || data.playing === false || !data.title) {
             titleEl.textContent = 'Música y alabanza continua';

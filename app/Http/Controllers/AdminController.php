@@ -82,8 +82,14 @@ class AdminController extends Controller
      *
      * Llama al API de WideStream server-side con la clave almacenada en
      * config('services.widestream.api_key') para no exponerla al navegador,
-     * y devuelve el JSON normalizado al dashboard. Cachea 10 segundos para
-     * no saturar el servicio ante refrescos frecuentes.
+     * y devuelve un JSON combinado con la PISTA en emisión (/now-playing) y
+     * el PROGRAMA actual en vivo (/program). Se cachea 10 segundos para no
+     * saturar el servicio ante refrescos frecuentes.
+     *
+     * Estructura devuelta (campos de pista en la raíz para retrocompatibilidad):
+     *   playing, title, artist, album, duration, elapsed_seconds, source, category,
+     *   program => { name, host_name, host_role, theme, description,
+     *                start_time, end_time, is_live, image_url }
      */
     public function nowPlaying()
     {
@@ -98,20 +104,51 @@ class AdminController extends Controller
         }
 
         $data = Cache::remember('widestream:now_playing', now()->addSeconds(10), function () use ($apiKey, $apiBase) {
+            $http = \Illuminate\Support\Facades\Http::withToken($apiKey)
+                ->timeout(5)
+                ->acceptJson();
+
+            // 1) Pista actual en emisión (/now-playing).
+            $track = ['playing' => false];
             try {
-                $response = \Illuminate\Support\Facades\Http::withToken($apiKey)
-                    ->timeout(5)
-                    ->acceptJson()
-                    ->get($apiBase . '/now-playing');
-
-                if ($response->successful()) {
-                    return $response->json();
+                $resp = $http->get($apiBase . '/now-playing');
+                if ($resp->successful()) {
+                    $track = $resp->json() ?: ['playing' => false];
+                } else {
+                    $track['error'] = 'Respuesta no exitosa de WideStream (now-playing).';
                 }
-
-                return ['playing' => false, 'error' => 'Respuesta no exitosa de WideStream.'];
             } catch (\Throwable $e) {
-                return ['playing' => false, 'error' => 'No se pudo contactar a WideStream.'];
+                $track['error'] = 'No se pudo contactar a WideStream (now-playing).';
             }
+
+            // 2) Programa actual en vivo (/program -> current). Si falla, la
+            //    pista se devuelve igual; el programa simplemente no se muestra.
+            $program = null;
+            try {
+                $resp = $http->get($apiBase . '/program');
+                if ($resp->successful()) {
+                    $current = (array) ($resp->json('current') ?? []);
+                    if (!empty($current)) {
+                        $program = [
+                            'name'        => $current['name'] ?? null,
+                            'host_name'   => $current['host_name'] ?? null,
+                            'host_role'   => $current['host_role'] ?? null,
+                            'theme'       => $current['theme'] ?? null,
+                            'description' => $current['description'] ?? null,
+                            'start_time'  => $current['start_time'] ?? null,
+                            'end_time'    => $current['end_time'] ?? null,
+                            'is_live'     => (bool) ($current['is_live'] ?? false),
+                            'image_url'   => $current['image_url'] ?? null,
+                        ];
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Silencioso: el programa es complementario a la pista.
+            }
+
+            $track['program'] = $program;
+
+            return $track;
         });
 
         return response()->json($data, 200);
