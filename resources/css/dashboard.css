@@ -1987,6 +1987,53 @@ img {
   overflow-y: auto !important;
 }
 
+/* --------------------------------------------------------------------------
+   MODAL DE EDICIÓN UNIVERSAL EN MÓVIL (hoja a pantalla completa)
+   --------------------------------------------------------------------------
+   En escritorio el modal flota centrado (reglas de arriba). En móvil eso deja
+   el formulario comprimido a 70vh y con los campos muy estrechos por el doble
+   padding. Debajo de 768px lo convertimos en una hoja a pantalla completa:
+   ancho y alto totales, sin centrado flotante y con un único scroll interno.
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  [data-modal-content] {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+  }
+
+  /* El área scrolleable ocupa todo el espacio disponible entre header y footer */
+  [data-modal-content] .overflow-y-auto {
+    max-height: none !important;
+    flex: 1 1 auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Elimina el padding interno excesivo de cada sección del formulario
+     (el contenedor del form ya aporta px-4) para dar ancho a los campos */
+  [data-modal-content] form .px-6 {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  [data-modal-content] > form {
+    min-height: 0 !important;
+  }
+
+  /* Tarjetas internas de secciones (PDF, imagen, audio...) con menos padding */
+  [data-modal-content] .rounded-xl.p-6 {
+    padding: 1rem !important;
+  }
+}
+
 /* Estado oculto */
 [data-modal-container][style*="display: none"] {
     pointer-events: none !important;
